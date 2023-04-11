@@ -72,7 +72,7 @@ export default function ServicesPage({ services }) {
 }
 
 export async function getStaticProps() {
-  const res = await axios.get("http://localhost:5000/services/getAllServices");
+  const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/services/getAllServices");
   const services = res.data;
   return {
     props: {
