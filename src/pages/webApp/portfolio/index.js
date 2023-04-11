@@ -41,7 +41,7 @@ export default function PortfolioPage({ portfolios }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     "https://enigmatic-badlands-35417.herokuapp.com/portfolio/getAllPortfolio"
   );

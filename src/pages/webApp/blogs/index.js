@@ -124,7 +124,7 @@ export default function BlogsPage({ blogs }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/blogs/getAllBlogs");
   const blogs = res.data;
   return {

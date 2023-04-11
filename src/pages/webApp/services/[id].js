@@ -59,7 +59,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const id = context.params.id;
   const res = await axios.get(
     `https://enigmatic-badlands-35417.herokuapp.com/services/getServiceById/${id}`
