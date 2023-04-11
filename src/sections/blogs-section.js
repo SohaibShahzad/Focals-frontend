@@ -5,11 +5,10 @@ import styles from "../styles";
 import { BlogCarousel } from "../components/blogCarousel";
 import { Button } from "../components/button";
 
-
 const BlogsSection = () => {
   return (
     <section className={`${styles.paddings}`} id="blogs">
-            <div className="gradient-02 z-[10]"/>
+      <div className="gradient-02 z-[0]" />
 
       <motion.div
         variants={staggerContainer}
@@ -24,7 +23,7 @@ const BlogsSection = () => {
           textStyles="text-center pb-[50px]"
         />
         <div className="text-center flex items-center flex-col">
-            <BlogCarousel/>
+          <BlogCarousel />
           <Button
             title="Explore Further >"
             styling="bg-[#621000] mt-[50px] hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"

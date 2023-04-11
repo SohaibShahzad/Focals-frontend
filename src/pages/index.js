@@ -20,7 +20,6 @@ export default function WebApp () {
       <div className="relative">
 
         <ServicesSection />
-        <div className="gradient-02 z-[0]" />
       </div>
     </>
   );

@@ -22,7 +22,7 @@ const ServicesSection = () => {
   }, []);
 
   return (
-    <section className={`${styles.paddings}`} id="blogs">
+    <section className={`${styles.paddings} `} id="blogs">
 
       <motion.div
         variants={staggerContainer}
