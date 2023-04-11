@@ -1,6 +1,7 @@
 import axios from "axios";
 import styles from "../../../styles";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function SingleService({ serviceData }) {
   return (
@@ -46,21 +47,21 @@ export default function SingleService({ serviceData }) {
   );
 }
 
-export async function getStaticPaths() {
-  const response = await axios.get(
-    "https://enigmatic-badlands-35417.herokuapp.com/services/getAllServiceIds"
-  );
-  const serviceids = response.data;
-  return {
-    fallback: "blocking",
-    paths: serviceids.map((serviceid) => ({
-      params: { id: serviceid._id.toString() },
-    })),
-  };
-}
+// export async function getStaticPaths() {
+//   const response = await axios.get(
+//     "https://enigmatic-badlands-35417.herokuapp.com/services/getAllServiceIds"
+//   );
+//   const serviceids = response.data;
+//   return {
+//     fallback: "blocking",
+//     paths: serviceids.map((serviceid) => ({
+//       params: { id: serviceid._id.toString() },
+//     })),
+//   };
+// }
 
 export async function getServerSideProps(context) {
-  const id = context.params.id;
+  const id = context.query;
   const res = await axios.get(
     `https://enigmatic-badlands-35417.herokuapp.com/services/getServiceById/${id}`
   );
