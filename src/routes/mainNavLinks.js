@@ -1,18 +1,22 @@
 export const mainNavLinks = [
-    {
-      title: "Services",
-      link: "/webApp/services",
-    },
-    {
-      title: "Blogs",
-      link: "/webApp/blogs",
-    },
-    {
-      title: "Portfolio",
-      link: "/webApp/portfolio",
-    },
-    {
-      title: "Contact Us",
-      link: "/webApp/contact-us",
-    },
-  ];
+  {
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Services",
+    link: "/services",
+  },
+  {
+    title: "Blogs",
+    link: "/blogs",
+  },
+  {
+    title: "Portfolio",
+    link: "/portfolio",
+  },
+  {
+    title: "Contact Us",
+    link: "/contact-us",
+  },
+];

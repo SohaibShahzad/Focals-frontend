@@ -69,7 +69,7 @@ export const BlogCarousel = () => {
     >
       <div className={`${classes["swiper-container"]} `}>
         {blogData.map((blog) => (
-          <SwiperSlide key={blog._id} className={`${classes["swiper-slide"]}`}>
+          <SwiperSlide key={blog._id} className={`${classes["swiper-slide"]} rounded-xl`}>
 
               <BlogCard blog={blog}/>
 

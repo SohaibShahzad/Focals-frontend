@@ -9,6 +9,8 @@ import { Button } from "../components/button";
 const BlogsSection = () => {
   return (
     <section className={`${styles.paddings}`} id="blogs">
+            <div className="gradient-02 z-[10]"/>
+
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -26,7 +28,7 @@ const BlogsSection = () => {
           <Button
             title="Explore Further >"
             styling="bg-[#621000] mt-[50px] hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
-            link="/webApp/blogs"
+            link="/blogs"
           />
         </div>
       </motion.div>

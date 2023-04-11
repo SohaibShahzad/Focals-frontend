@@ -1,5 +1,5 @@
 import axios from "axios";
-import styles from "../../../styles";
+import styles from "../../styles";
 import {useRouter } from "next/router";
 
 export default function SingleBlog({ blogData }) {
@@ -28,17 +28,6 @@ export default function SingleBlog({ blogData }) {
 
   );
 }
-
-// export async function getStaticPaths() {
-//   const response = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/blogs/getAllBlogIds");
-//   const blogids = response.data;
-//   return {
-//     fallback: "blocking",
-//     paths: blogids.map((blogid) => ({
-//       params: { id: blogid._id.toString() },
-//     })),
-//   };
-// }
 
 export async function getServerSideProps(context) {
   const { id }= context.query;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { MdTune } from "react-icons/md";
-import styles from "../../../styles";
+import styles from "../../styles";
 
 export default function ServicesPage({ services }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,7 +59,7 @@ export default function ServicesPage({ services }) {
               </p>
             </div>
             <Link
-              href={`/webApp/services/${service._id}`}
+              href={`/services/${service._id}`}
               className="text-center bg-orange-900 font-bold rounded-md py-2 md:px-5"
             >
               Details

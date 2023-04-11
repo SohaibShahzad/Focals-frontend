@@ -1,12 +1,27 @@
-import  WebApp  from "./webApp";
-import Link from "next/link";
+import Hero from "../sections/hero";
+import AboutUs from "../sections/about-us";
+import Explore from "../sections/explore";
+import BlogSection from "../sections/blogs-section";
+import ServicesSection from "../sections/services-section";
 
-function HomePage() {
+export default function WebApp () {
   return (
-    // <Link href='/dashboards'>AdminPanel</Link>
-    <WebApp />
+    <>
+      <Hero />
+      <div className="relative">
+        <AboutUs />
+        <div className="gradient-03 z-[0]" />
+        <Explore/>
+      </div>
+      <div className="relative">
+        <BlogSection />
+        <div className="gradient-03 z-[0]" />
+      </div>
+      <div className="relative">
+
+        <ServicesSection />
+        <div className="gradient-02 z-[0]" />
+      </div>
+    </>
   );
-
-}
-
-export default HomePage;
+};

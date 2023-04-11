@@ -1,7 +1,7 @@
 import axios from "axios";
-import styles from "../../../styles";
+import styles from "../../styles";
 import ReactPlayer from "react-player";
-import classes from "../../../styles/portfolio.module.css";
+import classes from "../../styles/portfolio.module.css";
 
 import "swiper/swiper-bundle.css";
 import "swiper/css";

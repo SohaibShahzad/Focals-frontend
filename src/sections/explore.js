@@ -22,14 +22,16 @@ const Explore = ({ portfolio }) => (
           textStyles="text-center pb-[50px]"
         />
         <div className="text-center">
+          
             <VideoCarousel/>
           <Button
             title="Explore Further >"
             styling="bg-[#621000] mt-[50px] hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
-            link="/webApp/portfolio"
+            link="/portfolio"
           />
         </div>
       </motion.div>
+
     </section>
   );
 

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
-import styles from "../../../styles";
+import styles from "../../styles";
 import axios from "axios";
-import { BlogCard } from "../../../components/blogSectionCard";
 import { MdTune } from "react-icons/md";
 
 export default function BlogsPage({ blogs }) {
@@ -112,7 +111,7 @@ export default function BlogsPage({ blogs }) {
             </div>
 
             <Link
-              href={`/webApp/blogs/${blog._id}`}
+              href={`/blogs/${blog._id}`}
               className="text-center bg-orange-900 font-bold rounded-md py-2 md:px-5"
             >
               Read Full Article

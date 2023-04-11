@@ -7,7 +7,7 @@ module.exports = {
     fontFamily: {
       'poppins': ['Poppins', 'sans-serif'],
       'orbitron': ['Orbitron', 'sans-serif'],
-      'zen': ['Zen Dots', 'cursive'],
+      'zen': ['ZenDots', 'cursive'],
     },
     extend: {
       colors: {

@@ -23,6 +23,7 @@ const ServicesSection = () => {
 
   return (
     <section className={`${styles.paddings}`} id="blogs">
+
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -53,7 +54,7 @@ const ServicesSection = () => {
                 </div>
 
                 <Link
-                  href={`/webApp/services/${service._id}`}
+                  href={`/services/${service._id}`}
                   className="text-center bg-orange-900 font-bold rounded-md py-2 md:px-5"
                 >
                   Details
@@ -66,7 +67,7 @@ const ServicesSection = () => {
           <Button
             title="Explore Further >"
             styling="bg-[#621000] mt-[50px] hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
-            link="/webApp/services"
+            link="/services"
           />
       </motion.div>
     </section>

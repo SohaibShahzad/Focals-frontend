@@ -31,22 +31,14 @@ const NavBar = () => {
     >
       <div className="absolute w-[50%] inset-0 gradient-010" />
       <div
-        className={`${styles.innerWidth} mx-auto flex justify-between gap-8 items-center`}
+        className={`${styles.innerWidth} mx-auto flex justify-between gap-4 items-center`}
       >
-        <Link href="/" className="z-10">
+        <Link href="/" className="z-10 flex flex-row items-center gap-2">
           <img src="/Logo.png" alt="FutureFocals" />
+          <span className="flex sm:hidden md:flex text-white font-extrabold text-[18px] md:text-[22px]">FutureFocals</span> 
         </Link>
-        {/* <button className="text-white py-2 px-4 rounded-md bg-orange-700 z-[100]"
-          onClick={handleLoginFormOpen}
-        >
-          LoginRegister
-        </button>
-        <div>
-          <Dialog open={loginFormOpen} onClose={handleLoginFormClose}>
-            <LoginRegisterForm/>
-          </Dialog>
-        </div> */}
-        <div className={`${classes.menuItems} space-x-6`}>
+
+        <div className={`${classes.menuItems} space-x-5`}>
           <ul className="list-none sm:flex hidden justify-end items-center flex-1">
             {mainNavLinks.map((link, index) => (
               <li

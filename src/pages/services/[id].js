@@ -1,5 +1,5 @@
 import axios from "axios";
-import styles from "../../../styles";
+import styles from "../../styles";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -16,7 +16,10 @@ export default function SingleService({ serviceData }) {
       </div>
       <div className="md:flex flex-row gap-10 justify-evenly">
         {serviceData.packages.map((bundle) => (
-          <div key={bundle._id} className="glassmorphism rounded-xl p-5 mb-8 md:px-7 w-full">
+          <div
+            key={bundle._id}
+            className="glassmorphism rounded-xl p-5 mb-8 md:px-7 w-full"
+          >
             <h2 className="text-center border-b-2 border-gray-500 pb-2 font-bold text-[20px]">
               {bundle.name}
             </h2>
@@ -38,30 +41,18 @@ export default function SingleService({ serviceData }) {
         ))}
       </div>
       <div className="flex justify-around">
-
-        <Link href="/webApp/contact-us">
-          <div className="cursor-pointer bg-orange-900 py-2 px-5 rounded-xl font-bold">Let's Discuss</div>
+        <Link href="/contact-us">
+          <div className="cursor-pointer bg-orange-900 py-2 px-5 rounded-xl font-bold">
+            Let's Discuss
+          </div>
         </Link>
       </div>
     </div>
   );
 }
 
-// export async function getStaticPaths() {
-//   const response = await axios.get(
-//     "https://enigmatic-badlands-35417.herokuapp.com/services/getAllServiceIds"
-//   );
-//   const serviceids = response.data;
-//   return {
-//     fallback: "blocking",
-//     paths: serviceids.map((serviceid) => ({
-//       params: { id: serviceid._id.toString() },
-//     })),
-//   };
-// }
-
 export async function getServerSideProps(context) {
-  const id = context.query;
+  const { id } = context.query;
   const res = await axios.get(
     `https://enigmatic-badlands-35417.herokuapp.com/services/getServiceById/${id}`
   );

@@ -20,7 +20,7 @@ const Footer = () => (
           Let's Discuss Your Project
         </h4>
         <Link
-          href='/webApp/contact-us'
+          href='/contact-us'
           className="flex items-center h-fit py-3 px-6 bg-orange-800 rounded-xl text-white gap-[12px]"
         >
           Let's Begin

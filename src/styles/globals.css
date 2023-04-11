@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Poppins";
+  src: url("../../public/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "ZenDots";
+  src: url("../../public/fonts/ZenDots-Regular.ttf");
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -162,7 +172,7 @@
   position: absolute;
   width: 200px;
   height: 316px;
-  left: 0px;
+  right: 0px;
   top: 0px;
 
   background: #8d39a3;
