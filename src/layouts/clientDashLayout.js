@@ -25,10 +25,7 @@ const ClientLayout = ({ children }) => {
         <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
           <AdminNavbar />
         </div>
-        <div className="mx-[5rem]">
-
-        {children}
-        </div>
+        <div className="mx-[5rem]">{children}</div>
       </div>
     </div>
   );
