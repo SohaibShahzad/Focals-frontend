@@ -4,10 +4,19 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
+    screens: {
+      'xs': '425px',
+      'sm': '620px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     fontFamily: {
       'poppins': ['Poppins', 'sans-serif'],
-      'orbitron': ['Orbitron', 'sans-serif'],
       'zen': ['ZenDots', 'cursive'],
+      'tungsten': ['Tungsten', 'serif'],
+      'nova': ['Proxima Nova', 'sans-serif'],
     },
     extend: {
       colors: {

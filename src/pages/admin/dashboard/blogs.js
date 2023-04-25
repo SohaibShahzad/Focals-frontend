@@ -48,7 +48,7 @@ export default function AdminBlogs({ blogs }) {
   const fetchBlogs = async () => {
     try {
       const response = await axios.get(
-        `https://enigmatic-badlands-35417.herokuapp.com/blogs/getAllBlogs`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`
         // "http://localhost:5000/blogs/getAllBlogs"
       );
       setRows(
@@ -116,12 +116,12 @@ export default function AdminBlogs({ blogs }) {
       if (isUpdate) {
         setSelectedBlogForUpdate(null);
         response = await axios.put(
-          `https://enigmatic-badlands-35417.herokuapp.com/blogs/updateBlogById/${selectedBlogForUpdate.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/updateBlogById/${selectedBlogForUpdate.id}`,
           formData
         );
       } else {
         response = await axios.post(
-          `https://enigmatic-badlands-35417.herokuapp.com/blogs/addNewBlog`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/addNewBlog`,
           formData
         );
       }
@@ -133,7 +133,7 @@ export default function AdminBlogs({ blogs }) {
 
   const deleteBlog = async (blogId) => {
     try {
-      await axios.delete(`https://enigmatic-badlands-35417.herokuapp.com/blogs/deleteBlog/${blogId}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}blogs/deleteBlog/${blogId}`);
       setRows(rows.filter((row) => row.id !== blogId));
     } catch (error) {
       console.log(error);
@@ -371,7 +371,7 @@ export default function AdminBlogs({ blogs }) {
 }
 
 export async function getServerSideProps() {
-  const res = await axios.get(`https://enigmatic-badlands-35417.herokuapp.com/blogs/getAllBlogs`);
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`);
   const blogs = res.data;
   return {
     props: {

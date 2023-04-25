@@ -2,7 +2,7 @@ const styles = {
   innerWidth: '2xl:max-w-[1280px] w-full',
   interWidth: 'lg:w-[80%] w-[100%]',
 
-  paddings: 'sm:p-16 xs:p-8 px-6 py-12',
+  paddings: 'sm:p-16 sm:px-32 xs:p-8 px-6 py-12',
   yPaddings: 'sm:py-16 xs:py-8 py-12',
   xPaddings: 'sm:px-16 px-6',
   topPaddings: 'sm:pt-16 xs:pt-8 pt-12',
@@ -15,7 +15,7 @@ const styles = {
 
   // hero section
   heroHeading:
-      'z-[10] lg:text-[100px] md:text-[85px] sm:text-[56px] text-[40px] lg:leading-[120.4px] md:leading-[114.4px] sm:leading-[74.4px] leading-[64.4px] uppercase font-zen text-white',
+      'z-[10] lg:text-[70px] md:text-[60px] sm:text-[50px] text-[40px] lg:leading-[120.4px] md:leading-[114.4px] sm:leading-[74.4px] leading-[34.4px] font-tungsten font-bold text-white',
   heroDText:
       'md:w-[212px] sm:w-[80px] w-[60px] md:h-[108px] sm:h-[48px] h-[38px] md:border-[18px] border-[9px] rounded-r-[50px] border-white sm:mx-2 mx-[6px]',
 };

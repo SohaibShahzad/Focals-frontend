@@ -43,7 +43,7 @@ export default function PortfolioPage({ portfolios }) {
 
 export async function getServerSideProps() {
   const res = await axios.get(
-    "https://enigmatic-badlands-35417.herokuapp.com/portfolio/getAllPortfolio"
+    `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`
   );
   const portfolios = res.data;
   console.log(portfolios);

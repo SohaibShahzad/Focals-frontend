@@ -1,11 +1,12 @@
 import "../styles/globals.css";
-import ClientLayout from "../layouts/clientLayout";
-import AdminLayout from "../layouts/adminLayout";
+import ClientLayout from "../layouts/clientDashLayout";
+import AdminLayout from "../layouts/adminDashLayout";
+import MainLayout from "../layouts/mainLayout";
 import { registerLicense } from "@syncfusion/ej2/base.js";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { isAuthenticated } from "../lib/auth";
+import { AuthProvider } from "../contexts/auth";
+import withAuth from "../hocs/withAuth";
 
 const ContextProvider = dynamic(() => import("../contexts/ContextProvider"), {
   ssr: false,
@@ -17,23 +18,19 @@ registerLicense(
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
-  const isRoute = router.pathname.startsWith("/dashboards");
+  const isClientRoute = router.pathname.startsWith("/dashboard");
+  const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
+  const ProtectedComponent = isClientRoute || isAdminRoute ? withAuth(Component) : Component;
 
-  useEffect(() => {
-    if (isRoute && !isAuthenticated()) {
-      router.push("/login-register");
-    }
-  }, [router]);
 
-  const getLayout =
-    Component.getLayout || ((page) => <ClientLayout children={page} />);
-
-  const Layout = isRoute ? AdminLayout : ClientLayout;
+  const Layout = isAdminRoute ? AdminLayout : isClientRoute ? ClientLayout : MainLayout;
   return (
     <ContextProvider>
+      <AuthProvider>
       <Layout>
-        <Component {...pageProps} />
+        <ProtectedComponent {...pageProps}/>
       </Layout>
+      </AuthProvider>
     </ContextProvider>
   );
 }

@@ -26,7 +26,7 @@ export default function ContactUsPage() {
 
     try {
       const res = await axios.post(
-        "https://enigmatic-badlands-35417.herokuapp.com/contact/sendEmail",
+        `${process.env.NEXT_PUBLIC_SERVER_URL}contact/sendEmail`,
         formData
       );
       setSuccessMessage("Message sent successfully!! We will contact you soon");

@@ -45,10 +45,10 @@ export const adminLinks = [
             name: 'Admins',
             icon: <RiAdminLine />
         },
-        // {
-        //     name: 'Clients',
-        //     icon: <HiOutlineUserGroup />
-        // },
+        {
+            name: 'Users',
+            icon: <HiOutlineUserGroup />
+        },
         // {
         //     name: 'Sub-Admins',
         //     icon: <HiOutlineUsers />

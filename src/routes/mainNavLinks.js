@@ -1,8 +1,8 @@
 export const mainNavLinks = [
-  {
-    title: "Home",
-    link: "/",
-  },
+  // {
+  //   title: "Home",
+  //   link: "/",
+  // },
   {
     title: "Services",
     link: "/services",
@@ -16,7 +16,7 @@ export const mainNavLinks = [
     link: "/portfolio",
   },
   {
-    title: "Contact Us",
+    title: "Contact",
     link: "/contact-us",
   },
 ];

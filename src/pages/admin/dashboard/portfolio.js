@@ -6,54 +6,57 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { IconButton, Dialog } from "@mui/material";
 import axios from "axios";
 
-export default function Admins({ admins }) {
-  const [adminId, setAdminId] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [hint, setHint] = useState("");
-  const [selectedAdminForUpdate, setSelectedAdminForUpdate] = useState(null);
+export default function AdminPortfolio({ portfolios }) {
+  const [portfolioId, setPortfolioId] = useState("");
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [isSpecial, setIsSpecial] = useState(false);
+  const [selectedPortfolioForUpdate, setSelectedPortfolioForUpdate] =
+    useState(null);
   const [addNewForm, setAddNewForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Submit");
 
   useEffect(() => {
-    setAdminId(selectedAdminForUpdate?.id || "");
-    setUsername(selectedAdminForUpdate?.adminUsername || "");
-    setPassword(selectedAdminForUpdate?.password || "");
-    setHint(selectedAdminForUpdate?.hint || "");
-  }, [selectedAdminForUpdate]);
+    setPortfolioId(selectedPortfolioForUpdate?.id || "");
+    setTitle(selectedPortfolioForUpdate?.portfolioName || "");
+    setUrl(selectedPortfolioForUpdate?.url || "");
+    setIsSpecial(selectedPortfolioForUpdate?.isSpecial || false);
+  }, [selectedPortfolioForUpdate]);
 
   const [rows, setRows] = useState(
-    admins.map((admin) => ({
-      id: admin._id,
-      adminUsername: admin.username,
-      password: admin.password,
-      hint: admin.hint,
+    portfolios.map((portfolio) => ({
+      id: portfolio._id,
+      portfolioName: portfolio.title,
+      url: portfolio.url,
+      isSpecial: portfolio.isSpecial,
     }))
   );
 
-  const fetchAdmins = async () => {
+  const fetchPortfolios = async () => {
     try {
       const response = await axios.get(
-        "https://enigmatic-badlands-35417.herokuapp.com/admins/getAllAdmins"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`
       );
       setRows(
-        response.data.map((admin) => ({
-          id: admin._id,
-          adminUsername: admin.username,
-          password: admin.password,
-          hint: admin.hint,
+        response.data.map((portfolio) => ({
+          id: portfolio._id,
+          portfolioName: portfolio.title,
+          url: portfolio.url,
+          isSpecial: portfolio.isSpecial,
         }))
       );
     } catch (error) {
       console.log(error);
     }
   };
+
+
   
   const resetForm = () => {
-    setUsername("");
-    setPassword("");
-    setHint("");
+    setTitle("");
+    setUrl("");
+    setIsSpecial(false);
   };
 
   const handleAddFormOpen = (e) => {
@@ -66,7 +69,7 @@ export default function Admins({ admins }) {
 
   const handleAddFormClose = (e) => {
     if (isUpdate) {
-      setSelectedAdminForUpdate(null);
+      setSelectedPortfolioForUpdate(null);
     }
     e.preventDefault();
     setAddNewForm(false);
@@ -79,34 +82,34 @@ export default function Admins({ admins }) {
     resetForm();
 
     const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
-    formData.append("hint", hint);
+    formData.append("title", title);
+    formData.append("url", url);
+    formData.append("isSpecial", isSpecial);
 
     try {
       let response;
       if (isUpdate) {
-        setSelectedAdminForUpdate(null);
+        setSelectedPortfolioForUpdate(null);
         response = await axios.put(
-          `https://enigmatic-badlands-35417.herokuapp.com/admins/updateAdminById/${selectedAdminForUpdate.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/updatePortfolioById/${selectedPortfolioForUpdate.id}`,
           formData
         );
       } else {
         response = await axios.post(
-          "https://enigmatic-badlands-35417.herokuapp.com/admins/addNewAdmin",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/addNewPortfolio`,
           formData
         );
       }
-      fetchAdmins();
+      fetchPortfolios();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deleteAdmin = async (adminId) => {
+  const deletePortfolio = async (portfolioId) => {
     try {
-      await axios.delete(`https://enigmatic-badlands-35417.herokuapp.com/admins/deleteAdmin/${adminId}`);
-      setRows(rows.filter((row) => row.id !== adminId));
+      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/deletePortfolio/${portfolioId}`);
+      setRows(rows.filter((row) => row.id !== portfolioId));
     } catch (error) {
       console.log(error);
     }
@@ -114,22 +117,22 @@ export default function Admins({ admins }) {
 
   const columns = [
     {
-      field: "adminUsername",
-      headerName: "Username",
+      field: "portfolioName",
+      headerName: "Title",
       flex: 1,
-      valueGetter: (params) => params.row.adminUsername,
+      valueGetter: (params) => params.row.portfolioName,
     },
-    // {
-    //   field: "password",
-    //   headerName: "Password",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.password,
-    // },
     {
-        field: "hint",
-        headerName: "Hint",
+      field: "url",
+      headerName: "Url",
+      flex: 1,
+      valueGetter: (params) => params.row.url,
+    },
+    {
+        field: "isSpecial",
+        headerName: "ShowCase",
         flex: 1,
-        valueGetter: (params) => params.row.hint,
+        valueGetter: (params) => params.row.isSpecial,
     },
     {
       field: "options",
@@ -143,16 +146,16 @@ export default function Admins({ admins }) {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedAdminForUpdate(params.row);
+          setSelectedPortfolioForUpdate(params.row);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete admin ${params.row.adminUsername}?`
+              `Are you sure you want to delete portfolio ${params.row.portfolioName}?`
             )
           ) {
-            deleteAdmin(params.row.id);
+            deletePortfolio(params.row.id);
           }
         };
         return (
@@ -172,12 +175,12 @@ export default function Admins({ admins }) {
   return (
     <>
       <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
-        <div className="text-3xl">Admins</div>
+        <div className="text-3xl">Portfolio</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Admin
+          + Add New Portfolio
         </button>
       </div>
       <div
@@ -189,42 +192,43 @@ export default function Admins({ admins }) {
         <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4">
-            <div className="text-2xl font-bold pb-3">Add New Admin</div>
+            <div className="text-2xl font-bold pb-3">Add New Portfolio</div>
             <form>
-              <label htmlFor="username" className="font-bold">
-                UserName
+              <label htmlFor="title" className="font-bold">
+                Title
               </label>
               <input
                 type="text"
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="username"
-                placeholder="Enter Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="title"
+                placeholder="Enter Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
 
-              <label htmlFor="password" className="font-bold">
-                Password
+              <label htmlFor="url" className="font-bold">
+                YouTube Url
               </label>
               <input
-                type="password"
+                type="url"
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="password"
-                placeholder={isUpdate ? "ReType Current Password or Enter New Password" : "Enter Password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="url"
+                placeholder="Enter Url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
               />
-              <label htmlFor="hint" className="font-bold">
-                Hint
-              </label>
+
               <input
-                type="text"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="hint"
-                placeholder="Enter Hint"
-                value={hint}
-                onChange={(e) => setHint(e.target.value)}
+                type="checkbox"
+                className="border-[2px] border-gray-300 rounded-md"
+                id="isSpecial"
+                value={isSpecial}
+                checked={isSpecial}
+                onChange={(e) => setIsSpecial(e.target.checked)}
               />
+              <label htmlFor="isSpecial" className="font-bold px-2">
+                ShowCase
+              </label>
             </form>
           </div>
           <DialogActions>
@@ -247,13 +251,12 @@ export default function Admins({ admins }) {
   );
 }
 
-
 export async function getServerSideProps() {
-    const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/admins/getAllAdmins");
-    const admins = res.data;
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`);
+    const portfolios = res.data;
     return {
       props: {
-        admins,
+        portfolios,
       },
     };
   }

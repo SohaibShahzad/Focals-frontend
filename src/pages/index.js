@@ -3,24 +3,27 @@ import AboutUs from "../sections/about-us";
 import Explore from "../sections/explore";
 import BlogSection from "../sections/blogs-section";
 import ServicesSection from "../sections/services-section";
+import ContactSection from "../sections/contactForm";
 
-export default function WebApp () {
+export default function WebApp() {
   return (
     <>
-      <Hero />
       <div className="relative">
-        <AboutUs />
         <div className="gradient-03 z-[0]" />
-        <Explore/>
+        <Hero />
+        <div className="gradient-02 z-[0]" />
+      </div>
+      <div className="relative">
+        <ServicesSection />
+        <div className="gradient-02 z-[0]" />
+        <Explore />
       </div>
       <div className="relative">
         <BlogSection />
         <div className="gradient-03 z-[0]" />
-      </div>
-      <div className="relative">
-
-        <ServicesSection />
+        <ContactSection/>
+        {/* <AboutUs /> */}
       </div>
     </>
   );
-};
+}

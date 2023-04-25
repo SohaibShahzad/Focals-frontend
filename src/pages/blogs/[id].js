@@ -31,7 +31,7 @@ export default function SingleBlog({ blogData }) {
 
 export async function getServerSideProps(context) {
   const { id }= context.query;
-  const res = await axios.get(`https://enigmatic-badlands-35417.herokuapp.com/blogs/getBlogById/${id}`);
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getBlogById/${id}`);
   const blogData = res.data;
   return {
     props: {

@@ -1,4 +1,4 @@
-import { TypingText, TitleText } from "../components/customText";
+import { TypingText } from "../components/customText";
 import { staggerContainer } from "../helper/motion";
 import { motion } from "framer-motion";
 import styles from "../styles";
@@ -7,8 +7,7 @@ import { Button } from "../components/button";
 
 const BlogsSection = () => {
   return (
-    <section className={`${styles.paddings}`} id="blogs">
-      <div className="gradient-02 z-[0]" />
+    <section className={`${styles.paddings} relative z-30`} id="blogs">
 
       <motion.div
         variants={staggerContainer}
@@ -17,19 +16,19 @@ const BlogsSection = () => {
         viewport={{ once: false, amount: 0.25 }}
         className={`${styles.innerWidth} mx-auto ${styles.flexCenter} flex-col`}
       >
-        <TypingText title="| Blogs" textStyles="text-center" />
-        <TitleText
-          title={<>Fuel Your Curiosity</>}
-          textStyles="text-center pb-[50px]"
-        />
-        <div className="text-center flex items-center flex-col">
-          <BlogCarousel />
-          <Button
-            title="Explore Further >"
-            styling="bg-[#621000] mt-[50px] hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
-            link="/blogs"
-          />
+        <div className={`font-tungsten`}>
+          <TypingText title="Blogs" />
         </div>
+        <div
+          className={` ${styles.yPaddings} text-center flex items-center flex-col`}
+        >
+          <BlogCarousel />
+        </div>
+        <Button
+          title="Explore Further >"
+          styling="bg-orange-700 font-poppins hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
+          link="/blogs"
+        />
       </motion.div>
     </section>
   );

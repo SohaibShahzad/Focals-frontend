@@ -17,7 +17,7 @@ export const VideoCarousel = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/portfolio/getSpecialPortfolio");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getSpecialPortfolio`);
       setPortfolioData(res.data);
     }
     fetchData();

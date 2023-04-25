@@ -1,7 +1,7 @@
 import NavBar from "../sections/navbar";
 import Footer from "../sections/footer";
 
-const ClientLayout = ({ children }) => {
+const MainLayout = ({ children }) => {
   return (
     <div className="bg-black overflow-hidden">
     {/* // <div> */}
@@ -12,4 +12,4 @@ const ClientLayout = ({ children }) => {
   );
 };
 
-export default ClientLayout;
+export default MainLayout;

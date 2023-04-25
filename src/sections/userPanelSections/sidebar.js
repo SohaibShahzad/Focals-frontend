@@ -1,7 +1,7 @@
 import { MdOutlineCancel } from "react-icons/md";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { useStateContext } from "../../contexts/ContextProvider";
-import { adminLinks } from "../../routes/adminRoutes";
+import { userDashLinks } from "../../routes/userDashRoutes";
 import ActiveLink from "../../components/activeLink";
 import Link from "next/link";
 import axios from "axios";
@@ -61,13 +61,13 @@ export const Sidebar = () => {
             </TooltipComponent>
           </div>
           <div className="mt-10">
-            {adminLinks.map((link, index) => (
+            {userDashLinks.map((link, index) => (
               <div key={index}>
                 <p className="text-gray-400 m-3 mt-4 uppercase">{link.title}</p>
                 {link.links.map((link, index) => (
                   <ActiveLink
                     onClick={handleCloseSidebar}
-                    href={`/admin/dashboard/${link.name.toLowerCase()}`}
+                    href={`/dashboard/${link.name.toLowerCase()}`}
                     styles="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 hover:bg-orange-300 m-2"
                   >
                     {link.icon}

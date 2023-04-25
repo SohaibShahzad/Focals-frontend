@@ -6,44 +6,44 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { IconButton, Dialog } from "@mui/material";
 import axios from "axios";
 
-export default function AdminPortfolio({ portfolios }) {
-  const [portfolioId, setPortfolioId] = useState("");
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [isSpecial, setIsSpecial] = useState(false);
-  const [selectedPortfolioForUpdate, setSelectedPortfolioForUpdate] =
+export default function AdminContactUs({ contacts }) {
+  const [contactId, setContactId] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedContactForUpdate, setSelectedContactForUpdate] =
     useState(null);
   const [addNewForm, setAddNewForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Submit");
 
   useEffect(() => {
-    setPortfolioId(selectedPortfolioForUpdate?.id || "");
-    setTitle(selectedPortfolioForUpdate?.portfolioName || "");
-    setUrl(selectedPortfolioForUpdate?.url || "");
-    setIsSpecial(selectedPortfolioForUpdate?.isSpecial || false);
-  }, [selectedPortfolioForUpdate]);
+    setContactId(selectedContactForUpdate?.id || "");
+    setName(selectedContactForUpdate?.contactName || "");
+    setPassword(selectedContactForUpdate?.password || "");
+    setEmail(selectedContactForUpdate?.email || "");
+  }, [selectedContactForUpdate]);
 
   const [rows, setRows] = useState(
-    portfolios.map((portfolio) => ({
-      id: portfolio._id,
-      portfolioName: portfolio.title,
-      url: portfolio.url,
-      isSpecial: portfolio.isSpecial,
+    contacts.map((contact) => ({
+      id: contact._id,
+      contactName: contact.name,
+      password: contact.password,
+      email: contact.email,
     }))
   );
 
-  const fetchPortfolios = async () => {
+  const fetchContacts = async () => {
     try {
       const response = await axios.get(
-        "https://enigmatic-badlands-35417.herokuapp.com/portfolio/getAllPortfolio"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}contact/getContactData`
       );
       setRows(
-        response.data.map((portfolio) => ({
-          id: portfolio._id,
-          portfolioName: portfolio.title,
-          url: portfolio.url,
-          isSpecial: portfolio.isSpecial,
+        response.data.map((contact) => ({
+          id: contact._id,
+          contactName: contact.name,
+          password: contact.password,
+          email: contact.email,
         }))
       );
     } catch (error) {
@@ -51,12 +51,10 @@ export default function AdminPortfolio({ portfolios }) {
     }
   };
 
-
-  
   const resetForm = () => {
-    setTitle("");
-    setUrl("");
-    setIsSpecial(false);
+    setName("");
+    setPassword("");
+    setEmail("");
   };
 
   const handleAddFormOpen = (e) => {
@@ -69,7 +67,7 @@ export default function AdminPortfolio({ portfolios }) {
 
   const handleAddFormClose = (e) => {
     if (isUpdate) {
-      setSelectedPortfolioForUpdate(null);
+      setSelectedContactForUpdate(null);
     }
     e.preventDefault();
     setAddNewForm(false);
@@ -82,34 +80,36 @@ export default function AdminPortfolio({ portfolios }) {
     resetForm();
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("url", url);
-    formData.append("isSpecial", isSpecial);
+    formData.append("name", name);
+    formData.append("password", password);
+    formData.append("email", email);
 
     try {
       let response;
       if (isUpdate) {
-        setSelectedPortfolioForUpdate(null);
+        setSelectedContactForUpdate(null);
         response = await axios.put(
-          `https://enigmatic-badlands-35417.herokuapp.com/portfolio/updatePortfolioById/${selectedPortfolioForUpdate.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}contact/updateContactData/${selectedContactForUpdate.id}`,
           formData
         );
       } else {
         response = await axios.post(
-          "https://enigmatic-badlands-35417.herokuapp.com/portfolio/addNewPortfolio",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}contact/addContactData`,
           formData
         );
       }
-      fetchPortfolios();
+      fetchContacts();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deletePortfolio = async (portfolioId) => {
+  const deleteContact = async (contactId) => {
     try {
-      await axios.delete(`https://enigmatic-badlands-35417.herokuapp.com/portfolio/deletePortfolio/${portfolioId}`);
-      setRows(rows.filter((row) => row.id !== portfolioId));
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}contact/deleteContactData/${adminId}`
+      );
+      setRows(rows.filter((row) => row.id !== contactId));
     } catch (error) {
       console.log(error);
     }
@@ -117,22 +117,22 @@ export default function AdminPortfolio({ portfolios }) {
 
   const columns = [
     {
-      field: "portfolioName",
-      headerName: "Title",
+      field: "contactName",
+      headerName: "Name",
       flex: 1,
-      valueGetter: (params) => params.row.portfolioName,
+      valueGetter: (params) => params.row.contactName,
     },
     {
-      field: "url",
-      headerName: "Url",
+      field: "password",
+      headerName: "Password",
       flex: 1,
-      valueGetter: (params) => params.row.url,
+      valueGetter: (params) => params.row.password,
     },
     {
-        field: "isSpecial",
-        headerName: "ShowCase",
-        flex: 1,
-        valueGetter: (params) => params.row.isSpecial,
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      valueGetter: (params) => params.row.email,
     },
     {
       field: "options",
@@ -146,16 +146,16 @@ export default function AdminPortfolio({ portfolios }) {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedPortfolioForUpdate(params.row);
+          setSelectedContactForUpdate(params.row);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete portfolio ${params.row.portfolioName}?`
+              `Are you sure you want to delete Contact Details ${params.row.contactName}?`
             )
           ) {
-            deletePortfolio(params.row.id);
+            deleteContact(params.row.id);
           }
         };
         return (
@@ -175,60 +175,59 @@ export default function AdminPortfolio({ portfolios }) {
   return (
     <>
       <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
-        <div className="text-3xl">Portfolio</div>
+        <div className="text-3xl">Contact Details</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Portfolio
+          + Add New Detail
         </button>
       </div>
       <div
-        style={{ maxWidth: '100%'}}
+        style={{ maxWidth: "100%" }}
         className="h-auto w-full bg-white shadow-lg "
       >
-        <DataGrid rows={rows} columns={columns} autoHeight/>
-        </div>
-        <div>
+        <DataGrid rows={rows} columns={columns} autoHeight />
+      </div>
+      <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4">
-            <div className="text-2xl font-bold pb-3">Add New Portfolio</div>
+            <div className="text-2xl font-bold pb-3">Add New Detail</div>
             <form>
-              <label htmlFor="title" className="font-bold">
-                Title
+              <label htmlFor="name" className="font-bold">
+                Name
               </label>
               <input
                 type="text"
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="title"
-                placeholder="Enter Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                id="name"
+                placeholder="Enter Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
 
-              <label htmlFor="url" className="font-bold">
-                YouTube Url
+              <label htmlFor="password" className="font-bold">
+                Password
               </label>
               <input
-                type="url"
+                type="text"
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="url"
-                placeholder="Enter Url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                id="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-
-              <input
-                type="checkbox"
-                className="border-[2px] border-gray-300 rounded-md"
-                id="isSpecial"
-                value={isSpecial}
-                checked={isSpecial}
-                onChange={(e) => setIsSpecial(e.target.checked)}
-              />
-              <label htmlFor="isSpecial" className="font-bold px-2">
-                ShowCase
+              <label htmlFor="email" className="font-bold">
+                Email
               </label>
+              <input
+                type="text"
+                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
+                id="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </form>
           </div>
           <DialogActions>
@@ -252,11 +251,13 @@ export default function AdminPortfolio({ portfolios }) {
 }
 
 export async function getServerSideProps() {
-    const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/portfolio/getAllPortfolio");
-    const portfolios = res.data;
-    return {
-      props: {
-        portfolios,
-      },
-    };
-  }
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}contact/getContactData`
+  );
+  const contacts = res.data;
+  return {
+    props: {
+      contacts,
+    },
+  };
+}

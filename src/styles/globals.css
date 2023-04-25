@@ -12,11 +12,20 @@
   src: url("../../public/fonts/ZenDots-Regular.ttf");
 }
 
+@font-face {
+  font-family: "Tungsten";
+  src: url("../../public/fonts/Tungsten-Book.otf");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("../../public/fonts/ProximaNova-Regular.otf");
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
   /* color: white; */
 
@@ -98,6 +107,16 @@
     rgba(98, 16, 0, 1) 100%
   );
   filter: blur(110px);
+}
+.gradient-hero {
+  position: relative;
+  z-index: -100;
+  background-image: radial-gradient(
+    rgb(255, 81, 0) 0%,
+    rgb(196, 78, 0) 51%,
+    rgba(98, 16, 0, 1) 100%
+  );
+  filter: blur(370px);
 }
 .sidebar-dashboard {
   box-shadow: rgb(113 122 131 / 11%) 0px 7px 30px 0px;

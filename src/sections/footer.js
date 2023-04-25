@@ -11,27 +11,20 @@ const Footer = () => (
     variants={footerVariants}
     initial="hidden"
     whileInView="show"
-    className={`${styles.paddings} py-8 relative`}
+    className={`${styles.paddings} py-8 relative font-poppins`}
   >
     <div className="footer-gradient" />
     <div className={`${styles.innerWidth} mx-auto flex flex-col gap-8`}>
-      <div className="flex items-center justify-between flex-wrap gap-5">
-        <h4 className="text-white font-bold md:text-[64px] text-[44px]">
-          Let's Discuss Your Project
-        </h4>
-        <Link
-          href='/contact-us'
-          className="flex items-center h-fit py-3 px-6 bg-orange-800 rounded-xl text-white gap-[12px]"
-        >
-          Let's Begin
-        </Link>
-      </div>
       <div className="flex flex-col">
-        <div className="mb-[50px] h-[2px]  bg-white opacity-10" />
+        <div className="mb-[50px] h-[2px]  bg-white opacity-10"/>
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <h4 className="font-extrabold text-[24px] text-white">
-            Future Focals
-          </h4>
+          <div className="text-white">
+            <h4 className="font-extrabold text-[24px]">Future Focals</h4>
+            <div className="flex flex-row text-[12px] gap-4 underline text-secondary-white">
+              <button href="#">Privacy Policy</button>
+              <button href="#">Terms & Conditions</button>
+            </div>
+          </div>
           <p className="font-normal text-[14px] text-white opacity-50">
             Copyright © 2023 FutureFocals. All rights reserved
           </p>

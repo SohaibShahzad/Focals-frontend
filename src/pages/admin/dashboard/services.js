@@ -42,7 +42,7 @@ export default function AdminServices({ services }) {
   const fetchServices = async () => {
     try {
       const response = await axios.get(
-        "https://enigmatic-badlands-35417.herokuapp.com/services/getAllServices"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
       );
       setRows(
         response.data.map((service) => ({
@@ -100,12 +100,12 @@ export default function AdminServices({ services }) {
       if (isUpdate) {
         setSelectedServiceForUpdate(null);
         response = await axios.put(
-          `https://enigmatic-badlands-35417.herokuapp.com/services/updateServiceById/${selectedServiceForUpdate.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}services/updateServiceById/${selectedServiceForUpdate.id}`,
           formData
         );
       } else {
         response = await axios.post(
-          "https://enigmatic-badlands-35417.herokuapp.com/services/addNewService",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}services/addNewService`,
           formData
         );
       }
@@ -142,7 +142,7 @@ export default function AdminServices({ services }) {
   const deleteService = async (serviceId) => {
     try {
       await axios.delete(
-        `https://enigmatic-badlands-35417.herokuapp.com/services/deleteService/${serviceId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/deleteService/${serviceId}`
       );
       setRows(rows.filter((row) => row.id !== serviceId));
     } catch (error) {
@@ -422,7 +422,7 @@ export default function AdminServices({ services }) {
 }
 
 export async function getServerSideProps() {
-  const res = await axios.get("https://enigmatic-badlands-35417.herokuapp.com/services/getAllServices");
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`);
   const services = res.data;
   return {
     props: {

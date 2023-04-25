@@ -1,0 +1,16 @@
+.buttonStyle {
+  padding: 8px 24px;
+  border-radius: 4px;
+  height: 48px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+
+.heroGradient {
+  background: #c44119;
+  filter: blur(15px);
+  width: 50%;
+  position: absolute;
+}

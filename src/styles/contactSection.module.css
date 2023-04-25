@@ -1,0 +1,13 @@
+.formInputs{
+    background-color: transparent;
+    border: 3px solid #5f2300;
+    border-radius: 5px;
+    padding: 8px 24px;
+    color: #ffffff;
+    font-family: "Poppins";
+}
+
+.formInputs:active, .formInputs:focus{
+    border: 3px solid #ff7e34;
+    outline: none;
+}

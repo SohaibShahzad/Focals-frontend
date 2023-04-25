@@ -54,7 +54,7 @@ export default function SingleService({ serviceData }) {
 export async function getServerSideProps(context) {
   const { id } = context.query;
   const res = await axios.get(
-    `https://enigmatic-badlands-35417.herokuapp.com/services/getServiceById/${id}`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServiceById/${id}`
   );
   const serviceData = res.data;
   return {
