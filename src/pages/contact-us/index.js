@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
-import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
 export default function ContactUsPage() {
   const [name, setName] = useState("");
@@ -12,7 +12,6 @@ export default function ContactUsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    resetForm();
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -31,6 +30,7 @@ export default function ContactUsPage() {
       );
       setSuccessMessage("Message sent successfully!! We will contact you soon");
       setErrorMessage("");
+      resetForm();
       console.log(res);
     } catch (error) {
       setSuccessMessage("");
@@ -59,7 +59,11 @@ export default function ContactUsPage() {
                   type="text"
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setSuccessMessage("");
+                    setErrorMessage("");
+                    setName(e.target.value);
+                  }}
                   className="border-2 border-gray-500 rounded-md p-2 mb-5 text-black"
                   placeholder="Enter your name"
                 />
@@ -70,7 +74,11 @@ export default function ContactUsPage() {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setSuccessMessage("");
+                    setErrorMessage("");
+                    setEmail(e.target.value);
+                  }}
                   className="border-2 border-gray-500 rounded-md p-2 mb-5 text-black"
                   placeholder="Enter your email"
                 />
@@ -82,7 +90,11 @@ export default function ContactUsPage() {
                 type="message"
                 id="message"
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                  setSuccessMessage("");
+                  setErrorMessage("");
+                  setMessage(e.target.value);
+                }}
                 placeholder="Enter the Requirements"
                 className="border-2 border-gray-500 rounded-md p-2 text-black"
               />
@@ -96,13 +108,16 @@ export default function ContactUsPage() {
               Submit
             </button>
 
-              {successMessage && (
-                <p className="text-white px-4 py-2 rounded-md bg-green-700"><CheckCircleRoundedIcon/> {successMessage}</p>
-              )}
-              {errorMessage && (
-                <p className="text-white px-4 py-2 rounded-md bg-red-700"><ErrorRoundedIcon/> {errorMessage}</p>
-              )}
- 
+            {successMessage && (
+              <p className="text-white px-4 py-2 rounded-md bg-green-700">
+                <CheckCircleRoundedIcon /> {successMessage}
+              </p>
+            )}
+            {errorMessage && (
+              <p className="text-white px-4 py-2 rounded-md bg-red-700">
+                <ErrorRoundedIcon /> {errorMessage}
+              </p>
+            )}
           </div>
         </form>
       </div>

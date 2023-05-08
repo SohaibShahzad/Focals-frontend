@@ -1,5 +1,5 @@
 import { RxDashboard } from "react-icons/rx";
-import { MdOutlineArticle, MdTrolley, MdOutlineCases, MdInfoOutline, MdMailOutline } from "react-icons/md";
+import { MdOutlineArticle, MdTrolley, MdOutlineCases, MdInfoOutline, MdMailOutline, MdOutlineRateReview } from "react-icons/md";
 import {HiOutlineUserGroup, HiOutlineUsers} from 'react-icons/hi'
 import {RiAdminLine} from 'react-icons/ri'
 
@@ -27,6 +27,10 @@ export const adminLinks = [
       {
         name: "Portfolio",
         icon: <MdOutlineCases />,
+      },
+      {
+        name: "Testimonials",
+        icon: <MdOutlineRateReview />,
       },
       {
         name: "About-Us",

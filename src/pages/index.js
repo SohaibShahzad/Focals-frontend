@@ -4,6 +4,7 @@ import Explore from "../sections/explore";
 import BlogSection from "../sections/blogs-section";
 import ServicesSection from "../sections/services-section";
 import ContactSection from "../sections/contactForm";
+import TestimonialSection from "../sections/testimonial-section";
 
 export default function WebApp() {
   return (
@@ -21,8 +22,10 @@ export default function WebApp() {
       <div className="relative">
         <BlogSection />
         <div className="gradient-03 z-[0]" />
-        <ContactSection/>
-        {/* <AboutUs /> */}
+        <TestimonialSection />
+      </div>
+      <div>
+        <ContactSection />
       </div>
     </>
   );

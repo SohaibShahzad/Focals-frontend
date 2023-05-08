@@ -1,17 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import styles from "../styles";
 import { navVariants } from "../helper/motion";
 import classes from "../styles/navbar.module.css";
 import { mainNavLinks } from "../routes/mainNavLinks";
 import { CgMenuRight, CgClose } from "react-icons/cg";
+import { parseCookies } from "nookies";
+import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
+import * as jwt from 'jsonwebtoken';
+const jwt_decode = jwt.decode;
+
 
 const NavBar = () => {
   const [toggle, setToggle] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const cookies = parseCookies();
+  const token = cookies.token;
+  const isAuthenticated = !!token;
+  const isUser = token ? jwt_decode(token).type === "user" : false;
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        (dropdownRef.current && !dropdownRef.current.contains(event.target))
+      ) {
+        setTimeout(() => {
+          setShowDropdown(false);
+        }, 100);
+      }
+    };
+    document.addEventListener("mouseup", handleClickOutside);
+    return () => {
+      document.removeEventListener("mouseup", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const handleLogout = async () => {
+    try {
+      await axios.delete("/api/session", { withCredentials: true });
+      localStorage.removeItem("token");
+      setShowDropdown(false);
+    } catch (err) {
+      console.log("Error logging out: ", err);
+    }
+  };
 
   return (
     <motion.nav
@@ -42,13 +79,80 @@ const NavBar = () => {
                 <Link href={link.link}>{link.title}</Link>
               </li>
             ))}
-            <Link href="/login" className="ml-5 bg-orange-700 rounded-md px-5 py-1">Login</Link>
+            {isAuthenticated && isUser ? (
+              <div>
+                <button
+                  className="ml-5 bg-orange-700 rounded-full p-1"
+                  onClick={() => {
+                    setShowDropdown((prev) => !prev);
+                    setToggle(false);
+                  }}
+                >
+                  <FaUserCircle className="w-7 h-7 " />
+                </button>
+                {showDropdown && (
+                  <ul
+                    ref={dropdownRef}
+                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-black-gradient navbar-sm-animation z-50"
+                  >
+                    <li className="mb-5 cursor-pointer">
+                      <Link href="/dashboard">Dashboard</Link>
+                    </li>
+                    <li className="cursor-pointer" onClick={handleLogout}>
+                      Logout
+                    </li>
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="ml-5 bg-orange-700 rounded-md px-5 py-1"
+              >
+                Login
+              </Link>
+            )}
           </ul>
           <div className="sm:hidden flex flex-1 justify-end items-center">
-            <Link href="/login" className="mr-3 bg-orange-700 rounded-md px-5 py-1">Login</Link>
+            {isAuthenticated && isUser ? (
+              <div>
+                <button
+                  className="mr-3 bg-orange-700 rounded-full p-1"
+                  onClick={() => {
+                    setShowDropdown((prev) => !prev);
+                    setToggle(false);
+                  }}
+                >
+                  <FaUserCircle className="w-7 h-7 !important" />
+                </button>
+                {showDropdown && (
+                  <ul
+                    ref={dropdownRef}
+                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-black-gradient navbar-sm-animation"
+                  >
+                    <li className="mb-5 cursor-pointer">
+                      <Link href="/dashboard">Dashboard</Link>
+                    </li>
+                    <li className="cursor-pointer" onClick={handleLogout}>
+                      Logout
+                    </li>
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="mr-3 bg-orange-700 rounded-md px-5 py-1"
+              >
+                Login
+              </Link>
+            )}
             <div
               className="object-contain cursor-pointer"
-              onClick={() => setToggle((prev) => !prev)}
+              onClick={() => {
+                setToggle((prev) => !prev);
+                setShowDropdown(false);
+              }}
             >
               {toggle ? (
                 <CgClose style={{ fontSize: "2rem" }} />
@@ -60,7 +164,7 @@ const NavBar = () => {
                   toggle ? "flex" : "hidden"
                 } p-6 bg-black-gradient navbar-sm-animation absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl`}
               >
-                <ul className="list-none flex flex-col  justify-end items-center flex-1">
+                <ul className="list-none flex flex-col justify-end items-center flex-1">
                   {mainNavLinks.map((link, index) => (
                     <li
                       key={index}
@@ -72,7 +176,6 @@ const NavBar = () => {
                     </li>
                   ))}
                 </ul>
-
               </div>
             </div>
           </div>

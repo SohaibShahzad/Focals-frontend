@@ -33,10 +33,10 @@ export const userDashLinks = [
         name: "Account",
         icon: <FiSettings />,
       },
-      {
-        name: "Payment",
-        icon: <MdPayment />,
-      },
+      // {
+      //   name: "Payment",
+      //   icon: <MdPayment />,
+      // },
     ],
   },
 ];

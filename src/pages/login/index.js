@@ -7,19 +7,22 @@ import { useRouter } from "next/router";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { setCookie } from "nookies";
 
 export default function LoginRegister() {
   const router = useRouter();
-  const {setAuthenticated} = useAuth();
+  const { authenticated, setAuthenticated } = useAuth();
 
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
-  const [passsword, setPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [signup, setSignup] = useState(false);
+  const [login, setLogin] = useState(true);
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [otpVerify, setOtpVerify] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
     message: "",
@@ -34,12 +37,54 @@ export default function LoginRegister() {
     setPassword("");
   };
 
+  const handleOTPinput = (e, index) => {
+    const value = e.target.value;
+    setOtp((prev) => {
+      const newOtp = [...prev];
+      newOtp[index] = value;
+      return newOtp;
+    });
+
+    if (
+      e.target.nextSibling &&
+      value &&
+      typeof e.target.nextSibling.focus === "function"
+    ) {
+      e.target.nextSibling.focus();
+    }
+  };
+
+  const isEmailValid = (email) => {
+    const emailPattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    return emailPattern.test(email);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!fname || !lname || !username || !passsword) {
+
+    if (!fname || !lname || !username || !password) {
       setErrorMessage({
         message: "Please fill all the fields",
+        icon: <ErrorRoundedIcon />,
+        styling: "bg-yellow-300 text-yellow-700",
+      });
+      setLoginError(true);
+      return;
+    }
+
+    if (!isEmailValid(username)) {
+      setErrorMessage({
+        message: "Please enter a valid email",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage({
+        message: "Password should be atleast 6 characters long",
         icon: <CancelRoundedIcon />,
         styling: "bg-red-400 text-red-700",
       });
@@ -51,10 +96,10 @@ export default function LoginRegister() {
     formData.append("fname", fname);
     formData.append("lname", lname);
     formData.append("username", username);
-    formData.append("password", passsword);
+    formData.append("password", password);
 
     setErrorMessage({
-      message: "Registering...",
+      message: "Sending OTP...",
       icon: <HourglassFullRoundedIcon />,
       styling: "bg-blue-300 text-blue-700",
     });
@@ -62,33 +107,78 @@ export default function LoginRegister() {
 
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}users/addNewUser`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}users/otpEmail`,
         formData
       );
       setErrorMessage({
-        message: "Registration Successful",
-        icon: <CheckCircleRoundedIcon/>,
+        message: "OTP Sent Successfully",
+        icon: <CheckCircleRoundedIcon />,
         styling: "bg-green-300 text-green-700",
       });
       setLoginError(true);
       setSignup(false);
+      setOtpVerify(true);
     } catch (error) {
       console.log(error);
       setErrorMessage({
-        message: "Error in registration",
+        message: "Error in sending OTP",
         icon: <CancelRoundedIcon />,
         styling: "bg-red-400 text-red-700",
       });
       setLoginError(true);
     }
+  };
 
+  const handleOTPverification = async (e) => {
+    e.preventDefault();
+    const userOTP = otp.join("");
+    if (userOTP.length !== 6) {
+      setErrorMessage({
+        message: "Please enter complete code",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("otp", userOTP);
+    formData.append("password", password);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}users/verifyOTPandRegister`,
+        formData
+      );
+      if (response.status === 200) {
+        setErrorMessage({
+          message: "Registered Successfully",
+          icon: <CheckCircleRoundedIcon />,
+          styling: "bg-green-300 text-green-700",
+        });
+        setLoginError(true);
+        setOtpVerify(false);
+        setLogin(true);
+        resetForm();
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage({
+        message: "Error in registering",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+    }
   };
 
   const handleLogin = async (e, setAuthenticated) => {
     e.preventDefault();
     console.log(showPassword);
     console.log(signup);
-    if (!username || !passsword) {
+    if (!username || !password) {
       setErrorMessage({
         message: "Please fill all the fields",
         icon: <ErrorRoundedIcon />,
@@ -99,7 +189,7 @@ export default function LoginRegister() {
     }
     const formData = new FormData();
     formData.append("username", username);
-    formData.append("password", passsword);
+    formData.append("password", password);
 
     setErrorMessage({
       message: "Authenticating...",
@@ -111,23 +201,24 @@ export default function LoginRegister() {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}users/verifyUser`,
-        formData,
-        );
-        if (response.status === 200) {
-          setCookie(null, "token", response.data.token, {
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
-          })
-          setAuthenticated(true);
-          router.push("/dashboard");
-        } else {
-          setErrorMessage({
-            message: "Invalid Credentials",
-            icon: <CancelRoundedIcon />,
-            styling: "bg-red-400 text-red-700",
-          });
-          setLoginError(true);
-        }
+        formData
+      );
+      if (response.status === 200) {
+        setCookie(null, "token", response.data.token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+        setAuthenticated(true);
+        console.log(authenticated);
+        router.push("/dashboard");
+      } else {
+        setErrorMessage({
+          message: "Invalid Credentials",
+          icon: <CancelRoundedIcon />,
+          styling: "bg-red-400 text-red-700",
+        });
+        setLoginError(true);
+      }
       setLoginError(false);
     } catch (error) {
       setErrorMessage({
@@ -142,12 +233,12 @@ export default function LoginRegister() {
   return (
     <div className="relative">
       <div className="gradient-03" />
-      <div className="gradient-02"/>
+      <div className="gradient-02" />
       <div
         className={`${styles.paddings} text-white font-poppins z-30 relative`}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:mx-20">
+          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:mx-[75px]">
             <div className="pb-8">
               <div
                 className={`lg:text-[45px] md:text-[35px] text-[40px] font-bold font-tungsten`}
@@ -156,8 +247,12 @@ export default function LoginRegister() {
               </div>
               <p className={``}>Please Enter Your Details Below</p>
             </div>
-            {!signup ? (
-              <form onSubmit={handleLogin}>
+            {login && (
+              <form
+                onSubmit={(e) => {
+                  handleLogin(e, setAuthenticated);
+                }}
+              >
                 <div className="flex flex-col gap-4">
                   <input
                     type="username"
@@ -174,7 +269,7 @@ export default function LoginRegister() {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    value={passsword}
+                    value={password}
                     onChange={(e) => {
                       setLoginError(false);
                       setPassword(e.target.value);
@@ -218,7 +313,8 @@ export default function LoginRegister() {
                   )}
                 </div>
               </form>
-            ) : (
+            )}
+            {signup && (
               <form>
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex flex-col gap-1">
@@ -268,7 +364,7 @@ export default function LoginRegister() {
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
-                      value={passsword}
+                      value={password}
                       onChange={(e) => {
                         setLoginError(false);
                         setPassword(e.target.value);
@@ -301,41 +397,86 @@ export default function LoginRegister() {
                     <div
                       className={`flex items-center gap-3 rounded-md px-[24px] py-[8px] justify-center text-[20px] font-bold ${errorMessage.styling}`}
                     >
-                      <CancelRoundedIcon /> {errorMessage.message}
+                      {errorMessage.icon} {errorMessage.message}
                     </div>
                   )}
                 </div>
               </form>
             )}
-            <div className="flex text-gray-400 flex-row font-bold py-5 justify-evenly items-center gap-5">
-              <hr className="w-full border-gray-500 border-t-2" /> OR{" "}
-              <hr className="w-full border-gray-500 border-t-2" />
-            </div>
-            <div className="space-y-4">
-              {/* <button className="bg-blue-600 hover:font-bold hover:bg-blue-900 py-[8px] px-[10px] w-full rounded-md flex items-center justify-center gap-4">
-                <img src="/facebook.svg" className="h-6 w-6" />
-                Continue with Facebook
-              </button> */}
-              <button className="bg-red-600 hover:font-bold hover:bg-red-900 py-[8px] w-full rounded-md flex items-center justify-center gap-4">
-                <img src="/gmailLogin.png" className="h-5 w-6" />
-                Continue with Google
-              </button>
-            </div>
-            <div className="mt-5">
-              <span className="text-gray-400">
-                {signup ? "Already have an account?" : "Don't have an account?"}
-              </span>{" "}
-              <button
-                className="underline"
-                onClick={() => {
-                  setLoginError(false);
-                  resetForm();
-                  setSignup((prev) => !prev);
-                }}
-              >
-                {signup ? "Sign in" : "Sign up"}
-              </button>
-            </div>
+            {otpVerify && (
+              <form>
+                <div className="flex flex-col gap-4 text-left">
+                  <div className="flex flex-col gap-1">
+                    <label>Please Enter the 6-Digit code</label>
+                    <label className="text-sm text-gray-400">
+                      6-digit code was sent to the your email
+                    </label>
+                    <div className="space-x-1">
+                      {otp.map((value, index) => (
+                        <input
+                          type="text"
+                          key={index}
+                          value={value}
+                          maxLength="1"
+                          className="w-9 h-9 lg:w-10 lg:h-10 bg-transparent text-center border-2 border-orange-600 rounded-md text-2xl font-bold"
+                          onChange={(e) => {
+                            setLoginError(false);
+                            handleOTPinput(e, index);
+                          }}
+                          autoComplete="off"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleOTPverification}
+                    className="bg-orange-700 py-[8px] px-[24px] w-full rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
+                  >
+                    Verify
+                  </button>
+                  {loginError && (
+                    <div
+                      className={`flex items-center gap-3 rounded-md px-[24px] py-[8px] justify-center text-[20px] font-bold ${errorMessage.styling}`}
+                    >
+                      {errorMessage.icon} {errorMessage.message}
+                    </div>
+                  )}
+                </div>
+              </form>
+            )}
+            {!otpVerify && (
+              <>
+                <div className="flex text-gray-400 flex-row font-bold py-5 justify-evenly items-center gap-5">
+                  <hr className="w-full border-gray-500 border-t-2" /> OR{" "}
+                  <hr className="w-full border-gray-500 border-t-2" />
+                </div>
+                <div className="space-y-4">
+                  <button className="bg-red-600 hover:font-bold hover:bg-red-900 py-[8px] w-full rounded-md flex items-center justify-center gap-4">
+                    <img src="/gmailLogin.png" className="h-5 w-6" />
+                    Continue with Google
+                  </button>
+                </div>
+                <div className="mt-5">
+                  <span className="text-gray-400">
+                    {signup
+                      ? "Already have an account?"
+                      : "Don't have an account?"}
+                  </span>{" "}
+                  <button
+                    className="underline"
+                    onClick={() => {
+                      setLoginError(false);
+                      resetForm();
+                      setSignup((prev) => !prev);
+                      setLogin((prev) => !prev);
+                    }}
+                  >
+                    {signup ? "Sign in" : "Sign up"}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
           <div className="glassmorphism hidden rounded-md md:flex">
             <h1>Yo</h1>

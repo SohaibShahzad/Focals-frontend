@@ -11,7 +11,7 @@ import { useAuth } from "../../contexts/auth";
 export const Sidebar = () => {
   const router = useRouter();
   const {setAuthenticated} = useAuth();
-  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
+  const { activeMenu, setActiveMenu, screenSize, loading, setLoading } = useStateContext();
 
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {
@@ -33,6 +33,11 @@ export const Sidebar = () => {
     }
   };
 
+  const handleClick = (onClickHandler) => {
+    setLoading(true);
+    onClickHandler();
+  }
+
   return (
     <div className="ml-3 h-screen md:overflow-hidden overflow-auto sidebar-dashboard md:hover:overflow-auto pb-10">
       {activeMenu && (
@@ -40,7 +45,7 @@ export const Sidebar = () => {
           <div className="flex justify-between items-center">
             <Link
               href="/"
-              onClick={handleCloseSidebar}
+              onClick={() => handleClick(handleCloseSidebar)}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
               <div className="p-2 bg-gray-500 rounded-lg">

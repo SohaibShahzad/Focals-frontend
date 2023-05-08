@@ -1,5 +1,6 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { useState, useEffect } from "react";
+import CustomDataGrid from "../../../components/customDataGrid";
+import { useState, useEffect, useMemo } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -49,7 +50,6 @@ export default function AdminBlogs({ blogs }) {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`
-        // "http://localhost:5000/blogs/getAllBlogs"
       );
       setRows(
         response.data.map((blog) => ({
@@ -103,7 +103,6 @@ export default function AdminBlogs({ blogs }) {
     formData.append("title", title);
     formData.append("content", content);
     formData.append("image", image);
-    // formData.append("tags", tags);
     formData.append("author", author);
     formData.append("date", date);
     formData.append("isSpecial", isSpecial);
@@ -133,7 +132,9 @@ export default function AdminBlogs({ blogs }) {
 
   const deleteBlog = async (blogId) => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}blogs/deleteBlog/${blogId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/deleteBlog/${blogId}`
+      );
       setRows(rows.filter((row) => row.id !== blogId));
     } catch (error) {
       console.log(error);
@@ -145,41 +146,41 @@ export default function AdminBlogs({ blogs }) {
       field: "blogName",
       headerName: "Blog Title",
       flex: 1,
-      valueGetter: (params) => params.row.blogName,
     },
     {
-      field: "content",
-      headerName: "Content",
-      flex: 3,
-      valueGetter: (params) => params.row.content,
+      field: "author",
+      headerName: "Author",
+      flex: 1,
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      flex: 1,
     },
     {
       field: "options",
       headerName: "Options",
       flex: 1,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
       renderCell: (params) => {
         const onClickEdit = () => {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedBlogForUpdate(params.row);
+          setSelectedBlogForUpdate(params);
         };
-
+        
         const onClickDelete = () => {
+          const blogTitle = params.blogName;
           if (
-            window.confirm(
-              `Are you sure you want to delete blog ${params.row.blogName}?`
-            )
-          ) {
-            deleteBlog(params.row.id);
-          }
-        };
-        const onClickView = () => {
-          console.log(params.row);
-          setSelectedBlog(params.row);
+            window.confirm(`Are you sure you want to delete blog ${blogTitle}?`)
+            ) {
+              deleteBlog(params.id);
+            }
+          };
+          
+          const onClickView = () => {
+          console.log(params);
+          setSelectedBlog(params);
           setOpenDialog(true);
         };
         return (
@@ -211,10 +212,10 @@ export default function AdminBlogs({ blogs }) {
         </button>
       </div>
       <div
-        style={{ height: 500 }}
-        className="h-auto w-full bg-white shadow-lg "
+        
+        className="w-full bg-white shadow-lg "
       >
-        <DataGrid rows={rows} columns={columns} />
+        <CustomDataGrid data={rows} columns={columns} />
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4">
             <div className="text-2xl font-bold pb-3">Add New Blog</div>
@@ -262,21 +263,8 @@ export default function AdminBlogs({ blogs }) {
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
                 id="date"
                 value={date}
-                // defaultValue={new Date(date).toISOString().substr(0, 10)}
                 onChange={(e) => setDate(e.target.value)}
               />
-
-              {/* <label htmlFor="blogTags" className="font-bold">
-                Tags
-              </label>
-              <input
-                type="text"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="blogTags"
-                placeholder="Enter Comma Seperated Tags"
-                value={blogTags.join(",")}
-                onChange={(e) => Blog(e.target.value)}
-              /> */}
 
               <label htmlFor="image" className="font-bold">
                 Image
@@ -370,8 +358,10 @@ export default function AdminBlogs({ blogs }) {
   );
 }
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`);
+export async function getStaticProps() {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`
+  );
   const blogs = res.data;
   return {
     props: {

@@ -1,4 +1,5 @@
-import { DataGrid } from "@mui/x-data-grid";
+import CustomDataGrid from "../../../components/customDataGrid";
+import ReactLoading from "react-loading";
 import { useState, useEffect } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
@@ -16,6 +17,13 @@ export default function AdminPortfolio({ portfolios }) {
   const [addNewForm, setAddNewForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Submit");
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    if (portfolios && portfolios.length > 0) {
+      setInitialLoading(false);
+    }
+  }, [portfolios]);
 
   useEffect(() => {
     setPortfolioId(selectedPortfolioForUpdate?.id || "");
@@ -46,13 +54,12 @@ export default function AdminPortfolio({ portfolios }) {
           isSpecial: portfolio.isSpecial,
         }))
       );
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-
-  
   const resetForm = () => {
     setTitle("");
     setUrl("");
@@ -108,7 +115,9 @@ export default function AdminPortfolio({ portfolios }) {
 
   const deletePortfolio = async (portfolioId) => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/deletePortfolio/${portfolioId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/deletePortfolio/${portfolioId}`
+      );
       setRows(rows.filter((row) => row.id !== portfolioId));
     } catch (error) {
       console.log(error);
@@ -120,42 +129,36 @@ export default function AdminPortfolio({ portfolios }) {
       field: "portfolioName",
       headerName: "Title",
       flex: 1,
-      valueGetter: (params) => params.row.portfolioName,
     },
     {
       field: "url",
       headerName: "Url",
       flex: 1,
-      valueGetter: (params) => params.row.url,
     },
     {
-        field: "isSpecial",
-        headerName: "ShowCase",
-        flex: 1,
-        valueGetter: (params) => params.row.isSpecial,
+      field: "isSpecial",
+      headerName: "ShowCase",
+      flex: 1,
     },
     {
       field: "options",
       headerName: "Options",
       flex: 1,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
       renderCell: (params) => {
         const onClickEdit = () => {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedPortfolioForUpdate(params.row);
+          setSelectedPortfolioForUpdate(params);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete portfolio ${params.row.portfolioName}?`
+              `Are you sure you want to delete portfolio ${params.portfolioName}?`
             )
           ) {
-            deletePortfolio(params.row.id);
+            deletePortfolio(params.id);
           }
         };
         return (
@@ -174,89 +177,99 @@ export default function AdminPortfolio({ portfolios }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
-        <div className="text-3xl">Portfolio</div>
-        <button
-          className="py-2 px-4 bg-orange-400 rounded-md"
-          onClick={handleAddFormOpen}
-        >
-          + Add New Portfolio
-        </button>
-      </div>
-      <div
-        style={{ maxWidth: '100%'}}
-        className="h-auto w-full bg-white shadow-lg "
-      >
-        <DataGrid rows={rows} columns={columns} autoHeight/>
+      {initialLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <ReactLoading type="spin" color="#000" />
         </div>
+      ) : (
         <div>
-        <Dialog open={addNewForm} onClose={handleAddFormClose}>
-          <div className="p-4">
-            <div className="text-2xl font-bold pb-3">Add New Portfolio</div>
-            <form>
-              <label htmlFor="title" className="font-bold">
-                Title
-              </label>
-              <input
-                type="text"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="title"
-                placeholder="Enter Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-
-              <label htmlFor="url" className="font-bold">
-                YouTube Url
-              </label>
-              <input
-                type="url"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="url"
-                placeholder="Enter Url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-
-              <input
-                type="checkbox"
-                className="border-[2px] border-gray-300 rounded-md"
-                id="isSpecial"
-                value={isSpecial}
-                checked={isSpecial}
-                onChange={(e) => setIsSpecial(e.target.checked)}
-              />
-              <label htmlFor="isSpecial" className="font-bold px-2">
-                ShowCase
-              </label>
-            </form>
+          <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+            <div className="text-3xl">Portfolio</div>
+            <button
+              className="py-2 px-4 bg-orange-400 rounded-md"
+              onClick={handleAddFormOpen}
+            >
+              + Add New Portfolio
+            </button>
           </div>
-          <DialogActions>
-            <button
-              className="py-2 px-4 rounded-md bg-green-400"
-              onClick={handleFormSubmit}
-            >
-              {buttonLabel}
-            </button>
-            <button
-              className="py-2 px-4 rounded-md bg-red-400"
-              onClick={handleAddFormClose}
-            >
-              Close
-            </button>
-          </DialogActions>
-        </Dialog>
-      </div>
+          <div
+            style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+            className="h-auto overflow-auto w-full bg-white"
+          >
+            <CustomDataGrid data={rows} columns={columns} autoHeight />
+          </div>
+          <div>
+            <Dialog open={addNewForm} onClose={handleAddFormClose}>
+              <div className="p-4">
+                <div className="text-2xl font-bold pb-3">Add New Portfolio</div>
+                <form>
+                  <label htmlFor="title" className="font-bold">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
+                    id="title"
+                    placeholder="Enter Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+
+                  <label htmlFor="url" className="font-bold">
+                    YouTube Url
+                  </label>
+                  <input
+                    type="url"
+                    className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
+                    id="url"
+                    placeholder="Enter Url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                  />
+
+                  <input
+                    type="checkbox"
+                    className="border-[2px] border-gray-300 rounded-md"
+                    id="isSpecial"
+                    value={isSpecial}
+                    checked={isSpecial}
+                    onChange={(e) => setIsSpecial(e.target.checked)}
+                  />
+                  <label htmlFor="isSpecial" className="font-bold px-2">
+                    ShowCase
+                  </label>
+                </form>
+              </div>
+              <DialogActions>
+                <button
+                  className="py-2 px-4 rounded-md bg-green-400"
+                  onClick={handleFormSubmit}
+                >
+                  {buttonLabel}
+                </button>
+                <button
+                  className="py-2 px-4 rounded-md bg-red-400"
+                  onClick={handleAddFormClose}
+                >
+                  Close
+                </button>
+              </DialogActions>
+            </Dialog>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
-export async function getServerSideProps() {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`);
-    const portfolios = res.data;
-    return {
-      props: {
-        portfolios,
-      },
-    };
-  }
+export async function getStaticProps() {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`
+  );
+  const portfolios = res.data;
+  return {
+    props: {
+      portfolios,
+    },
+  };
+}

@@ -248,7 +248,7 @@ export default function Admins({ admins }) {
 }
 
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`);
     const admins = res.data;
     return {
