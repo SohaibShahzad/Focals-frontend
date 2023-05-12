@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import CustomDataGrid from "../../../components/customDataGrid";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import { IconButton, Dialog } from "@mui/material";
 
 export default function Users({ users }) {
   const columns = [
@@ -9,11 +11,24 @@ export default function Users({ users }) {
     {
       field: "options",
       headerName: "Options",
-      renderCell: (row) => (
-        <>
-          <button onClick={() => deleteUser(row.id)}>Delete</button>
-        </>
-      ),
+      renderCell: (params) => {
+        const onClickDelete = () => {
+          if (
+            window.confirm(
+              `Are you sure you want to delete user ${params.firstName} ${params.lastName}?`
+            )
+          ) {
+            deleteUser(params.id);
+          }
+        };
+        return (
+          <>
+            <IconButton onClick={onClickDelete}>
+              <DeleteRoundedIcon />
+            </IconButton>
+          </>
+        );
+      },
     },
   ];
 
@@ -38,11 +53,14 @@ export default function Users({ users }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Users</div>
       </div>
-      <div className="flex items-center flex-col justify-around">
-        <CustomDataGrid columns={columns} data={rows} />
+      <div
+        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+        className="h-auto overflow-auto w-full bg-white"
+      >
+        <CustomDataGrid data={rows} columns={columns} autoHeight />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
+import CustomDataGrid from "../../../components/customDataGrid";
 import { useState, useEffect } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
@@ -49,7 +49,7 @@ export default function Admins({ admins }) {
       console.log(error);
     }
   };
-  
+
   const resetForm = () => {
     setUsername("");
     setPassword("");
@@ -105,7 +105,9 @@ export default function Admins({ admins }) {
 
   const deleteAdmin = async (adminId) => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}admins/deleteAdmin/${adminId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admins/deleteAdmin/${adminId}`
+      );
       setRows(rows.filter((row) => row.id !== adminId));
     } catch (error) {
       console.log(error);
@@ -119,17 +121,11 @@ export default function Admins({ admins }) {
       flex: 1,
       valueGetter: (params) => params.row.adminUsername,
     },
-    // {
-    //   field: "password",
-    //   headerName: "Password",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.password,
-    // },
     {
-        field: "hint",
-        headerName: "Hint",
-        flex: 1,
-        valueGetter: (params) => params.row.hint,
+      field: "hint",
+      headerName: "Hint",
+      flex: 1,
+      valueGetter: (params) => params.row.hint,
     },
     {
       field: "options",
@@ -181,12 +177,12 @@ export default function Admins({ admins }) {
         </button>
       </div>
       <div
-        style={{ maxWidth: '100%'}}
-        className="h-auto w-full bg-white shadow-lg "
+        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+        className="h-auto overflow-auto w-full bg-white"
       >
-        <DataGrid rows={rows} columns={columns} autoHeight/>
-        </div>
-        <div>
+        <CustomDataGrid data={rows} columns={columns} autoHeight />
+      </div>
+      <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4">
             <div className="text-2xl font-bold pb-3">Add New Admin</div>
@@ -210,7 +206,11 @@ export default function Admins({ admins }) {
                 type="password"
                 className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
                 id="password"
-                placeholder={isUpdate ? "ReType Current Password or Enter New Password" : "Enter Password"}
+                placeholder={
+                  isUpdate
+                    ? "ReType Current Password or Enter New Password"
+                    : "Enter Password"
+                }
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -247,13 +247,14 @@ export default function Admins({ admins }) {
   );
 }
 
-
 export async function getServerSideProps() {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`);
-    const admins = res.data;
-    return {
-      props: {
-        admins,
-      },
-    };
-  }
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`
+  );
+  const admins = res.data;
+  return {
+    props: {
+      admins,
+    },
+  };
+}

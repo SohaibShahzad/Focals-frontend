@@ -54,7 +54,6 @@ export default function AdminPortfolio({ portfolios }) {
           isSpecial: portfolio.isSpecial,
         }))
       );
-      setLoading(false);
     } catch (error) {
       console.log(error);
     }

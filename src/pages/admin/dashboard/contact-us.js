@@ -174,7 +174,7 @@ export default function AdminContactUs({ contacts }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Contact Details</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
