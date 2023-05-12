@@ -9,7 +9,6 @@ import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { setCookie } from "nookies";
-import { set } from "mongoose";
 
 export default function LoginRegister() {
   const router = useRouter();
