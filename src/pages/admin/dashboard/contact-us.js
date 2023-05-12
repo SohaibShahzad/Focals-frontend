@@ -120,19 +120,19 @@ export default function AdminContactUs({ contacts }) {
       field: "contactName",
       headerName: "Name",
       flex: 1,
-      valueGetter: (params) => params.row.contactName,
+      valueGetter: (params) => params.contactName,
     },
     {
       field: "password",
       headerName: "Password",
       flex: 1,
-      valueGetter: (params) => params.row.password,
+      valueGetter: (params) => params.password,
     },
     {
       field: "email",
       headerName: "Email",
       flex: 1,
-      valueGetter: (params) => params.row.email,
+      valueGetter: (params) => params.email,
     },
     {
       field: "options",
@@ -146,16 +146,16 @@ export default function AdminContactUs({ contacts }) {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedContactForUpdate(params.row);
+          setSelectedContactForUpdate(params);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete Contact Details ${params.row.contactName}?`
+              `Are you sure you want to delete Contact Details ${params.contactName}?`
             )
           ) {
-            deleteContact(params.row.id);
+            deleteContact(params.id);
           }
         };
         return (

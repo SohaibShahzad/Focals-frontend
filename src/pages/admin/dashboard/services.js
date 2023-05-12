@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 const QuillNoSSRWrapper = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
-import CustomDataGrid from "../../../components/customDataGrid";
+import CustomDataGridServices from "../../../components/customDataGridServices";
 import { useState, useEffect } from "react";
 import ReactLoading from "react-loading";
 import DialogActions from "@mui/material/DialogActions";
@@ -250,7 +250,7 @@ export default function AdminServices({ services }) {
             style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
             className="h-auto overflow-auto w-full bg-white"
           >
-            <CustomDataGrid data={rows} columns={columns} />
+            <CustomDataGridServices data={rows} columns={columns} />
           </div>
           <div>
             <Dialog open={addNewForm} onClose={handleAddFormClose}>
@@ -477,7 +477,7 @@ export default function AdminServices({ services }) {
                   <DialogContent>
                     <div>
                       <div className="underline text-xl">Description:</div>
-                      <div className="my-1">{selectedService.description}</div>
+                      <p className="my-1" dangerouslySetInnerHTML={{ __html: selectedService.description }}/>
                       <hr className="border-2 border-gray-300 rounded-xl" />
                     </div>
                     <div>

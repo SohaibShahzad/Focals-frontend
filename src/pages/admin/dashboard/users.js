@@ -15,7 +15,7 @@ export default function Users({ users }) {
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete user ${params.firstName} ${params.lastName}?`
+              `Are you sure you want to delete user ${params.name}?`
             )
           ) {
             deleteUser(params.id);

@@ -119,13 +119,13 @@ export default function Admins({ admins }) {
       field: "adminUsername",
       headerName: "Username",
       flex: 1,
-      valueGetter: (params) => params.row.adminUsername,
+      valueGetter: (params) => params.adminUsername,
     },
     {
       field: "hint",
       headerName: "Hint",
       flex: 1,
-      valueGetter: (params) => params.row.hint,
+      valueGetter: (params) => params.hint,
     },
     {
       field: "options",
@@ -139,16 +139,16 @@ export default function Admins({ admins }) {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedAdminForUpdate(params.row);
+          setSelectedAdminForUpdate(params);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete admin ${params.row.adminUsername}?`
+              `Are you sure you want to delete admin ${params.adminUsername}?`
             )
           ) {
-            deleteAdmin(params.row.id);
+            deleteAdmin(params.id);
           }
         };
         return (

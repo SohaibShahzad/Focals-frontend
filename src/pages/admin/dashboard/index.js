@@ -1,12 +1,14 @@
-import { useRouter } from "next/router";
+import axios from "axios";
 import { parseCookies } from "nookies";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-export default function AdminDashboarding() {
+export default function AdminDashboarding({ admin }) {
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
+    <div className="flex flex-col justify-center py-2">
+      <main className="text-center">
+        <h1 className="text-3xl font-bold">Welcome, {admin.username}!</h1>
+      </main>
     </div>
   );
 }
@@ -18,7 +20,7 @@ export async function getServerSideProps(context) {
   if (!token) {
     return {
       redirect: {
-        destination: "/login",
+        destination: "/admin",
         permanent: false,
       },
     };
@@ -27,7 +29,7 @@ export async function getServerSideProps(context) {
   try {
     const decoded = jwt_decode(token);
     console.log(decoded);
-    if(decoded.type !== "admin"){
+    if (decoded.type !== "admin") {
       return {
         redirect: {
           destination: "/login",
@@ -35,15 +37,31 @@ export async function getServerSideProps(context) {
         },
       };
     }
+
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAdminbyId/${decoded.id}`
+    );
+    const admin = response.data;
+
+    if (!admin) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: { admin },
+    };
   } catch (err) {
     console.log("Error decoding JWT: ", err);
     return {
       redirect: {
-        destination: "/login",
+        destination: "/admin",
         permanent: false,
       },
     };
   }
-
-  return { props: {} };
 }

@@ -10,6 +10,8 @@ export const adminLinks = [
       {
         name: "Overview",
         icon: <RxDashboard />,
+        linkName: "",
+        
       },
     ],
   },
@@ -19,41 +21,49 @@ export const adminLinks = [
       {
         name: "Blogs",
         icon: <MdOutlineArticle />,
+        linkName: "/blogs",
       },
       {
         name: "Services",
         icon: <MdTrolley />,
+        linkName: "/services",
       },
       {
         name: "Portfolio",
         icon: <MdOutlineCases />,
+        linkName: "/portfolio",
       },
       {
         name: "Testimonials",
         icon: <MdOutlineRateReview />,
+        linkName: "/testimonials",
       },
-      {
-        name: "About-Us",
-        icon: <MdInfoOutline />,
-      },
+      // {
+      //   name: "About-Us",
+      //   icon: <MdInfoOutline />,
+      //   linkName: "/about-us",
+      // },
       {
         name: "Contact-Us",
         icon: <MdMailOutline />,
+        linkName: "/contact-us",
       }
     ],
   },
   {
     title: 'Personnel',
     links: [
-        {
-            name: 'Admins',
-            icon: <RiAdminLine />
-        },
-        {
-            name: 'Users',
-            icon: <HiOutlineUserGroup />
-        },
-        // {
+      {
+        name: 'Admins',
+        icon: <RiAdminLine />,
+        linkName: "/admins",
+      },
+      {
+        name: 'Users',
+        icon: <HiOutlineUserGroup />,
+        linkName: "/users",
+      },
+      // {
         //     name: 'Sub-Admins',
         //     icon: <HiOutlineUsers />
         // }

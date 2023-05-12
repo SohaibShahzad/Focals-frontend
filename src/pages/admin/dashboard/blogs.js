@@ -1,6 +1,9 @@
-import { DataGrid } from "@mui/x-data-grid";
+import dynamic from "next/dynamic";
+const QuillNoSSRWrapper = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
+
 import CustomDataGrid from "../../../components/customDataGrid";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -31,6 +34,7 @@ export default function AdminBlogs({ blogs }) {
     setBlogTags(selectedBlogForUpdate?.blogTags || []);
     setAuthor(selectedBlogForUpdate?.author || "");
     setDate(selectedBlogForUpdate?.date || "");
+    setImage(selectedBlogForUpdate?.image || null);
     setIsSpecial(selectedBlogForUpdate?.isSpecial || false);
   }, [selectedBlogForUpdate]);
 
@@ -43,6 +47,7 @@ export default function AdminBlogs({ blogs }) {
       author: blog.author,
       date: blog.date,
       isSpecial: blog.isSpecial,
+      image: blog.image,
     }))
   );
 
@@ -60,6 +65,7 @@ export default function AdminBlogs({ blogs }) {
           author: blog.author,
           date: blog.date,
           isSpecial: blog.isSpecial,
+          image: blog.image,
         }))
       );
     } catch (error) {
@@ -237,13 +243,16 @@ export default function AdminBlogs({ blogs }) {
               <label htmlFor="content" className="font-bold">
                 Content
               </label>
-              <textarea
+              <QuillNoSSRWrapper
+                theme="snow"
                 id="content"
-                placeholder="What's on your mind?"
+                placeholder="Some Words About This Service"
                 className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
-              ></textarea>
+                onChange={(content, delta, source, editor) =>
+                  setContent(editor.getHTML())
+                }
+              />
 
               <label htmlFor="author" className="font-bold">
                 Author
@@ -271,6 +280,25 @@ export default function AdminBlogs({ blogs }) {
               <label htmlFor="image" className="font-bold">
                 Image
               </label>
+              {image && (
+                <div className="flex items-start gap-4">
+                  <img
+                    src={
+                      typeof image === "string"
+                        ? image
+                        : URL.createObjectURL(image)
+                    }
+                    alt="Current image"
+                    className="w-[auto] h-[150px] p-2 bg-gray-200 rounded-md mb-3"
+                  />
+                  <button
+                    className="bg-red-600 text-white py-1 px-3 rounded"
+                    onClick={() => setImage(null)}
+                  >
+                    X
+                  </button>
+                </div>
+              )}
               <input
                 type="file"
                 id="image"
@@ -319,7 +347,7 @@ export default function AdminBlogs({ blogs }) {
               <DialogContent>
                 <div>
                   <div className="underline text-xl">Content:</div>
-                  <div className="my-1">{selectedBlog.content}</div>
+                  <p className="my-1" dangerouslySetInnerHTML={{ __html: selectedBlog.content }}/>
                   <hr className="border-2 border-gray-300 rounded-xl" />
                 </div>
                 <div className="md:flex md:flex-row justify-between">

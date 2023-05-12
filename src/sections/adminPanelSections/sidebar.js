@@ -72,7 +72,7 @@ export const Sidebar = () => {
                 {link.links.map((link, index) => (
                   <ActiveLink
                     onClick={handleCloseSidebar}
-                    href={`/admin/dashboard/${link.name.toLowerCase()}`}
+                    href={`/admin/dashboard${link.linkName.toLowerCase()}`}
                     styles="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 hover:bg-orange-300 m-2"
                   >
                     {link.icon}
