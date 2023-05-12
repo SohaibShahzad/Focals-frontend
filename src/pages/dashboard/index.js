@@ -1,10 +1,17 @@
-import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
+import axios from "axios";
+
 const jwt_decode = jwt.decode;
 
-const UserPanel = () => {
-  return <div>ClientDashboard</div>
+const UserPanel = ({user}) => {
+  return (
+    <div className="flex flex-col justify-center py-2">
+      <main className="text-center">
+        <h1 className="text-3xl font-bold">Welcome, {user.firstName} {user.lastName}!</h1>
+      </main>
+    </div>
+  );
 };
 
 export async function getServerSideProps(context) {
@@ -23,7 +30,7 @@ export async function getServerSideProps(context) {
   try {
     const decoded = jwt_decode(token);
     console.log(decoded);
-    if(decoded.type !== "user"){
+    if (decoded.type !== "user") {
       return {
         redirect: {
           destination: "/login",
@@ -31,6 +38,24 @@ export async function getServerSideProps(context) {
         },
       };
     }
+
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}users/getUserbyId/${decoded.id}`
+    );
+    const user = response.data;
+
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: { user },
+    };
   } catch (err) {
     console.log("Error decoding JWT: ", err);
     return {
@@ -40,8 +65,6 @@ export async function getServerSideProps(context) {
       },
     };
   }
-
-  return { props: {} };
 }
 
 export default UserPanel;

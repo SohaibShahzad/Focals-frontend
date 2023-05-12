@@ -39,7 +39,7 @@ export const Sidebar = () => {
         <>
           <div className="flex justify-between items-center">
             <Link
-              href="/"
+              href="/dashboard"
               onClick={handleCloseSidebar}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
@@ -48,7 +48,7 @@ export const Sidebar = () => {
               </div>
               <span>FutureFocals</span>
             </Link>
-            <TooltipComponent content="Menu" position="BottomCenter">
+            {/* <TooltipComponent content="Menu" position="BottomCenter"> */}
               <button
                 type="button"
                 onClick={() =>
@@ -58,7 +58,7 @@ export const Sidebar = () => {
               >
                 <MdOutlineCancel />
               </button>
-            </TooltipComponent>
+            {/* </TooltipComponent> */}
           </div>
           <div className="mt-10">
             {userDashLinks.map((link, index) => (
@@ -67,7 +67,7 @@ export const Sidebar = () => {
                 {link.links.map((link, index) => (
                   <ActiveLink
                     onClick={handleCloseSidebar}
-                    href={`/dashboard/${link.name.toLowerCase()}`}
+                    href={`/dashboard${link.linkName.toLowerCase()}`}
                     styles="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 hover:bg-orange-300 m-2"
                   >
                     {link.icon}

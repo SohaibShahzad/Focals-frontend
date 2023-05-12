@@ -1,4 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
+import CustomDataGrid from "../../../components/customDataGrid";
 import { useState, useEffect } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
@@ -182,20 +182,20 @@ export default function AdminTestimonials({ testimonials }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between items-center">
         <div className="text-3xl">Testimonial</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Testimonial
+          + Add New
         </button>
       </div>
       <div
-        style={{ maxWidth: "100%" }}
-        className="h-auto w-full bg-white shadow-lg "
+        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+        className="h-auto overflow-auto w-full bg-white"
       >
-        <DataGrid rows={rows} columns={columns} autoHeight />
+        <CustomDataGrid data={rows} columns={columns} autoHeight />
       </div>
       <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
@@ -272,7 +272,7 @@ export default function AdminTestimonials({ testimonials }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}testimonials/getAllTestimonials`
   );

@@ -10,6 +10,7 @@ export const userDashLinks = [
       {
         name: "Overview",
         icon: <RxDashboard />,
+        linkName: "",
       },
     ],
   },
@@ -19,11 +20,13 @@ export const userDashLinks = [
       {
         name: "Projects",
         icon: <CgWebsite />,
+        linkName: "/projects",
       },
-      {
-        name: "History",
-        icon: <MdHistory />,
-      },
+      // {
+      //   name: "History",
+      //   icon: <MdHistory />,
+      //   linkName: "/history",
+      // },
     ],
   },
   {
@@ -32,11 +35,13 @@ export const userDashLinks = [
       {
         name: "Account",
         icon: <FiSettings />,
+        linkName: "/account",
       },
       // {
-      //   name: "Payment",
-      //   icon: <MdPayment />,
-      // },
+        //   name: "Payment",
+        //   icon: <MdPayment />,
+        // linkName: "/payment",
+        // },
     ],
   },
 ];

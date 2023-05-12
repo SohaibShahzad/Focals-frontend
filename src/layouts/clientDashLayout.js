@@ -1,11 +1,11 @@
 import { Sidebar } from "../sections/userPanelSections/sidebar";
 import { useStateContext } from "../contexts/ContextProvider";
-
 import { AdminNavbar } from "../sections/adminPanelSections/admin-navbar";
+
 const ClientLayout = ({ children }) => {
   const { activeMenu } = useStateContext();
   return (
-    <div className="flex relative">
+    <div className="flex items-center">
       {activeMenu ? (
         <div className="w-72 fixed sidebar-dashboard  bg-gray-100 ">
           <Sidebar />
@@ -22,10 +22,10 @@ const ClientLayout = ({ children }) => {
             : "bg-main-bg dark:bg-main-dark-bg w-full min-h-screen flex-2"
         }
       >
-        <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
+        <div className="static bg-main-bg dark:bg-main-dark-bg navbar w-full">
           <AdminNavbar />
         </div>
-        <div className="mx-[5rem]">{children}</div>
+        <div className="mx-[2.5rem]">{children}</div>
       </div>
     </div>
   );

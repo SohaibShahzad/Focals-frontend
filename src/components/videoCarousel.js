@@ -1,7 +1,8 @@
-
 import classes from "../styles/carousel.module.css";
+import useYoutubeIframeAPI from "../hooks/useYouTubeIframeAPI";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ReactPlayer from "react-player";
+import YouTube from "react-youtube";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { EffectCards, Navigation } from "swiper";
@@ -12,12 +13,15 @@ import "swiper/css/navigation";
 import "swiper/css/effect-cards";
 
 export const VideoCarousel = () => {
+  useYoutubeIframeAPI();
   const [portfolioData, setPortfolioData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getSpecialPortfolio`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getSpecialPortfolio`
+      );
       setPortfolioData(res.data);
     }
     fetchData();
@@ -52,4 +56,8 @@ export const VideoCarousel = () => {
   );
 };
 
-
+// function extractYoutubeIdFromUrl(url) {
+//   const regex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+//   const match = url.match(regex);
+//   return match && match[2].length === 11 ? match[2] : null;
+// }

@@ -171,7 +171,7 @@ export default function Admins({ admins }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Admins</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
@@ -248,7 +248,7 @@ export default function Admins({ admins }) {
 }
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`);
     const admins = res.data;
     return {

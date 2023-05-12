@@ -1,17 +1,35 @@
 import axios from "axios";
 import styles from "../../styles";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
-import { BsArrowRight } from "react-icons/bs";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 export default function SingleService({ serviceData }) {
   const [activeTab, setActiveTab] = useState(0);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const openFullScreen = (imageUrl) => {
+    setFullScreenImage(imageUrl);
+  };
+
+  const closeFullScreen = () => {
+    setFullScreenImage(null);
+  };
 
   const handleTabChange = (index) => {
     console.log(index);
     setActiveTab(index);
+  };
+
+  const changeImageIndex = (newIndex) => {
+    if (newIndex < 0) {
+      newIndex = serviceData.images.length - 1;
+    } else if (newIndex >= serviceData.images.length) {
+      newIndex = 0;
+    }
+    setActiveImageIndex(newIndex);
   };
 
   return (
@@ -23,11 +41,52 @@ export default function SingleService({ serviceData }) {
       </div>
 
       <div className="mb-[10px] h-[2px] bg-white opacity-20" />
-      <div className="text-[20px] font-bold mb-[10px] md:text-[40px] md:font-normal">
-        {serviceData.description}
-      </div>
+      <p className="text-[15px] mb-[10px] md:text-[25px] md:font-normal py-5"  dangerouslySetInnerHTML={{ __html: serviceData.description }}/>
+
+      {fullScreenImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center cursor-zoom-out"
+          onClick={closeFullScreen}
+        >
+          <img
+            src={fullScreenImage}
+            alt="Fullscreen Image"
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-5 items-center">
-        <div className="glassmorphism text-center lg:col-span-2 rounded-md">Image</div>
+        <div className="glassmorphism text-center lg:col-span-2 rounded-md">
+          <div className="relative w-[100%] h-[400px] mx-auto overflow-hidden">
+            <div className="w-full h-full flex items-center justify-center">
+              {serviceData.images.map(
+                (imageUrl, index) =>
+                  index === activeImageIndex && (
+                    <img
+                      key={index}
+                      src={imageUrl}
+                      alt={`Image ${index}`}
+                      onClick={() => openFullScreen(imageUrl)}
+                      className="rounded-md w-full h-full object-contain cursor-zoom-in"
+                    />
+                  )
+              )}
+            </div>
+            <button
+              onClick={() => changeImageIndex(activeImageIndex - 1)}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => changeImageIndex(activeImageIndex + 1)}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
         <div>
           <Tabs index={activeTab} onSelect={handleTabChange}>
             <TabList className="flex gap-3 justify-center mb-3 cursor-pointer">
@@ -45,7 +104,9 @@ export default function SingleService({ serviceData }) {
               <TabPanel key={bundle._id}>
                 <div className="glassmorphism rounded-md p-5 mb-8 md:px-7 w-full">
                   <div className="flex justify-between pb-2 items-center">
-                    <h2 className="text-center font-bold text-[16px]">{bundle.name}</h2>
+                    <h2 className="text-center font-bold text-[16px]">
+                      {bundle.name}
+                    </h2>
                     <div className=" text-[20px] font-bold">
                       ${bundle.price}
                     </div>
@@ -62,7 +123,7 @@ export default function SingleService({ serviceData }) {
                     ))}
                   </ul>
                   <div className="bg-orange-700 rounded-md py-1 mt-5 items-center text-center">
-                    Continue <ArrowRightAltRoundedIcon/>
+                    Continue <ArrowRightAltRoundedIcon />
                   </div>
                 </div>
               </TabPanel>
@@ -70,9 +131,9 @@ export default function SingleService({ serviceData }) {
           </Tabs>
         </div>
       </div>
-      <div className="flex justify-around">
+      <div className="flex justify-around mt-5">
         <Link href="/contact-us">
-          <div className="cursor-pointer bg-orange-900 py-2 px-5 rounded-xl font-bold">
+          <div className="cursor-pointer bg-orange-700 py-2 px-5 rounded-md font-bold">
             Let's Discuss
           </div>
         </Link>
@@ -84,9 +145,10 @@ export default function SingleService({ serviceData }) {
 export async function getServerSideProps(context) {
   const { id } = context.query;
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServiceById/${id}`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServiceDataAndImages/${id}`
   );
   const serviceData = res.data;
+  console.log(serviceData);
   return {
     props: {
       serviceData,

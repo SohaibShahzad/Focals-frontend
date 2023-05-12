@@ -49,14 +49,19 @@ export default function ServicesPage({ services }) {
             key={service._id}
             className="p-5 glassmorphism rounded-xl mb-5 flex gap-5 flex-col justify-between h-full"
           >
-            <div className="">
+            <div>
+              <div className="flex justify-center my-3">
+                <img
+                  src={service.thumbnail}
+                  alt={service.title}
+                  className="w-[auto] h-[75px]"
+                />
+              </div>
               <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
                 {service.title}
               </h3>
+              <p className="mt-2 px-4 text-center md:pt-1 text-[18px] " dangerouslySetInnerHTML={{ __html: service.description }}/>
 
-              <p className="pt-2 md:pt-1 text-[18px] pb-2">
-                {service.description}
-              </p>
             </div>
             <Link
               href={`/services/${service._id}`}
@@ -72,7 +77,9 @@ export default function ServicesPage({ services }) {
 }
 
 export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`);
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
+  );
   const services = res.data;
   return {
     props: {

@@ -120,7 +120,7 @@ export default function AdminBlogs({ blogs }) {
         );
       } else {
         response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/addNewBlog`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/addNewBlogWithImage`,
           formData
         );
       }
@@ -168,17 +168,17 @@ export default function AdminBlogs({ blogs }) {
           setAddNewForm(true);
           setSelectedBlogForUpdate(params);
         };
-        
+
         const onClickDelete = () => {
           const blogTitle = params.blogName;
           if (
             window.confirm(`Are you sure you want to delete blog ${blogTitle}?`)
-            ) {
-              deleteBlog(params.id);
-            }
-          };
-          
-          const onClickView = () => {
+          ) {
+            deleteBlog(params.id);
+          }
+        };
+
+        const onClickView = () => {
           console.log(params);
           setSelectedBlog(params);
           setOpenDialog(true);
@@ -202,7 +202,7 @@ export default function AdminBlogs({ blogs }) {
 
   return (
     <>
-      <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Blogs</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
@@ -212,10 +212,12 @@ export default function AdminBlogs({ blogs }) {
         </button>
       </div>
       <div
-        
-        className="w-full bg-white shadow-lg "
+        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+        className="h-auto overflow-auto w-full bg-white"
       >
-        <CustomDataGrid data={rows} columns={columns} />
+        <CustomDataGrid data={rows} columns={columns} autoHeight />
+      </div>
+      <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4">
             <div className="text-2xl font-bold pb-3">Add New Blog</div>
@@ -358,7 +360,7 @@ export default function AdminBlogs({ blogs }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getAllBlogs`
   );

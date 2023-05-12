@@ -1,4 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
+import CustomDataGrid from "../../../components/customDataGrid";
 import { useState, useEffect } from "react";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
@@ -107,7 +107,7 @@ export default function AdminContactUs({ contacts }) {
   const deleteContact = async (contactId) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}contact/deleteContactData/${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}contact/deleteContactData/${contactId}`
       );
       setRows(rows.filter((row) => row.id !== contactId));
     } catch (error) {
@@ -180,17 +180,17 @@ export default function AdminContactUs({ contacts }) {
           className="py-2 px-4 bg-orange-400 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Detail
+          + Add New
         </button>
       </div>
       <div
-        style={{ maxWidth: "100%" }}
-        className="h-auto w-full bg-white shadow-lg "
+        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+        className="h-auto overflow-auto w-full bg-white"
       >
-        <DataGrid rows={rows} columns={columns} autoHeight />
+        <CustomDataGrid data={rows} columns={columns} autoHeight />
       </div>
       <div>
-        <Dialog open={addNewForm} onClose={handleAddFormClose}>
+        <Dialog open={addNewForm} onClose={handleAddFormClose} className="z-50">
           <div className="p-4">
             <div className="text-2xl font-bold pb-3">Add New Detail</div>
             <form>

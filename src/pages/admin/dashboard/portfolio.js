@@ -183,13 +183,13 @@ export default function AdminPortfolio({ portfolios }) {
         </div>
       ) : (
         <div>
-          <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+          <div className="mb-2 flex flex-row justify-between">
             <div className="text-3xl">Portfolio</div>
             <button
               className="py-2 px-4 bg-orange-400 rounded-md"
               onClick={handleAddFormOpen}
             >
-              + Add New Portfolio
+              + Add New
             </button>
           </div>
           <div
@@ -262,7 +262,7 @@ export default function AdminPortfolio({ portfolios }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getAllPortfolio`
   );

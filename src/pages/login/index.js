@@ -9,6 +9,7 @@ import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { setCookie } from "nookies";
+import { set } from "mongoose";
 
 export default function LoginRegister() {
   const router = useRouter();
@@ -21,6 +22,8 @@ export default function LoginRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [signup, setSignup] = useState(false);
   const [login, setLogin] = useState(true);
+  const [forgotPassword, setForgotPassword] = useState(false);
+  const [resetPassword, setResetPassword] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [otpVerify, setOtpVerify] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -143,30 +146,183 @@ export default function LoginRegister() {
     }
 
     const formData = new FormData();
+
+    if (resetPassword) {
+      formData.append("username", username);
+      formData.append("otp", userOTP);
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}users/verifyOTPforReset`,
+          formData
+        );
+        if (response.status === 200) {
+          setErrorMessage({
+            message: "OTP Verified Successfully",
+            icon: <CheckCircleRoundedIcon />,
+            styling: "bg-green-300 text-green-700",
+          });
+          setLoginError(true);
+          setOtpVerify(false);
+          console.log("OTP verified successfully");
+        }
+      } catch (error) {
+        console.log(error);
+        setErrorMessage({
+          message: "Error in OTP Verification",
+          icon: <CancelRoundedIcon />,
+          styling: "bg-red-400 text-red-700",
+        });
+        setLoginError(true);
+        console.log("OTP verification failed");
+      }
+    } else {
+      formData.append("username", username);
+      formData.append("otp", userOTP);
+      formData.append("password", password);
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}users/verifyOTPandRegister`,
+          formData
+        );
+        if (response.status === 200) {
+          setErrorMessage({
+            message: "Registered Successfully",
+            icon: <CheckCircleRoundedIcon />,
+            styling: "bg-green-300 text-green-700",
+          });
+          setLoginError(true);
+          setOtpVerify(false);
+          setLogin(true);
+          resetForm();
+        }
+      } catch (error) {
+        console.log(error);
+        setErrorMessage({
+          message: "Error in registering",
+          icon: <CancelRoundedIcon />,
+          styling: "bg-red-400 text-red-700",
+        });
+        setLoginError(true);
+      }
+    }
+  };
+
+  const handlePasswordResetRequest = async (e) => {
+    e.preventDefault();
+    if (!username) {
+      setErrorMessage({
+        message: "Please enter your email",
+        icon: <ErrorRoundedIcon />,
+        styling: "bg-yellow-300 text-yellow-700",
+      });
+      setLoginError(true);
+      return;
+    }
+    if (!isEmailValid(username)) {
+      setErrorMessage({
+        message: "Please enter a valid email",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+      return;
+    }
+    const formData = new FormData();
     formData.append("username", username);
-    formData.append("otp", userOTP);
-    formData.append("password", password);
+
+    setErrorMessage({
+      message: "Verifying Email and Sending OTP...",
+      icon: <HourglassFullRoundedIcon />,
+      styling: "bg-blue-300 text-blue-700",
+    });
+    setLoginError(true);
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}users/verifyOTPandRegister`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}users/resetPasswordRequest`,
         formData
       );
       if (response.status === 200) {
         setErrorMessage({
-          message: "Registered Successfully",
+          message: "OTP Sent Successfully",
           icon: <CheckCircleRoundedIcon />,
           styling: "bg-green-300 text-green-700",
         });
         setLoginError(true);
+        setResetPassword(true);
+        setOtpVerify(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage({
+        message: "Error in sending OTP",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+    }
+
+    console.log(username);
+  };
+
+  const handleNewPassword = async (e) => {
+    e.preventDefault();
+
+    if (!password) {
+      setErrorMessage({
+        message: "Please enter a password",
+        icon: <ErrorRoundedIcon />,
+        styling: "bg-yellow-300 text-yellow-700",
+      });
+      setLoginError(true);
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage({
+        message: "Password should be atleast 6 characters long",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
+      });
+      setLoginError(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("password", password);
+
+    setErrorMessage({
+      message: "Resetting Password...",
+      icon: <HourglassFullRoundedIcon />,
+      styling: "bg-blue-300 text-blue-700",
+    });
+    setLoginError(true);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}users/resetPassword`,
+        formData
+      );
+      if (response.status === 200) {
+        setErrorMessage({
+          message: "Password Reset Successfully",
+          icon: <CheckCircleRoundedIcon />,
+          styling: "bg-green-300 text-green-700",
+        });
+        setLoginError(true);
+        setResetPassword(false);
+        setForgotPassword(false);
         setOtpVerify(false);
         setLogin(true);
+        setSignup(false);
         resetForm();
       }
     } catch (error) {
       console.log(error);
       setErrorMessage({
-        message: "Error in registering",
+        message: "Error in resetting password",
         icon: <CancelRoundedIcon />,
         styling: "bg-red-400 text-red-700",
       });
@@ -176,13 +332,20 @@ export default function LoginRegister() {
 
   const handleLogin = async (e, setAuthenticated) => {
     e.preventDefault();
-    console.log(showPassword);
-    console.log(signup);
     if (!username || !password) {
       setErrorMessage({
         message: "Please fill all the fields",
         icon: <ErrorRoundedIcon />,
         styling: "bg-yellow-300 text-yellow-700",
+      });
+      setLoginError(true);
+      return;
+    }
+    if (!isEmailValid(username)) {
+      setErrorMessage({
+        message: "Please enter a valid email",
+        icon: <CancelRoundedIcon />,
+        styling: "bg-red-400 text-red-700",
       });
       setLoginError(true);
       return;
@@ -209,7 +372,6 @@ export default function LoginRegister() {
           path: "/",
         });
         setAuthenticated(true);
-        console.log(authenticated);
         router.push("/dashboard");
       } else {
         setErrorMessage({
@@ -237,17 +399,21 @@ export default function LoginRegister() {
       <div
         className={`${styles.paddings} text-white font-poppins z-30 relative`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:mx-[75px]">
+        <div className="grid grid-cols-1">
+          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:mx-[200px]">
             <div className="pb-8">
               <div
                 className={`lg:text-[45px] md:text-[35px] text-[40px] font-bold font-tungsten`}
               >
-                {signup ? "Greetings!" : "Welcome Back!"}
+                {forgotPassword
+                  ? "Verification for Password Reset"
+                  : signup
+                  ? "Greetings!"
+                  : "Welcome Back!"}
               </div>
               <p className={``}>Please Enter Your Details Below</p>
             </div>
-            {login && (
+            {login && !forgotPassword && (
               <form
                 onSubmit={(e) => {
                   handleLogin(e, setAuthenticated);
@@ -292,7 +458,18 @@ export default function LoginRegister() {
                         Show Password
                       </label>
                     </div>
-                    <button href="#" className="underline text-xs select-none">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setLogin(false);
+                        setSignup(true);
+                        setOtpVerify(false);
+                        resetForm();
+                        setForgotPassword(true);
+                        setResetPassword(false);
+                      }}
+                      className="underline text-xs z-30"
+                    >
                       Forgot Password?
                     </button>
                   </div>
@@ -314,7 +491,89 @@ export default function LoginRegister() {
                 </div>
               </form>
             )}
-            {signup && (
+            {forgotPassword && !resetPassword && (
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="flex flex-col gap-4 text-left">
+                  <div className="flex flex-col gap-2">
+                    <label>Email</label>
+                    <input
+                      type="username"
+                      name="username"
+                      value={username}
+                      onChange={(e) => {
+                        setLoginError(false);
+                        setUsername(e.target.value);
+                      }}
+                      autoComplete="off"
+                      placeholder="Enter Email"
+                      className={`${classes.formInputs}`}
+                    />
+                  </div>
+                  <button
+                    className="bg-orange-700 py-[8px] px-[24px] w-full rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
+                    onClick={handlePasswordResetRequest}
+                  >
+                    Sent OTP
+                  </button>
+                  {loginError && (
+                    <div
+                      className={`flex items-center gap-3 rounded-md px-[24px] py-[8px] justify-center text-[20px] font-bold ${errorMessage.styling}`}
+                    >
+                      {errorMessage.icon} {errorMessage.message}
+                    </div>
+                  )}
+                </div>
+              </form>
+            )}
+            {resetPassword && !otpVerify && (
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="flex flex-col gap-4 text-left">
+                  <div className="flex flex-col gap-1">
+                    <label>Password</label>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={password}
+                      onChange={(e) => {
+                        setLoginError(false);
+                        setPassword(e.target.value);
+                      }}
+                      placeholder="Enter Password"
+                      className={`${classes.formInputs}`}
+                    />
+                  </div>
+                  <div
+                    className="items-center flex gap-1"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <input
+                      type="checkbox"
+                      className="cursor-pointer rounded-md h-4 w-4"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                    />
+                    <label className="text-xs select-none cursor-pointer">
+                      Show Password
+                    </label>
+                  </div>
+
+                  <button
+                    className="bg-orange-700 py-[8px] px-[24px] w-full rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
+                    onClick={handleNewPassword}
+                  >
+                    Reset Password
+                  </button>
+                  {loginError && (
+                    <div
+                      className={`flex items-center gap-3 rounded-md px-[24px] py-[8px] justify-center text-[20px] font-bold ${errorMessage.styling}`}
+                    >
+                      {errorMessage.icon} {errorMessage.message}
+                    </div>
+                  )}
+                </div>
+              </form>
+            )}
+            {signup && !forgotPassword && (
               <form>
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex flex-col gap-1">
@@ -470,6 +729,7 @@ export default function LoginRegister() {
                       resetForm();
                       setSignup((prev) => !prev);
                       setLogin((prev) => !prev);
+                      setForgotPassword(false);
                     }}
                   >
                     {signup ? "Sign in" : "Sign up"}
@@ -477,10 +737,6 @@ export default function LoginRegister() {
                 </div>
               </>
             )}
-          </div>
-          <div className="glassmorphism hidden rounded-md md:flex">
-            <h1>Yo</h1>
-            <h1>Yo</h1>
           </div>
         </div>
       </div>

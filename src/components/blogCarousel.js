@@ -21,10 +21,10 @@ export const BlogCarousel = () => {
       if (window.innerWidth > 425 && window.innerWidth <= 625) {
         setSlidesPerView(2);
       } else if (window.innerWidth > 625 && window.innerWidth <= 865) {
-        setSlidesPerView(3);
+        setSlidesPerView(2);
       } else if (window.innerWidth > 865) {
 
-          setSlidesPerView(4);
+          setSlidesPerView(3);
         // }
       } else {
         setSlidesPerView(1);

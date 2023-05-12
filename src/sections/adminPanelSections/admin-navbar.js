@@ -15,7 +15,7 @@ import { AdminNotify } from "./admin-notify";
 import { AdminProfile } from "./admin-profile";
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
-  <TooltipComponent content={title} position="BottomCenter">
+  // <TooltipComponent content={title} position="BottomCenter">
     <button
       type="button"
       onClick={customFunc}
@@ -29,7 +29,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
         {icon}
 
     </button>
-  </TooltipComponent>
+  // </TooltipComponent>
 );
 
 export const AdminNavbar = () => {
@@ -91,7 +91,7 @@ export const AdminNavbar = () => {
           color="orange"
           dotColor="#03C9D7"
         /> */}
-        <TooltipComponent content="Profile" position="BottomCenter">
+        {/* <TooltipComponent content="Profile" position="BottomCenter">
           <div
             className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-lgray-300"
             onClick={() => handleClick("userProfile")}
@@ -102,10 +102,10 @@ export const AdminNavbar = () => {
               <span className="text-gray-400 font-bold ml-1 text-14">
                 Admin
               </span>
-            </p>
+            </p> */}
             {/* <MdKeyboardArrowDown className="text-gray-400 text-14" /> */}
-          </div>
-        </TooltipComponent>
+          {/* </div>
+        </TooltipComponent> */}
 
         {isClicked.cart && <AdminCart />}
         {isClicked.chat && <AdminChat />}

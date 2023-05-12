@@ -19,10 +19,7 @@ const Explore = () => (
         <div className={`font-tungsten`}>
           <TypingText title="Explore" />
         </div>
-                {/* <TitleText
-          title={<>A Collection of Our Finest Projects</>}
-          textStyles="text-center pb-[50px]"
-        /> */}
+
         <div className={`${styles.yPaddings} text-center`}>
           
             <VideoCarousel/>

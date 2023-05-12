@@ -39,13 +39,13 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="ml-3 h-screen md:overflow-hidden overflow-auto sidebar-dashboard md:hover:overflow-auto pb-10">
+    <div className="ml-3 h-screen overflow-auto sidebar-dashboard md:hover:overflow-auto pb-10">
       {activeMenu && (
         <>
           <div className="flex justify-between items-center">
             <Link
-              href="/"
-              onClick={() => handleClick(handleCloseSidebar)}
+              href="/admin/dashboard"
+              onClick={handleCloseSidebar}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
               <div className="p-2 bg-gray-500 rounded-lg">
@@ -53,7 +53,7 @@ export const Sidebar = () => {
               </div>
               <span>FutureFocals</span>
             </Link>
-            <TooltipComponent content="Menu" position="BottomCenter">
+            {/* <TooltipComponent content="Menu" position="BottomCenter"> */}
               <button
                 type="button"
                 onClick={() =>
@@ -63,7 +63,7 @@ export const Sidebar = () => {
               >
                 <MdOutlineCancel />
               </button>
-            </TooltipComponent>
+            {/* </TooltipComponent> */}
           </div>
           <div className="mt-10">
             {adminLinks.map((link, index) => (

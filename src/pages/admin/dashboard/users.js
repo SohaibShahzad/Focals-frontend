@@ -48,7 +48,7 @@ export default function Users({ users }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}users/getAllUsers`
   );

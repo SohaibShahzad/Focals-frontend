@@ -8,7 +8,8 @@ import {
   BsFillArrowLeftSquareFill,
   BsFillArrowRightSquareFill,
 } from "react-icons/bs";
-import { Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Dialog } from "@mui/material";
+import { IoCloseCircle } from "react-icons/io5";
 
 const RatingStars = ({ rating }) => {
   const fullStars = Math.floor(rating);
@@ -104,11 +105,20 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
           </button>
         </div>
       )}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>{currentDialog.name}</DialogTitle>
-        <DialogContent>
-          {currentDialog.testimonialData}
-        </DialogContent>
+      <Dialog open={openDialog} className="bg-black bg-opacity-20">
+        <div className="bg-[#222222] text-white font-poppins p-6 flex flex-col gap-4">
+          <div className="flex justify-between">
+            <RatingStars rating={currentDialog.stars} />
+            <IoCloseCircle className="w-[25px] h-[25px] md:w-[30px] md:h-[30px] cursor-pointer font-bold text-orange-400 hover:text-orange-800"
+              onClick={() => {setOpenDialog(false)}}
+            />
+          </div>
+          <div className="text-[20px] font-bold tracking-wide text-center">
+            {currentDialog.testimonialHeading}
+          </div>
+          <div className="text-justify">{currentDialog.testimonialData}</div>
+          <h3 className="text-right font-bold">{currentDialog.name}</h3>
+        </div>
       </Dialog>
     </div>
   );

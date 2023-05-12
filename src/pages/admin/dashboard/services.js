@@ -1,4 +1,6 @@
-import { DataGrid } from "@mui/x-data-grid";
+import dynamic from "next/dynamic";
+const QuillNoSSRWrapper = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
 import CustomDataGrid from "../../../components/customDataGrid";
 import { useState, useEffect } from "react";
 import ReactLoading from "react-loading";
@@ -14,7 +16,8 @@ export default function AdminServices({ services }) {
   const [serviceId, setServiceId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [image, setImage] = useState([]);
   const [newPackages, setNewPackages] = useState([]);
   const [selectedServiceForUpdate, setSelectedServiceForUpdate] =
     useState(null);
@@ -36,6 +39,8 @@ export default function AdminServices({ services }) {
     setTitle(selectedServiceForUpdate?.serviceName || "");
     setDescription(selectedServiceForUpdate?.description || "");
     setNewPackages(selectedServiceForUpdate?.packages || []);
+    setImage(selectedServiceForUpdate?.image || []);
+    setThumbnail(selectedServiceForUpdate?.thumbnail || null);
   }, [selectedServiceForUpdate]);
 
   const [rows, setRows] = useState(
@@ -43,8 +48,9 @@ export default function AdminServices({ services }) {
       id: service._id,
       serviceName: service.title,
       description: service.description,
-      numberOfPackages: service.packages.length,
       packages: service.packages,
+      thumbnail: service.thumbnail,
+      image: service.images,
     }))
   );
 
@@ -58,8 +64,9 @@ export default function AdminServices({ services }) {
           id: service._id,
           serviceName: service.title,
           description: service.description,
-          numberOfPackages: service.packages.length,
           packages: service.packages,
+          thumbnail: service.thumbnail,
+          image: service.images,
         }))
       );
     } catch (error) {
@@ -98,8 +105,11 @@ export default function AdminServices({ services }) {
 
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("thumbnail", thumbnail);
     formData.append("description", description);
-    formData.append("image", image);
+    image.forEach((img, index) => {
+      formData.append(`images`, img);
+    });
 
     const updatedNewPackages = newPackages;
     formData.append("newPackages", JSON.stringify(updatedNewPackages));
@@ -114,7 +124,7 @@ export default function AdminServices({ services }) {
         );
       } else {
         response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}services/addNewService`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}services/addNewServiceWithImages`,
           formData
         );
       }
@@ -122,6 +132,11 @@ export default function AdminServices({ services }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleRemoveImage = (e, index) => {
+    e.preventDefault();
+    setImage((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleAddPackage = (e) => {
@@ -176,6 +191,7 @@ export default function AdminServices({ services }) {
       flex: 1,
       renderCell: (params) => {
         const onClickEdit = () => {
+          console.log(params);
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
@@ -221,13 +237,13 @@ export default function AdminServices({ services }) {
         </div>
       ) : (
         <div>
-          <div className="md:mt-10 mt-24 mb-2 flex flex-row justify-between">
+          <div className="mb-2 flex flex-row justify-between">
             <div className="text-3xl">Services</div>
             <button
               className="py-2 px-4 bg-orange-400 rounded-md"
               onClick={handleAddFormOpen}
             >
-              + Add New Service
+              + Add New
             </button>
           </div>
           <div
@@ -240,7 +256,7 @@ export default function AdminServices({ services }) {
             <Dialog open={addNewForm} onClose={handleAddFormClose}>
               <div className="p-4">
                 <div className="text-2xl font-bold pb-3">Add New Service</div>
-                <form>
+                <form encType="multipart/form-data">
                   <label htmlFor="title" className="font-bold">
                     Title
                   </label>
@@ -253,26 +269,86 @@ export default function AdminServices({ services }) {
                     onChange={(e) => setTitle(e.target.value)}
                   />
 
+                  <label htmlFor="thumbnail" className="font-bold">
+                    Thumbnail
+                  </label>
+                  {thumbnail && (
+                    <div className="flex items-start gap-4">
+                      <img
+                        src={
+                          typeof thumbnail === "string"
+                            ? thumbnail
+                            : URL.createObjectURL(thumbnail)
+                        }
+                        alt="Current thumbnail"
+                        className="w-[auto] h-[150px] p-2 bg-gray-200 rounded-md mb-3"
+                      />
+                      <button
+                        className="bg-red-600 text-white py-1 px-3 rounded"
+                        onClick={() => setThumbnail(null)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    id="thumbnail"
+                    className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
+                    accept="image/*"
+                    onChange={(e) => setThumbnail(e.target.files[0])}
+                  />
+
                   <label htmlFor="description" className="font-bold">
                     Description
                   </label>
-                  <textarea
+                  <QuillNoSSRWrapper
+                    theme="snow"
                     id="description"
                     placeholder="Some Words About This Service"
                     className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
+                    onChange={(content, delta, source, editor) =>
+                      setDescription(editor.getHTML())
+                    }
+                  />
 
                   <label htmlFor="image" className="font-bold">
                     Image
                   </label>
+                  {image &&
+                    image.map((file, index) => (
+                      <div key={index} className="flex items-start gap-4">
+                        <img
+                          src={
+                            typeof file === "string"
+                              ? file
+                              : URL.createObjectURL(file)
+                          }
+                          alt={`Current image ${index + 1}`}
+                          className="w-[auto] h-[150px] p-2 bg-gray-200 rounded-md mb-3"
+                        />
+
+                        <button
+                          className="bg-red-600 text-white py-1 px-3 rounded"
+                          onClick={(e) => handleRemoveImage(e, index)}
+                        >
+                          X
+                        </button>
+                      </div>
+                    ))}
                   <input
                     type="file"
                     id="image"
                     className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
                     accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
+                    multiple
+                    onChange={(e) =>
+                      setImage((prev) => [
+                        ...prev,
+                        ...Array.from(e.target.files),
+                      ])
+                    }
                   />
                   {newPackages.length > 0 && (
                     <div className="text-center underline text-xl font-bold">
@@ -439,11 +515,13 @@ export default function AdminServices({ services }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
   );
+
   const services = res.data;
+  console.log(services);
   return {
     props: {
       services,

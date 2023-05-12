@@ -29,32 +29,48 @@ const ServicesSection = () => {
         viewport={{ once: false, amount: 0.25 }}
         className={`${styles.innerWidth} mx-auto`}
       >
-        <div className={` flex-col flex md:gap-28 lg:hap-48 font-tungsten md:flex-row items-center`}>
-          <div
-            className={`${styles.flexStart}`}
-          >
+        <div
+          className={` flex-col flex md:gap-28 lg:gap-48 font-tungsten md:flex-row items-center`}
+        >
+          <div className={`${styles.flexStart}`}>
             <TypingText title="Services" />
           </div>
           <div className={`text-center md:text-left`}>
-            <TitleText title={<>We specialize in crafting visually stunning videos that captivate audiences and elevate brands. Let us help you tell your story like never before.</>} />
+            <TitleText
+              title={
+                <>
+                  We specialize in crafting visually stunning videos that
+                  captivate audiences and elevate brands. Let us help you tell
+                  your story like never before.
+                </>
+              }
+            />
           </div>
         </div>
         <div className="items-center flex flex-col z-40">
           <div className={`${styles.yPaddings} text-white`}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 m-4 ">
+            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-8  ">
               {servicesData.map((service) => (
                 <div
                   key={service._id}
-                  className="p-5 glassmorphism rounded-xl mb-5 flex gap-5 flex-col justify-between h-full"
+                  className="p-5 glassmorphism rounded-md flex gap-5 flex-col justify-between h-full"
                 >
                   <div className="">
+                    <div className="flex justify-center my-3">
+                      <img
+                        src={service.thumbnail}
+                        alt={service.title}
+                        className="w-[auto] h-[75px]"
+                      />
+                    </div>
                     <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
                       {service.title}
                     </h3>
 
-                    <p className="pt-2 md:pt-1 text-[18px] pb-2">
-                      {service.description}
-                    </p>
+                    <p
+                      className="pt-2 px-2 md:pt-1 text-[18px] pb-2 text-center flex justify-center"
+                      dangerouslySetInnerHTML={{ __html: service.description }}
+                    />
                   </div>
 
                   <Link
@@ -67,11 +83,6 @@ const ServicesSection = () => {
               ))}
             </div>
           </div>
-          <Button
-            title="Explore Further >"
-            styling="bg-orange-700 font-poppins hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
-            link="/services"
-          />
         </div>
       </motion.div>
     </section>
