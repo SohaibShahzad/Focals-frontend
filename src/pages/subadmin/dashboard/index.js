@@ -3,11 +3,11 @@ import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-export default function AdminDashboarding({admin}) {
+export default function AdminDashboarding({subAdmin}) {
   return (
     <div className="flex flex-col font-poppins justify-center py-2">
       <main className="text-center">
-        <h1 className="text-3xl font-bold">Welcome, {admin.username}!</h1>
+        <h1 className="text-3xl font-bold">Welcome, {subAdmin.username}!</h1>
       </main>
     </div>
   );
@@ -29,7 +29,7 @@ export async function getServerSideProps(context) {
   try {
     const decoded = jwt_decode(token);
     console.log(decoded);
-    if (decoded.type !== "admin" && decoded.type !== "subadmin") {
+    if (decoded.type !== "subadmin") {
       return {
         redirect: {
           destination: "/login",
@@ -39,11 +39,11 @@ export async function getServerSideProps(context) {
     }
 
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAdminbyId/${decoded.id}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/getSubAdminbyId/${decoded.id}`
     );
-    const admin = response.data;
+    const subAdmin = response.data;
 
-    if (!admin) {
+    if (!subAdmin) {
       return {
         redirect: {
           destination: "/login",
@@ -53,7 +53,7 @@ export async function getServerSideProps(context) {
     }
 
     return {
-      props: { admin },
+      props: { subAdmin },
     };
   } catch (err) {
     console.log("Error decoding JWT: ", err);

@@ -330,6 +330,7 @@ export default function LoginRegister() {
   };
 
   const handleLogin = async (e, setAuthenticated) => {
+    console.log("Login");
     e.preventDefault();
     if (!username || !password) {
       setErrorMessage({
@@ -392,7 +393,7 @@ export default function LoginRegister() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative font-poppins">
       <div className="gradient-03" />
       <div className="gradient-02" />
       <div
@@ -415,7 +416,8 @@ export default function LoginRegister() {
             {login && !forgotPassword && (
               <form
                 onSubmit={(e) => {
-                  handleLogin(e, setAuthenticated);
+                  console.log("Login");
+                  e.preventDefault();
                 }}
               >
                 <div className="flex flex-col gap-4">

@@ -173,7 +173,7 @@ export default function AdminContactUs({ contacts }) {
   ];
 
   return (
-    <>
+    <div className="font-poppins">
       <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Contact Details</div>
         <button
@@ -185,7 +185,7 @@ export default function AdminContactUs({ contacts }) {
       </div>
       <div
         style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-        className="h-auto overflow-auto w-full bg-white"
+        className="h-auto overflow-auto w-full"
       >
         <CustomDataGrid data={rows} columns={columns} autoHeight />
       </div>
@@ -246,7 +246,7 @@ export default function AdminContactUs({ contacts }) {
           </DialogActions>
         </Dialog>
       </div>
-    </>
+    </div>
   );
 }
 

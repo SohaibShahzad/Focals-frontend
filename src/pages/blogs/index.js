@@ -17,7 +17,7 @@ export default function BlogsPage({ blogs }) {
     return includeTitle;
   });
   return (
-    <div className={`${styles.paddings} text-white`}>
+    <div className={`${styles.paddings} text-white font-poppins`}>
       <div className="flex justify-between items-center">
         <h1 className="md:text-[64px] text-[50px] font-extrabold light-text ">
           Our Blogs

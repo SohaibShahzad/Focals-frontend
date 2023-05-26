@@ -1,8 +1,8 @@
 import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
-import axios from "axios";
 
 const jwt_decode = jwt.decode;
 
@@ -90,7 +90,7 @@ export default function AccountSettings({ user }) {
   };
 
   return (
-    <div className="flex flex-col gap-5 py-2">
+    <div className="flex flex-col gap-5 py-2 font-poppins">
       <main className="text-center">
         <h1 className="text-3xl underline font-bold">Account Settings</h1>
       </main>

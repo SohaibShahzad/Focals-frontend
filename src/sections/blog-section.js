@@ -47,7 +47,7 @@ const BlogSection = () => {
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.25 }}
-        className={`${styles.innerWidth} mx-auto ${styles.flexCenter} flex-col`}
+        className={`${styles.innerWidth} mx-auto ${styles.flexCenter} flex-col font-poppins`}
       >
         <div className={`font-tungsten`}>
           <TypingText title="Blogs" />

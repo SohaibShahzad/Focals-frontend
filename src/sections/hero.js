@@ -17,20 +17,20 @@ const Hero = () => (
     >
       <div className="flex justify-center items-center flex-col sm:flex-row relative gap-2 ">
         <motion.h1
-          variants={textVariant(1.0)}
+          variants={textVariant(0.2)}
           className={`${styles.heroHeading}`}
         >
           Create Video Magic
         </motion.h1>
         <motion.h1
-          variants={textVariant(1.5)}
+          variants={textVariant(0.5)}
           className={`${styles.heroHeading}`}
         >
           With Us
         </motion.h1>
       </div>
       <motion.div
-        variants={slideIn("right", "tween", 0.2, 1)}
+        variants={slideIn("right", "tween", 0.2, 0.75)}
         className="relative w-full md:-mt-[20px] mt-[12px]"
       >
         <motion.div className={`text-white text-center mt-7 font-nova px-5 sm:px-[60px] md:px-[140px] text-[20px]`}>

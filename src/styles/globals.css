@@ -35,9 +35,8 @@
     display: none;
 } */
 
-
-.light-text{
-  color: white
+.light-text {
+  color: white;
 }
 
 ::-webkit-scrollbar {
@@ -121,11 +120,11 @@
 }
 .sidebar-dashboard {
   box-shadow: rgb(113 122 131 / 11%) 0px 7px 30px 0px;
-  z-index: 1000000;
+  z-index: 1000;
 }
 @media screen and (max-width: 800px) {
   .sidebar-dashboard {
-    z-index: 1000000;
+    z-index: 1000;
   }
 }
 .hero-gradient {
@@ -151,9 +150,44 @@
 .glassmorphism {
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px 0 rgba(135, 69, 31, 0.37);
+  backdrop-filter: blur(190px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glassmorphism-dataGrid {
+  /* background: rgba(255, 255, 255, 0.15); */
+  background: rgba(98, 44, 0, 0.678);
+
+  backdrop-filter: blur(190px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.glassmorphism-projects {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glassmorphism-sidebar {
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(135, 69, 31, 0.37);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glassmorphism-sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 10%;
+  width: 400px;
+  height: 500px;
+  background: rgba(98, 44, 0, 0.678);
+  filter: blur(190px);
+  transform: rotate(-53.13deg);
+  z-index: -1;
 }
 
 .gradient-03 {

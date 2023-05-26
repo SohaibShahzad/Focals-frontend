@@ -4,11 +4,27 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import CalendlyWidget from "../../components/calendlyWidget";
+import { Dialog } from "@mui/material";
+import DialogActions from "@mui/material/DialogActions";
+import classes from "../../styles/contactSection.module.css";
+import { IoMdCloseCircle } from "react-icons/io";
 
 export default function SingleService({ serviceData }) {
+  const [email, setEmail] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [widgetOpen, setWidgetOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    // setEmail("");
+    // console.log(email);
+    setFormOpen(false);
+    setWidgetOpen(true);
+  };
 
   const openFullScreen = (imageUrl) => {
     setFullScreenImage(imageUrl);
@@ -19,7 +35,6 @@ export default function SingleService({ serviceData }) {
   };
 
   const handleTabChange = (index) => {
-    console.log(index);
     setActiveTab(index);
   };
 
@@ -32,8 +47,14 @@ export default function SingleService({ serviceData }) {
     setActiveImageIndex(newIndex);
   };
 
+  const handleScheduleMeeting = (bundle) => {
+    console.log(bundle);
+  };
+
   return (
-    <div className={`${styles.paddings} text-white relative z-[10]`}>
+    <div
+      className={`${styles.paddings} text-white relative z-[10] font-poppins`}
+    >
       <div className="gradient-02 z-[-1]" />
 
       <div className="md:text-[64px] text-[50px] font-extrabold ">
@@ -41,7 +62,10 @@ export default function SingleService({ serviceData }) {
       </div>
 
       <div className="mb-[10px] h-[2px] bg-white opacity-20" />
-      <p className="text-[15px] mb-[10px] md:text-[25px] md:font-normal py-5"  dangerouslySetInnerHTML={{ __html: serviceData.description }}/>
+      <p
+        className="text-[15px] mb-[10px] md:text-[25px] md:font-normal py-5"
+        dangerouslySetInnerHTML={{ __html: serviceData.description }}
+      />
 
       {fullScreenImage && (
         <div
@@ -58,8 +82,9 @@ export default function SingleService({ serviceData }) {
 
       <div className="grid lg:grid-cols-3 gap-5 items-center">
         <div className="glassmorphism text-center lg:col-span-2 rounded-md">
-          <div className="relative w-[100%] h-[400px] mx-auto overflow-hidden">
-            <div className="w-full h-full flex items-center justify-center">
+          <div className="relative w-full">
+            <div style={{ paddingBottom: "56.25%" }} />
+            <div className="absolute inset-0 flex items-center justify-center">
               {serviceData.images.map(
                 (imageUrl, index) =>
                   index === activeImageIndex && (
@@ -122,9 +147,57 @@ export default function SingleService({ serviceData }) {
                       </li>
                     ))}
                   </ul>
-                  <div className="bg-orange-700 rounded-md py-1 mt-5 items-center text-center">
+                  <div
+                    onClick={() => setFormOpen(true)}
+                    className="bg-orange-700 rounded-md py-1 mt-5 items-center text-center cursor-pointer"
+                  >
                     Continue <ArrowRightAltRoundedIcon />
                   </div>
+                  <Dialog open={formOpen} onClose={() => setFormOpen(false)}>
+                    <div className="bg-black">
+                      <div className="glassmorphism p-4 font-poppins text-white">
+                        <form>
+                          <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-1">
+                              <label htmlFor="email">Email</label>
+                              <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className={` ${classes.formInputs} border-2 rounded-md text-[16px]`}
+                              />
+                            </div>
+                          </div>
+                        </form>
+                        <DialogActions>
+                          <button
+                            onClick={handleFormSubmit}
+                            className="bg-orange-700 rounded-md py-2 px-4 mt-5 items-center text-center cursor-pointer"
+                          >
+                            Continue
+                          </button>
+                          <button
+                            onClick={() => {
+                              setFormOpen(false);
+                              setEmail("");
+                            }}
+                            className="absolute right-1 top-0 mt-2 mr-2 text-red-600 font-bold"
+                          >
+                            <IoMdCloseCircle size={25} />
+                          </button>
+                        </DialogActions>
+                      </div>
+                    </div>
+                  </Dialog>
+                  <Dialog
+                    open={widgetOpen}
+                    onClose={() => setWidgetOpen(false)}
+                    className="fixed z-10 inset-0 overflow-y-auto"
+                  >
+                    <CalendlyWidget bundle={bundle} serviceData={serviceData} email={email}/>
+                  </Dialog>
                 </div>
               </TabPanel>
             ))}

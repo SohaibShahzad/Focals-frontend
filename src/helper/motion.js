@@ -68,7 +68,7 @@ export const textContainer = {
   },
   show: (i = 1) => ({
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: i * 0.1 },
+    transition: { staggerChildren: 0.05, delayChildren: i * 0.01 },
   }),
 };
 
@@ -155,7 +155,7 @@ export const footerVariants = {
     transition: {
       type: "spring",
       stiffness: 80,
-      delay: 0.5,
+      delay: 0.1,
     },
   },
 };

@@ -15,6 +15,7 @@ export default function AdminLogin() {
 
   const [username, setUsername] = useState("");
   const [passsword, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("admin");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
@@ -50,39 +51,72 @@ export default function AdminLogin() {
     });
     setLoginError(true);
 
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admins/verifyAdmin`,
-        formData
-      );
-      if (response.status === 200) {
-        setCookie(null, "token", response.data.token, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-        });
-        setAuthenticated(true);
-        router.push("/admin/dashboard");
-      } else {
+    if (selectedRole === "admin") {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}admins/verifyAdmin`,
+          formData
+        );
+        if (response.status === 200) {
+          setCookie(null, "token", response.data.token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setAuthenticated(true);
+          router.push("/admin/dashboard");
+        } else {
+          setErrorMessage({
+            message: "Invalid Admin Credentials",
+            icon: <CancelRoundedIcon />,
+            styling: "bg-red-400 text-red-700",
+          });
+          setLoginError(true);
+        }
+        setLoginError(false);
+      } catch (error) {
         setErrorMessage({
-          message: "Invalid Credentials",
+          message: "Invalid Admin Credentials",
           icon: <CancelRoundedIcon />,
           styling: "bg-red-400 text-red-700",
         });
         setLoginError(true);
       }
-      setLoginError(false);
-    } catch (error) {
-      setErrorMessage({
-        message: "Invalid Credentials",
-        icon: <CancelRoundedIcon />,
-        styling: "bg-red-400 text-red-700",
-      });
-      setLoginError(true);
+    } else {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/verifySubAdmin`,
+          formData
+        );
+        if (response.status === 200) {
+          setCookie(null, "token", response.data.token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setAuthenticated(true);
+          router.push("/subadmin/dashboard");
+        } else {
+          setErrorMessage({
+            message: "Invalid SubAdmin Credentials",
+            icon: <CancelRoundedIcon />,
+            styling: "bg-red-400 text-red-700",
+          });
+          setLoginError(true);
+        }
+        setLoginError(false);
+      } catch (error) {
+        console.log("here");
+        setErrorMessage({
+          message: "Invalid SubAdmin Credentials",
+          icon: <CancelRoundedIcon />,
+          styling: "bg-red-400 text-red-700",
+        });
+        setLoginError(true);
+      }
     }
   };
 
   return (
-    <div className="relative">
+    <div className="relative font-poppins">
       <div className="gradient-03" />
       <div className="gradient-02" />
       <div
@@ -140,6 +174,43 @@ export default function AdminLogin() {
                     </label>
                   </div>
                 </div>
+                <div className="flex flex-row gap-3 justify-between">
+                  <div className="flex gap-1 items-center">
+                    <input
+                      type="radio"
+                      id="adminRole"
+                      name="role"
+                      value="admin"
+                      checked={selectedRole === "admin"}
+                      onChange={() => setSelectedRole("admin")}
+                      className="cursor-pointer rounded-md h-4 w-4"
+                    />
+                    <label
+                      htmlFor="adminRole"
+                      className="text-xs select-none cursor-pointer"
+                    >
+                      Admin
+                    </label>
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <input
+                      type="radio"
+                      id="subadminRole"
+                      name="role"
+                      value="subadmin"
+                      checked={selectedRole === "subadmin"}
+                      onChange={() => setSelectedRole("subadmin")}
+                      className="cursor-pointer rounded-md h-4 w-4"
+                    />
+                    <label
+                      htmlFor="subadminRole"
+                      className="text-xs select-none cursor-pointer"
+                    >
+                      Sub-Admin
+                    </label>
+                  </div>
+                </div>
+
                 <button
                   className="bg-orange-700 py-[8px] px-[24px] rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
                   onClick={(e) => {
@@ -148,7 +219,7 @@ export default function AdminLogin() {
                 >
                   Login
                 </button>
-                
+
                 {loginError && (
                   <div
                     className={`flex items-center gap-3 rounded-md px-[24px] py-[8px] justify-center text-[20px] font-bold ${errorMessage.styling}`}

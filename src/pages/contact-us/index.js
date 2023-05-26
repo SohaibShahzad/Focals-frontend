@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
+import styles from "../../styles";
+
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
@@ -9,6 +11,8 @@ export default function ContactUsPage() {
   const [message, setMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const inputStyle =
+    "border-[3px] border-[#5f2300] rounded-md p-2 mb-5 z-10 bg-transparent focus:outline-none focus:border-[#ff7e34]";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,11 +50,13 @@ export default function ContactUsPage() {
   };
 
   return (
-    <div className="text-white m-10">
-      <h1 className="text-[40px] font-bold">Tell Us Your Idea</h1>
-      <p>Describe your need and we will contact you</p>
+    <div className="text-white m-10 font-poppins relative">
+      <div className="gradient-03" />
+      <div className="gradient-02" />
+      <h1 className="text-[40px] text-center font-bold">Tell Us Your Idea</h1>
+      <p className="text-center">Describe your need and we will contact you</p>
       <div>
-        <form className="m-1 mt-10 md:mx-[6em] lg:mx-[10em] lg:my-[5em]">
+        <form className="m-1 mt-10 md:mx-[6em] lg:mx-[10em] lg:my-[3em] xl:mx-[30em]">
           <div className="flex flex-col gap-5">
             <div className="md:flex md:flex-row gap-5">
               <div className="flex flex-col w-full md:w-1/2 gap-2">
@@ -64,7 +70,8 @@ export default function ContactUsPage() {
                     setErrorMessage("");
                     setName(e.target.value);
                   }}
-                  className="border-2 border-gray-500 rounded-md p-2 mb-5 text-black"
+                  className={inputStyle}
+                  autoComplete="off"
                   placeholder="Enter your name"
                 />
               </div>
@@ -79,7 +86,8 @@ export default function ContactUsPage() {
                     setErrorMessage("");
                     setEmail(e.target.value);
                   }}
-                  className="border-2 border-gray-500 rounded-md p-2 mb-5 text-black"
+                  className={inputStyle}
+                  autoComplete="off"
                   placeholder="Enter your email"
                 />
               </div>
@@ -96,13 +104,14 @@ export default function ContactUsPage() {
                   setMessage(e.target.value);
                 }}
                 placeholder="Enter the Requirements"
-                className="border-2 border-gray-500 rounded-md p-2 text-black"
+                autoComplete="off"
+                className={inputStyle}
               />
             </div>
           </div>
           <div className="flex flex-col gap-7 mt-7 sm:flex-row sm:justify-between sm:mt-10 sm:items-center">
             <button
-              className="px-8 py-3 bg-orange-800 font-bold rounded-md"
+              className="px-8 py-3 bg-orange-800 font-bold rounded-md z-10"
               onClick={handleSubmit}
             >
               Submit

@@ -6,43 +6,62 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { IconButton, Dialog } from "@mui/material";
 import axios from "axios";
 
-export default function Admins({ admins }) {
-  const [adminId, setAdminId] = useState("");
+export default function SubAdmins({ subAdmins }) {
+  const [subAdminId, setSubAdminId] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [hint, setHint] = useState("");
-  const [selectedAdminForUpdate, setSelectedAdminForUpdate] = useState(null);
+  const [permissions, setPermissions] = useState([]);
+  const [fixedPermissions, setFixedPermissions] = useState([
+    "blogs",
+    "services",
+    "projects",
+    "testimonials",
+    "liveChat",
+  ]);
+  const [selectedSubAdminForUpdate, setSelectedSubAdminForUpdate] =
+    useState(null);
   const [addNewForm, setAddNewForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Submit");
 
   useEffect(() => {
-    setAdminId(selectedAdminForUpdate?.id || "");
-    setUsername(selectedAdminForUpdate?.adminUsername || "");
-    setPassword(selectedAdminForUpdate?.password || "");
-    setHint(selectedAdminForUpdate?.hint || "");
-  }, [selectedAdminForUpdate]);
+    setSubAdminId(selectedSubAdminForUpdate?.id || "");
+    setUsername(selectedSubAdminForUpdate?.subAdminUsername || "");
+    setPassword(selectedSubAdminForUpdate?.password || "");
+    setHint(selectedSubAdminForUpdate?.hint || "");
+    setPermissions([]);
+    if (selectedSubAdminForUpdate?.permissions) {
+      let selectedPermissions = selectedSubAdminForUpdate.permissions;
+      let newPermissions = fixedPermissions.filter((permission) =>
+        selectedPermissions.includes(permission)
+      );
+      setPermissions(newPermissions);
+    }
+  }, [selectedSubAdminForUpdate]);
 
   const [rows, setRows] = useState(
-    admins.map((admin) => ({
-      id: admin._id,
-      adminUsername: admin.username,
-      password: admin.password,
-      hint: admin.hint,
+    subAdmins.map((subAdmin) => ({
+      id: subAdmin._id,
+      subAdminUsername: subAdmin.username,
+      password: subAdmin.password,
+      hint: subAdmin.hint,
+      permissions: subAdmin.permissions,
     }))
   );
 
-  const fetchAdmins = async () => {
+  const fetchSubAdmins = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/getAllSubAdmins`
       );
       setRows(
-        response.data.map((admin) => ({
-          id: admin._id,
-          adminUsername: admin.username,
-          password: admin.password,
-          hint: admin.hint,
+        response.data.map((subAdmin) => ({
+          id: subAdmin._id,
+          subAdminUsername: subAdmin.username,
+          password: subAdmin.password,
+          hint: subAdmin.hint,
+          permissions: subAdmin.permissions,
         }))
       );
     } catch (error) {
@@ -54,6 +73,7 @@ export default function Admins({ admins }) {
     setUsername("");
     setPassword("");
     setHint("");
+    setPermissions([]);
   };
 
   const handleAddFormOpen = (e) => {
@@ -66,7 +86,7 @@ export default function Admins({ admins }) {
 
   const handleAddFormClose = (e) => {
     if (isUpdate) {
-      setSelectedAdminForUpdate(null);
+      setSelectedSubAdminForUpdate(null);
     }
     e.preventDefault();
     setAddNewForm(false);
@@ -74,6 +94,11 @@ export default function Admins({ admins }) {
   };
 
   const handleFormSubmit = async (e) => {
+    if (username === "" || password === "" || hint === "") {
+      alert("Please fill all the fields!");
+      return;
+    }
+
     setAddNewForm(false);
     e.preventDefault();
     resetForm();
@@ -83,32 +108,35 @@ export default function Admins({ admins }) {
     formData.append("password", password);
     formData.append("hint", hint);
 
+    const newPermissions = permissions;
+    formData.append("permissions", JSON.stringify(newPermissions));
+    console.log(username, password, hint, permissions);
     try {
       let response;
       if (isUpdate) {
-        setSelectedAdminForUpdate(null);
+        setSelectedSubAdminForUpdate(null);
         response = await axios.put(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}admins/updateAdminById/${selectedAdminForUpdate.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/updateSubAdminById/${selectedSubAdminForUpdate.id}`,
           formData
         );
       } else {
         response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}admins/addNewAdmin`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/addNewSubAdmin`,
           formData
         );
       }
-      fetchAdmins();
+      fetchSubAdmins();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deleteAdmin = async (adminId) => {
+  const deleteSubAdmin = async (subAdminId) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admins/deleteAdmin/${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/deleteSubAdmin/${subAdminId}`
       );
-      setRows(rows.filter((row) => row.id !== adminId));
+      setRows(rows.filter((row) => row.id !== subAdminId));
     } catch (error) {
       console.log(error);
     }
@@ -116,10 +144,10 @@ export default function Admins({ admins }) {
 
   const columns = [
     {
-      field: "adminUsername",
+      field: "subAdminUsername",
       headerName: "Username",
       flex: 1,
-      valueGetter: (params) => params.adminUsername,
+      valueGetter: (params) => params.subAdminUsername,
     },
     {
       field: "hint",
@@ -139,16 +167,16 @@ export default function Admins({ admins }) {
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
-          setSelectedAdminForUpdate(params);
+          setSelectedSubAdminForUpdate(params);
         };
 
         const onClickDelete = () => {
           if (
             window.confirm(
-              `Are you sure you want to delete admin ${params.adminUsername}?`
+              `Are you sure you want to delete sub-admin ${params.subAdminUsername}?`
             )
           ) {
-            deleteAdmin(params.id);
+            deleteSubAdmin(params.id);
           }
         };
         return (
@@ -168,12 +196,12 @@ export default function Admins({ admins }) {
   return (
     <div className="font-poppins">
       <div className="mb-2 flex flex-row justify-between">
-        <div className="text-3xl">Admins</div>
+        <div className="text-3xl">Sub-Admins</div>
         <button
           className="py-2 px-4 bg-orange-400 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Admin
+          + Add New
         </button>
       </div>
       <div
@@ -185,7 +213,7 @@ export default function Admins({ admins }) {
       <div>
         <Dialog open={addNewForm} onClose={handleAddFormClose}>
           <div className="p-4 font-poppins">
-            <div className="text-2xl font-bold pb-3">Add New Admin</div>
+            <div className="text-2xl font-bold pb-3">Add New Sub-Admin</div>
             <form>
               <label htmlFor="username" className="font-bold">
                 UserName
@@ -225,6 +253,40 @@ export default function Admins({ admins }) {
                 value={hint}
                 onChange={(e) => setHint(e.target.value)}
               />
+              <label htmlFor="permissions" className="font-bold">
+                Permissions
+              </label>
+              <div className="flex flex-row flex-wrap">
+                {fixedPermissions.map((permission, index) => (
+                  <div key={index} className="flex flex-row items-center">
+                    <input
+                      type="checkbox"
+                      className="w-5 h-5"
+                      id={permission}
+                      checked={permissions.includes(permission)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          // Add the permission to the array if the checkbox is checked
+                          setPermissions((prevPermissions) => [
+                            ...prevPermissions,
+                            permission,
+                          ]);
+                        } else {
+                          // Remove the permission from the array if the checkbox is unchecked
+                          setPermissions((prevPermissions) =>
+                            prevPermissions.filter(
+                              (perm) => perm !== permission
+                            )
+                          );
+                        }
+                      }}
+                    />
+                    <label htmlFor={permission} className="mr-2 ml-1">
+                      {permission}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </form>
           </div>
           <DialogActions>
@@ -249,12 +311,12 @@ export default function Admins({ admins }) {
 
 export async function getServerSideProps() {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}admins/getAllAdmins`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}subAdmins/getAllSubAdmins`
   );
-  const admins = res.data;
+  const subAdmins = res.data;
   return {
     props: {
-      admins,
+      subAdmins,
     },
   };
 }

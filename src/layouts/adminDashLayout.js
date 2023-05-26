@@ -1,31 +1,34 @@
 import { Sidebar } from "../sections/adminPanelSections/sidebar";
 import { useStateContext } from "../contexts/ContextProvider";
-
 import { AdminNavbar } from "../sections/adminPanelSections/admin-navbar";
+
 const AdminLayout = ({ children }) => {
   const { activeMenu } = useStateContext();
   return (
-    <div className="flex  items-center">
+    <div className="flex text-white min-h-screen bg-[#111111]">
       {activeMenu ? (
-        <div className="w-72 fixed sidebar-dashboard  bg-gray-100 ">
+        <div
+          className="w-72 fixed z-[1000] bg-black rounded-lg h-full m-2"
+          style={{ height: "calc(100vh - 20px)" }}
+        >
           <Sidebar />
         </div>
       ) : (
-        <div className="w-0 ">
+        <div className="w-0 h-full">
           <Sidebar />
         </div>
       )}
       <div
         className={
           activeMenu
-            ? "dark:bg-main-dark-bg bg-main-bg min-h-screen md:ml-72 w-full"
-            : "bg-main-bg dark:bg-main-dark-bg w-full min-h-screen flex-2"
+            ? " bg-main-bg flex flex-col w-full md:ml-72"
+            : "bg-main-bg  w-full min-h-screen flex-2 flex flex-col"
         }
       >
-        <div className="static bg-main-bg dark:bg-main-dark-bg navbar w-full">
+        <div className="static bg-main-bg  navbar w-full">
           <AdminNavbar />
         </div>
-        <div className="mx-[2.5rem]">{children}</div>
+        <div className="flex-grow mx-[2.5rem]">{children}</div>
       </div>
     </div>
   );

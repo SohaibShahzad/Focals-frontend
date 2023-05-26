@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { parseCookies } from "nookies";
 
 const withAuth = (Component) => {
-  const AuthenticatedComponent = (props) => {
+  const AuthenticatedComponent = ({role, ...props}) => {
     const router = useRouter();
 
     useEffect(() => {
@@ -14,7 +14,7 @@ const withAuth = (Component) => {
       }
     }, [router]);
 
-    return <Component {...props} />;
+    return <Component {...props} role={role} />;
   };
 
   return AuthenticatedComponent;

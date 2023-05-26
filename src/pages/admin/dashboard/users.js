@@ -52,17 +52,17 @@ export default function Users({ users }) {
   };
 
   return (
-    <>
-      <div className="mb-2 flex flex-row justify-between">
+    <div className="font-poppins">
+      <div className="mb-2 flex flex-row justify-between ">
         <div className="text-3xl">Users</div>
       </div>
       <div
         style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-        className="h-auto overflow-auto w-full bg-white"
+        className="h-auto overflow-auto w-full"
       >
         <CustomDataGrid data={rows} columns={columns} autoHeight />
       </div>
-    </>
+    </div>
   );
 }
 

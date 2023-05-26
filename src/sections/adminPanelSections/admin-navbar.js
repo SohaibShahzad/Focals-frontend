@@ -76,8 +76,8 @@ export const AdminNavbar = () => {
           icon={<RiShoppingCart2Line />}
           color="orange"
           // dotColor="bg-gray-500"
-        />
-        <NavButton
+        /> */}
+        {/* <NavButton
           title="Chat"
           customFunc={() => handleClick("chat")}
           icon={<RiWechatLine />}

@@ -64,7 +64,7 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
     >
       <div className={`gap-5 flex transition-all duration-500 ease-in-out`}>
         {items.length === 0 ? (
-          <div className={`p-5 glassmorphism rounded-lg h-full mx-2`}>
+          <div className={`p-5 glassmorphism rounded-lg h-[200px] w-full md:w-[80%] lg:w-[60%] mx-2 overflow-y-auto`}>
             <div className="flex flex-col gap-5 justify-center items-center">
               <h3 className="text-[24px]">No testimonials available</h3>
             </div>
@@ -73,7 +73,7 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
           visibleItems.map((item, index) => (
             <div
               key={item._id}
-              className="p-5 glassmorphism rounded-lg h-full mx-2 flex flex-col justify-between items-center"
+              className="p-5 glassmorphism h-[200px] rounded-lg h-[240px] w-full md:w-[80%] lg:w-[60%] mx-2 flex flex-col justify-between items-center"
             >
               <div className="flex flex-col gap-5 justify-between">
                 <RatingStars rating={item.stars} />

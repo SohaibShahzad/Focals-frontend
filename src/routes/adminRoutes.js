@@ -1,7 +1,16 @@
 import { RxDashboard } from "react-icons/rx";
-import { MdOutlineArticle, MdTrolley, MdOutlineCases, MdInfoOutline, MdMailOutline, MdOutlineRateReview } from "react-icons/md";
-import {HiOutlineUserGroup, HiOutlineUsers} from 'react-icons/hi'
-import {RiAdminLine} from 'react-icons/ri'
+import {
+  MdOutlineArticle,
+  MdTrolley,
+  MdOutlineCases,
+  MdInfoOutline,
+  MdMailOutline,
+  MdOutlineRateReview,
+} from "react-icons/md";
+import { HiOutlineUserGroup, HiOutlineUsers } from "react-icons/hi";
+import { RiAdminLine, RiChat1Line } from "react-icons/ri";
+import { CgWebsite } from "react-icons/cg";
+import { FiLink2 } from "react-icons/fi";
 
 export const adminLinks = [
   {
@@ -11,7 +20,6 @@ export const adminLinks = [
         name: "Overview",
         icon: <RxDashboard />,
         linkName: "",
-        
       },
     ],
   },
@@ -29,6 +37,11 @@ export const adminLinks = [
         linkName: "/services",
       },
       {
+        name: "Live Chat",
+        icon: <RiChat1Line />,
+        linkName: "/live-chat",
+      },
+      {
         name: "Portfolio",
         icon: <MdOutlineCases />,
         linkName: "/portfolio",
@@ -37,6 +50,11 @@ export const adminLinks = [
         name: "Testimonials",
         icon: <MdOutlineRateReview />,
         linkName: "/testimonials",
+      },
+      {
+        name: "Projects",
+        icon: <CgWebsite />,
+        linkName: "/projects",
       },
       // {
       //   name: "About-Us",
@@ -47,26 +65,32 @@ export const adminLinks = [
         name: "Contact-Us",
         icon: <MdMailOutline />,
         linkName: "/contact-us",
-      }
+      },
+      {
+        name: "Terms & Policy",
+        icon: <FiLink2 />,
+        linkName: "/termpolicy",
+      },
     ],
   },
   {
-    title: 'Personnel',
+    title: "Personnel",
     links: [
       {
-        name: 'Admins',
+        name: "Admins",
         icon: <RiAdminLine />,
         linkName: "/admins",
       },
       {
-        name: 'Users',
+        name: "Users",
         icon: <HiOutlineUserGroup />,
         linkName: "/users",
       },
-      // {
-        //     name: 'Sub-Admins',
-        //     icon: <HiOutlineUsers />
-        // }
-    ]
-  }
+      {
+        name: "Sub-Admins",
+        icon: <HiOutlineUsers />,
+        linkName: "/sub-admins",
+      },
+    ],
+  },
 ];

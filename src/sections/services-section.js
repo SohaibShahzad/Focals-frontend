@@ -27,7 +27,7 @@ const ServicesSection = () => {
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.25 }}
-        className={`${styles.innerWidth} mx-auto`}
+        className={`${styles.innerWidth} mx-auto font-poppins`}
       >
         <div
           className={` flex-col flex md:gap-28 lg:gap-48 font-tungsten md:flex-row items-center`}

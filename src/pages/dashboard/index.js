@@ -6,7 +6,7 @@ const jwt_decode = jwt.decode;
 
 const UserPanel = ({user}) => {
   return (
-    <div className="flex flex-col justify-center py-2">
+    <div className="flex flex-col justify-center py-2 font-poppins">
       <main className="text-center">
         <h1 className="text-3xl font-bold">Welcome, {user.firstName} {user.lastName}!</h1>
       </main>
