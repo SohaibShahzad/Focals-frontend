@@ -22,11 +22,12 @@ const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [servicesData, setServicesData] = useState([]);
-  const [blogsData, setBlogsData] = useState([]);
-  const [filterToggle, setFilterToggle] = useState(false);
-  const [filter, setFilter] = useState("");
+  // const [blogsData, setBlogsData] = useState([]);
+  // const [filterToggle, setFilterToggle] = useState(false);
+  // const [filter, setFilter] = useState("");
   const dropdownRef = useRef(null);
   const searchBarRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const cookies = parseCookies();
   const token = cookies.token;
   const isAuthenticated = !!token;
@@ -35,7 +36,7 @@ const NavBar = () => {
   useEffect(() => {
     async function fetchData() {
       const resServices = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServicesWithoutImages`
       );
       setServicesData(resServices.data);
     }
@@ -57,12 +58,20 @@ const NavBar = () => {
           setShowSearch(false);
         }, 100);
       }
+      if (
+        toggle &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      ) {
+        setToggle(false);
+        setSearchQuery("");
+      }
     };
-    document.addEventListener("mouseup", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mouseup", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef, searchBarRef]);
+  }, [dropdownRef, searchBarRef, mobileMenuRef, toggle]);
 
   const handleLogout = async () => {
     try {
@@ -127,7 +136,7 @@ const NavBar = () => {
                 </button>
               </div>
               {showSearch && (
-                <div className="absolute right-0 top-10 p-2 rounded-md bg-black-gradient px-4 navbar-sm-animation ">
+                <div className="absolute right-0 top-10 p-2 rounded-md bg-gray-900 px-4 navbar-sm-animation ">
                   <input
                     type="text"
                     ref={searchBarRef}
@@ -146,12 +155,7 @@ const NavBar = () => {
                           className="navbar-sm-animation mb-2 group"
                         >
                           <Link href={`/services/${service._id}`}>
-                            <div className="flex items-center justify-between gap-3 glassmorphism rounded-md px-2 hover:bg-orange-800">
-                              <img
-                                src={service.thumbnail}
-                                alt={service.title}
-                                className="w-10 h-10"
-                              />
+                            <div className="flex items-center justify-between glassmorphism rounded-md px-2 hover:bg-orange-800">
                               <p className="text-white font-semibold">
                                 {service.title}
                               </p>
@@ -179,7 +183,7 @@ const NavBar = () => {
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-black-gradient navbar-sm-animation z-50"
+                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-900 navbar-sm-animation z-50"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link href="/dashboard">Dashboard</Link>
@@ -214,7 +218,7 @@ const NavBar = () => {
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-black-gradient navbar-sm-animation"
+                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-900 navbar-sm-animation"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link href="/dashboard">Dashboard</Link>
@@ -246,9 +250,11 @@ const NavBar = () => {
                 <CgMenuRight style={{ fontSize: "2rem" }} />
               )}
               <div
+                ref={mobileMenuRef}
                 className={`${
                   toggle ? "flex" : "hidden"
-                } p-6 bg-gray-900 navbar-sm-animation absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl`}
+                } p-6 bg-gray-900 navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
+                style={{ maxWidth: "calc(100% - 4px)" }}
               >
                 <ul className="list-none flex flex-col justify-end items-center flex-1">
                   {mainNavLinks.map((link, index) => (
@@ -270,87 +276,30 @@ const NavBar = () => {
                         setSearchQuery(e.target.value);
                       }}
                       placeholder="Search Services"
-                      className=" bg-transparent border-[3px] border-[#5f2300] z-50 mt-5 rounded-lg p-2"
+                      className="w-[200px] bg-transparent border-[3px] border-[#5f2300] z-50 mt-5 rounded-lg p-2"
                     />
                     {searchQuery && (
-                    <ul>
-                      {searchResults.length > 0 && <div className="text-gray-400">Result:</div>}
-                      {searchResults.map((service) => (
-                        <li
-                          key={service._id}
-                          className="navbar-sm-animation mb-2 group"
-                        >
-                          <Link href={`/services/${service._id}`}>
-                            <div className="flex items-center justify-between gap-3 pl-2 glassmorphism rounded-md hover:bg-orange-800">
-                              <img
-                                src={service.thumbnail}
-                                alt={service.title}
-                                className="w-10 h-10"
-                              />
-                              <p className="text-white font-semibold">
-                                {service.title}
-                              </p>
-                              <MdKeyboardArrowRight className="w-10 h-10" />
-                            </div>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                    {/* <div
-                      className="flex items-center justify-end text-gray-400 mt-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setFilterToggle((prev) => !prev);
-                      }}
-                    >
-                      <span>Filters</span>
-                      {filterToggle ? (
-                        <MdKeyboardArrowDown className="w-6 h-6" />
-                      ) : (
-                        <MdKeyboardArrowRight className="w-6 h-6" />
-                      )}
-                    </div> */}
-                    {/* {filterToggle && (
-                      <div className="flex justify-evenly">
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="searchFilter"
-                            id="blogSearch"
-                            value="blogSearch"
-                            checked={filter === "blogSearch"}
-                            onChange={() => setFilter("blogSearch")}
-                            className="cursor-pointer rounded-md h-4 w-4"
-                          />
-                          <label
-                            htmlFor="blogSearch"
-                            className="text-[16px] select-none cursor-pointer"
+                      <ul>
+                        {searchResults.length > 0 && (
+                          <div className="text-gray-400">Result:</div>
+                        )}
+                        {searchResults.map((service) => (
+                          <li
+                            key={service._id}
+                            className="navbar-sm-animation mb-2 group"
                           >
-                            Blogs
-                          </label>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="searchFilter"
-                            id="serviceSearch"
-                            value="serviceSearch"
-                            checked={filter === "serviceSearch"}
-                            onChange={(e) => {
-                              setFilter("serviceSearch");
-                            }}
-                            className="cursor-pointer rounded-md h-4 w-4"
-                          />
-                          <label
-                            htmlFor="serviceSearch"
-                            className="text-[16px] select-none cursor-pointer"
-                          >
-                            Services
-                          </label>
-                        </div>
-                      </div>
-                    )} */}
+                            <Link href={`/services/${service._id}`}>
+                              <div className="flex w-[200px] items-center justify-between gap-3 pl-2 glassmorphism rounded-md hover:bg-orange-800">
+                                <p className="text-white font-semibold">
+                                  {service.title}
+                                </p>
+                                <MdKeyboardArrowRight className="w-10 h-10" />
+                              </div>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </ul>
               </div>
