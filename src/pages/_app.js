@@ -3,6 +3,7 @@ import ClientLayout from "../layouts/clientDashLayout";
 import AdminLayout from "../layouts/adminDashLayout";
 import SubAdminLayout from "../layouts/subAdminDashLayout";
 import MainLayout from "../layouts/mainLayout";
+import TestMainLayout from "../layouts/testMainLayout";
 import { registerLicense } from "@syncfusion/ej2/base.js";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -23,6 +24,7 @@ registerLicense(
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const isClientRoute = router.pathname.startsWith("/dashboard");
+  const isTestRoute = router.pathname.startsWith("/dashboard/cart-checkout");
   const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
   const isSubAdminRoute = router.pathname.startsWith("/subadmin/dashboard");
   const ProtectedComponent =
@@ -46,6 +48,8 @@ export default function App({ Component, pageProps }) {
     ? (props) => <ClientLayout {...props} />
     : isSubAdminRoute
     ? (props) => <SubAdminLayout {...props} />
+    : isTestRoute
+    ? (props) => <TestMainLayout {...props} />
     : (props) => <MainLayout {...props} />;
 
   return (

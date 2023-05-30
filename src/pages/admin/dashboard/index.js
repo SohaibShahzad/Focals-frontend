@@ -29,7 +29,7 @@ export async function getServerSideProps(context) {
   try {
     const decoded = jwt_decode(token);
     console.log(decoded);
-    if (decoded.type !== "admin" && decoded.type !== "subadmin") {
+    if (decoded.type !== "admin") {
       return {
         redirect: {
           destination: "/login",

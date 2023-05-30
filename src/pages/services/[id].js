@@ -1,8 +1,11 @@
 import axios from "axios";
 import styles from "../../styles";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useStateContext } from "../../contexts/ContextProvider";
+import { useState, useEffect } from "react";
 import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
+import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import CalendlyWidget from "../../components/calendlyWidget";
 import { Dialog } from "@mui/material";
@@ -17,11 +20,83 @@ export default function SingleService({ serviceData }) {
   const [formOpen, setFormOpen] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { cart, setCart } = useStateContext();
+
+  useEffect(() => {
+    const cartFromStorage = localStorage.getItem("cart");
+    if (cartFromStorage) {
+      setCart(JSON.parse(cartFromStorage));
+    }
+  }, []);
+
+  const addToCart = (bundle, action) => {
+    let newCart = [];
+    const existingCartItem = cart.find(
+      (item) => item.serviceId === serviceData._id
+    );
+  
+    if (existingCartItem) {
+      newCart = cart.map((item) =>
+        item.serviceId === serviceData._id
+          ? {
+              ...existingCartItem,
+              bundles: existingCartItem.bundles.some((b) => b.id === bundle._id)
+                ? existingCartItem.bundles.map((b) =>
+                    b.id === bundle._id
+                      ? {
+                          ...b,
+                          quantity:
+                            action === "increase"
+                              ? b.quantity + 1
+                              : b.quantity > 0
+                              ? b.quantity - 1
+                              : 0,
+                        }
+                      : b
+                  )
+                : [
+                    ...existingCartItem.bundles,
+                    {
+                      id: bundle._id,
+                      name: bundle.name,
+                      price: bundle.price,
+                      quantity: 1,
+                    },
+                  ],
+            }
+          : item
+      );
+      newCart = newCart.map((item) => ({
+        ...item,
+        bundles: item.bundles.filter((b) => b.quantity > 0),
+      }));
+      newCart = newCart.filter((item) => item.bundles.length !== 0);
+    } else if (action === "increase") {
+      newCart = [
+        ...cart,
+        {
+          serviceId: serviceData._id,
+          serviceName: serviceData.title,
+          bundleId: bundle._id,
+          bundles: [
+            {
+              id: bundle._id,
+              name: bundle.name,
+              price: bundle.price,
+              quantity: 1,
+            },
+          ],
+        },
+      ];
+    }
+  
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+  };
+  
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // setEmail("");
-    // console.log(email);
     setFormOpen(false);
     setWidgetOpen(true);
   };
@@ -45,10 +120,6 @@ export default function SingleService({ serviceData }) {
       newIndex = 0;
     }
     setActiveImageIndex(newIndex);
-  };
-
-  const handleScheduleMeeting = (bundle) => {
-    console.log(bundle);
   };
 
   return (
@@ -127,7 +198,7 @@ export default function SingleService({ serviceData }) {
             </TabList>
             {serviceData.packages.map((bundle) => (
               <TabPanel key={bundle._id}>
-                <div className="glassmorphism rounded-md p-5 mb-8 md:px-7 w-full">
+                <div className="glassmorphism-projects rounded-md p-5 mb-8 md:px-7 w-full">
                   <div className="flex justify-between pb-2 items-center">
                     <h2 className="text-center font-bold text-[16px]">
                       {bundle.name}
@@ -147,11 +218,54 @@ export default function SingleService({ serviceData }) {
                       </li>
                     ))}
                   </ul>
-                  <div
-                    onClick={() => setFormOpen(true)}
-                    className="bg-orange-700 rounded-md py-1 mt-5 items-center text-center cursor-pointer"
-                  >
-                    Continue <ArrowRightAltRoundedIcon />
+                  <div>
+                    {/* <div
+                      onClick={() => setFormOpen(true)}
+                      className="2xl:w-1/2 bg-orange-700 rounded-md py-1 items-center text-center cursor-pointer"
+                    >
+                      Continue <ArrowRightAltRoundedIcon />
+                    </div> */}
+                    <div className="my-[10px] h-[2px] rounded-md bg-white opacity-50" />
+                    {cart.find(
+                      (item) =>
+                        item.serviceId === serviceData._id &&
+                        item.bundles.some((b) => b.id === bundle._id)
+                    ) ? (
+                      <div className="flex items-center justify-between ">
+                        <div className="text-[22px]">Quantity: </div>
+                        <div className="flex gap-3 justify-center items-center">
+                          <span
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                            onClick={() => addToCart(bundle, "decrease")}
+                          >
+                            <FaMinusCircle className="w-7 h-7" />
+                          </span>
+                          <span className="text-[26px]">
+                            {
+                              cart
+                                .find(
+                                  (item) => item.serviceId === serviceData._id
+                                )
+                                .bundles.find((b) => b.id === bundle._id)
+                                .quantity
+                            }
+                          </span>
+                          <span
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                            onClick={() => addToCart(bundle, "increase")}
+                          >
+                            <FaPlusCircle className="w-7 h-7" />
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className="bg-orange-700 hover:bg-orange-500 hover:font-bold mt-1 rounded-md py-1 items-center text-center cursor-pointer text-[20px]"
+                        onClick={() => addToCart(bundle, "increase")}
+                      >
+                        Add to Cart <AddShoppingCartRoundedIcon />
+                      </div>
+                    )}
                   </div>
                   <Dialog open={formOpen} onClose={() => setFormOpen(false)}>
                     <div className="bg-black">
@@ -196,7 +310,11 @@ export default function SingleService({ serviceData }) {
                     onClose={() => setWidgetOpen(false)}
                     className="fixed z-10 inset-0 overflow-y-auto"
                   >
-                    <CalendlyWidget bundle={bundle} serviceData={serviceData} email={email}/>
+                    <CalendlyWidget
+                      bundle={bundle}
+                      serviceData={serviceData}
+                      email={email}
+                    />
                   </Dialog>
                 </div>
               </TabPanel>
