@@ -124,7 +124,7 @@ export default function SingleService({ serviceData }) {
 
   return (
     <div
-      className={`${styles.paddings} text-white relative z-[10] font-poppins`}
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white relative z-[10] font-poppins`}
     >
       <div className="gradient-02 z-[-1]" />
 

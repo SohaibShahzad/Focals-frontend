@@ -10,7 +10,7 @@ import "swiper/css/effect-cards";
 
 export default function PortfolioPage({ portfolios }) {
   return (
-    <div className={`${styles.paddings} flex flex-col text-white font-poppins`}>
+    <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto flex flex-col text-white font-poppins`}>
       <div>
         <h4 className="text-white md:text-[64px] text-[50px] font-extrabold">
           Portfolios

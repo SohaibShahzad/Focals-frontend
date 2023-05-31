@@ -50,13 +50,13 @@ export default function ContactUsPage() {
   };
 
   return (
-    <div className="text-white m-10 font-poppins relative">
+    <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative pt-10`}>
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="text-[40px] text-center font-bold">Tell Us Your Idea</h1>
       <p className="text-center">Describe your need and we will contact you</p>
       <div>
-        <form className="m-1 mt-10 md:mx-[6em] lg:mx-[10em] lg:my-[3em] xl:mx-[30em]">
+        <form className="my-10">
           <div className="flex flex-col gap-5">
             <div className="md:flex md:flex-row gap-5">
               <div className="flex flex-col w-full md:w-1/2 gap-2">

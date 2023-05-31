@@ -64,93 +64,107 @@ export default function CartCheckoutPage() {
   };
 
   return (
-    <div className={`${styles.paddings} text-white font-poppins relative`}>
+    <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}>
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="md:text-[64px] text-[50px] font-extrabold text-white relative">
         Cart
       </h1>
       <div className="mb-[30px] h-[2px]  bg-white opacity-20" />
-      <div className="flex flex-col md:flex-row md:space-y-0 md:justify-between gap-5">
-        <div className="lg:w-1/3">
-          {cart.map((service) => (
-            <div
-              key={service.serviceId}
-              className="mb-5 border-b-2 border-gray-500 border-rounded-md pb-3 flex flex-col"
-            >
-              <h1 className="text-[20px] text-center md:text-left mb-2 font-bold z-30">
-                {service.serviceName}
-              </h1>
-              <div className="z-30 flex flex-col gap-3">
-                {service.bundles.map((bundle) => (
-                  <div
-                    key={bundle.id}
-                    className="glassmorphism-projects rounded-xl py-2 px-2 justify-between h-full"
-                  >
-                    <div className="flex  justify-between items-center">
-                      <div className="flex flex-col justify-center ">
-                        <h1 className="text-[20px] font-bold">{bundle.name}</h1>
-                        <span className="text-[20px] flex items-center gap-2">
-                          <p className="text-[16px] text-gray-300">
-                            Sub-Total:
-                          </p>{" "}
-                          ${bundle.price * bundle.quantity}
-                        </span>
-                      </div>
-                      <div className="flex flex-col justify-center border-l-2 pl-3 border-gray-500 items-center">
-                        <button
-                          className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
-                          onClick={() =>
-                            addToCart(service.serviceId, bundle, "increase")
-                          }
-                        >
-                          <span className="text-[20px] font-bold">
-                            <FaPlusCircle className="w-6 h-6" />
+      {cart.length === 0 ? (
+        <div className="text-[20px]">No Items in the cart</div>
+      ) : (
+        <div className="flex flex-col md:flex-row md:space-y-0 md:justify-between gap-5">
+          <div className="lg:w-1/3">
+            {cart.map((service) => (
+              <div
+                key={service.serviceId}
+                className="mb-5 border-b-2 border-gray-500 border-rounded-md pb-3 flex flex-col"
+              >
+                <h1 className="text-[20px] text-center md:text-left mb-2 font-bold z-30">
+                  {service.serviceName}
+                </h1>
+                <div className="z-30 flex flex-col gap-3">
+                  {service.bundles.map((bundle) => (
+                    <div
+                      key={bundle.id}
+                      className="glassmorphism-projects rounded-xl py-2 px-2 justify-between h-full"
+                    >
+                      <div className="flex  justify-between items-center">
+                        <div className="flex flex-col justify-center ">
+                          <h1 className="text-[20px] font-bold">
+                            {bundle.name}
+                          </h1>
+                          <span className="text-[20px] flex items-center gap-2">
+                            <p className="text-[16px] text-gray-300">
+                              Sub-Total:
+                            </p>{" "}
+                            ${bundle.price * bundle.quantity}
                           </span>
-                        </button>
-                        <h1 className="text-[20px] font-bold">
-                          {bundle.quantity}
-                        </h1>
-                        <button
-                          className="text-orange-700 bg-white hover:text-orange-500 rounded-full cursor-pointer"
-                          onClick={() =>
-                            addToCart(service.serviceId, bundle, "decrease")
-                          }
-                        >
-                          <span className="text-[20px] font-bold">
-                            <FaMinusCircle className="w-6 h-6" />
-                          </span>
-                        </button>
+                        </div>
+                        <div className="flex flex-col justify-center border-l-2 pl-3 border-gray-500 items-center">
+                          <button
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                            onClick={() =>
+                              addToCart(service.serviceId, bundle, "increase")
+                            }
+                          >
+                            <span className="text-[20px] font-bold">
+                              <FaPlusCircle className="w-6 h-6" />
+                            </span>
+                          </button>
+                          <h1 className="text-[20px] font-bold">
+                            {bundle.quantity}
+                          </h1>
+                          <button
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full cursor-pointer"
+                            onClick={() =>
+                              addToCart(service.serviceId, bundle, "decrease")
+                            }
+                          >
+                            <span className="text-[20px] font-bold">
+                              <FaMinusCircle className="w-6 h-6" />
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="lg:w-1/3">
-          <div className="glassmorphism-projects rounded-xl p-2 relative ">
-            <div className="flex flex-col gap-2">
-              <span className="flex justify-between items-center">
-                <h1 className="text-[20px]">Total:</h1>
-                <h1 className="text-[24px] font-bold">
-                  ${calculateTotalPrice().toLocaleString()}
-                </h1>
-              </span>
-              <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
-                <button className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md">
-                  <h1 className="text-[20px] font-bold">Payment</h1>
-                </button>
+            ))}
+          </div>
+          <div className="lg:w-1/3">
+            <div className="glassmorphism-projects rounded-xl p-2 relative">
+              <div className="flex flex-col gap-2 justify-between h-[250px]">
+                <span className="flex justify-between items-center">
+                  <h1 className="text-[20px]">Total:</h1>
+                  <h1 className="text-[24px] font-bold">
+                    ${calculateTotalPrice().toLocaleString()}
+                  </h1>
+                </span>
+                <div>
+                  <div className="h-[2px] bg-[#666666] mb-2" />
+                  <div className="flex flex-col  gap-2">
+                    <button className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md">
+                      <h1 className="text-[20px] font-bold">Payment</h1>
+                    </button>
 
-                <Link className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md hover:bg-orange-500" href="/services">
-                  <h1 className="text-[20px] font-bold">Add More</h1>
-                </Link>
+                    <Link
+                      className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md hover:bg-orange-500"
+                      href="/services"
+                    >
+                      <h1 className="text-[20px] text-center font-bold">
+                        + Add More Items
+                      </h1>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

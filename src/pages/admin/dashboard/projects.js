@@ -100,6 +100,56 @@ function AdminChat({ chatId }) {
   );
 }
 
+function EditProjectForm({ project, onDone }) {
+  const [status, setStatus] = useState(project.status);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}projects/updateProject/${project.userId}/${project._id}`,
+        {
+          status,
+        }
+      );
+      // If successful, exit edit mode
+      onDone();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+      >
+        <option className="text-black  text-[15px]  max-w-[150px]">
+          Scheduled
+        </option>
+        <option className="text-black  text-[15px]  max-w-[150px]">
+          In Progress
+        </option>
+        <option className="text-black  text-[15px]  max-w-[150px]">
+          Revision
+        </option>
+        <option className="text-black  text-[15px]  max-w-[150px]">
+          Awaiting Approval
+        </option>
+        <option className="text-black  text-[15px]  max-w-[150px]">
+          Completed
+        </option>
+      </select>
+      <button type="submit">Update</button>
+      <button type="button" onClick={onDone}>
+        Cancel
+      </button>
+    </form>
+  );
+}
+
 export default function Projects({ projects }) {
   const [activeTab, setActiveTab] = useState(0);
   const [expandedProject, setExpandedProject] = useState(null);
@@ -111,6 +161,7 @@ export default function Projects({ projects }) {
   const [isSearchOpenCompleted, setIsSearchOpenCompleted] = useState(false);
   const [ongoingProjects, setOngoingProjects] = useState([]);
   const [completedProjects, setCompletedProjects] = useState([]);
+  const [editingProject, setEditingProject] = useState(null);
 
   useEffect(() => {
     const ongoing = [];
@@ -121,12 +172,14 @@ export default function Projects({ projects }) {
         ongoing.push({
           ...project,
           email: userProject.email,
+          userId: userProject.user,
         });
       });
       userProject.projectHistory.forEach((project) => {
         completed.push({
           ...project,
           email: userProject.email,
+          userId: userProject.user,
         });
       });
     });
@@ -150,6 +203,15 @@ export default function Projects({ projects }) {
 
   const handleTabChange = (index) => {
     setActiveTab(index);
+  };
+
+  const handleEdit = (project) => {
+    if (editingProject && editingProject._id === project._id) {
+      console.log("null", project);
+      setEditingProject(null);
+    } else {
+      setEditingProject(project);
+    }
   };
 
   const handleExpand = (project) => {
@@ -211,10 +273,7 @@ export default function Projects({ projects }) {
             Completed
           </Tab>
         </TabList>
-        <TabPanel
-          style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-          className="h-auto overflow-auto "
-        >
+        <TabPanel>
           <div className="mr-3">
             <div className="flex items-center justify-between">
               <h3 className="font-bold underline text-[18px]">In Progress:</h3>
@@ -265,46 +324,55 @@ export default function Projects({ projects }) {
               </div>
             )}
           </div>
-          {filteredOngoingProjects.map((project) => (
-            // Map each project to a component that displays the project info
-            <div
-              key={project._id}
-              className="text-white bg-[#313132] rounded-md p-5 mb-3 mr-3 md:px-7"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-[18px] xs:text-[20px]">
-                  {project.projectName}
-                </h2>
-                {expandedProject === project._id ? (
-                  <MdKeyboardArrowDown
-                    className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                    onClick={() => handleExpand(project)}
-                  />
-                ) : (
-                  <MdKeyboardArrowRight
-                    className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                    onClick={() => handleExpand(project)}
-                  />
+          <div
+            style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
+            className="overflow-y-auto"
+          >
+            {filteredOngoingProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className="text-white bg-[#313132] rounded-md p-5 mb-3 mr-3 md:px-7"
+              >
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown
+                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                      onClick={() => handleExpand(project)}
+                    />
+                  ) : (
+                    <MdKeyboardArrowRight
+                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                      onClick={() => handleExpand(project)}
+                    />
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <button onClick={() => handleEdit(project)}>Edit</button>
+                    {editingProject && editingProject._id === project._id && (
+                      <EditProjectForm
+                        project={editingProject}
+                        onDone={() => handleEdit(project)}
+                      />
+                    )}
+                    <button
+                      className="p-1 rounded-full bg-orange-500"
+                      onClick={() => {}}
+                    >
+                      <RiChat1Line className="w-7 h-7" />
+                    </button>
+                    <AdminChat chatId={project._id} />
+                  </div>
                 )}
               </div>
-              {expandedProject === project._id && (
-                <div>
-                  <button
-                    className="p-1 rounded-full bg-orange-500"
-                    onClick={() => {}}
-                  >
-                    <RiChat1Line className="w-7 h-7" />
-                  </button>
-                  <AdminChat chatId={project._id} />
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </TabPanel>
-        <TabPanel
-        // style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-        // className="h-auto overflow-auto"
-        >
+        <TabPanel>
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
               <h3 className="font-bold underline text-[18px]">History:</h3>
@@ -344,10 +412,46 @@ export default function Projects({ projects }) {
               </div>
             )}
           </div>
-          {filteredCompletedProjects.map((project) => (
-            // Map each project to a component that displays the project info
-            <div key={project._id}>{/* Project info goes here */}</div>
-          ))}
+          <div
+            style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
+            className="overflow-y-auto"
+          >
+            {filteredCompletedProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className="text-white bg-[#313132] rounded-md p-5 mb-3 mr-3 md:px-7"
+              >
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown
+                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                      onClick={() => handleExpand(project)}
+                    />
+                  ) : (
+                    <MdKeyboardArrowRight
+                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                      onClick={() => handleExpand(project)}
+                    />
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <button onClick={() => handleEdit(project)}>Edit</button>
+                    {editingProject && editingProject._id === project._id && (
+                      <EditProjectForm
+                        project={editingProject}
+                        onDone={() => handleEdit(project)}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </TabPanel>
       </Tabs>
     </div>

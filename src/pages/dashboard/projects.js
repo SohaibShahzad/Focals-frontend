@@ -18,7 +18,7 @@ function ProjectChat({ chatId, userData }) {
 
   const scrollToBottom = () => {
     messagesRef.current.scrollIntoView({ behavior: "smooth" });
-  }
+  };
 
   useEffect(() => {
     const messageHandler = ({ user, message }) => {
@@ -48,7 +48,7 @@ function ProjectChat({ chatId, userData }) {
     };
   }, []);
 
-  useEffect(scrollToBottom, [messages]); 
+  useEffect(scrollToBottom, [messages]);
 
   const sendMessage = (event) => {
     event.preventDefault();
@@ -154,69 +154,135 @@ export default function UserProjects({ userProjects, userData }) {
                 Completed
               </Tab>
             </TabList>
-            <TabPanel
-              style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-              className="h-auto overflow-auto"
-            >
-              {userProjects.ongoingProjects.map((project) => (
-                <div
-                  key={project._id}
-                  className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <h2 className="text-[18px] xs:text-[20px]">
-                        {project.projectName}
-                      </h2>
-                      <p className="text-[14px] xs:text-[16px] text-gray-300">
-                        Date:
-                        {project.startDate === null ? "TBD" : project.startDate}
-                        - {project.endDate === null ? "TBD" : project.endDate}
-                      </p>
+            <TabPanel>
+              <div
+                style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
+                className="overflow-y-auto"
+              >
+                {userProjects.ongoingProjects.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : project.startDate}
+                          - {project.endDate === null ? "TBD" : project.endDate}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      )}
                     </div>
-                    {expandedProject === project._id ? (
-                      <MdKeyboardArrowDown
-                        className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                        onClick={() => handleExpand(project)}
-                      />
-                    ) : (
-                      <MdKeyboardArrowRight
-                        className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                        onClick={() => handleExpand(project)}
-                      />
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                          <ProjectChat
+                            chatId={project._id}
+                            userData={userData}
+                          />
+                        </div>
+                      </>
                     )}
                   </div>
-                  {expandedProject === project._id && (
-                    <>
-                      <div className="h-1 my-3 bg-gray-500 rounded-md" />
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between">
-                          Progress:
-                          <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
-                            {project.progress}%
-                            <ProgressBar progress={project.progress} />
-                          </div>
-                        </div>
-                        <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
-                          <div className="text-center p-2 border-4 border-orange-700 rounded-md">
-                            Meeting
-                            <p>{project.meetingStatus}</p>
-                          </div>
-                          <div className="text-center p-2 border-4 border-orange-700 rounded-md">
-                            Status
-                            <p>{project.status}</p>
-                          </div>
-                        </div>
-                        <ProjectChat chatId={project._id} userData={userData} />
-                      </div>
-                    </>
-                  )}
-                  <div className="" />
-                </div>
-              ))}
+                ))}
+              </div>
             </TabPanel>
             <TabPanel>
-              <div>{userProjects.user}</div>
+              <div
+                style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
+                className="overflow-y-auto"
+              >
+                {userProjects.projectHistory.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : project.startDate}
+                          - {project.endDate === null ? "TBD" : project.endDate}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      )}
+                    </div>
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
             </TabPanel>
           </Tabs>
         </div>

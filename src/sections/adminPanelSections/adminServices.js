@@ -13,6 +13,8 @@ import { IconButton, Dialog, DialogContent } from "@mui/material";
 import axios from "axios";
 
 const ServicesPanel = ({ services }) => {
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [promptMessage, setPromptMessage] = useState({});
   const [serviceId, setServiceId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -117,18 +119,39 @@ const ServicesPanel = ({ services }) => {
     try {
       let response;
       if (isUpdate) {
+        setShowPrompt(true);
+        setPromptMessage({
+          message: "Updating Service...",
+          styling: "bg-blue-300 text-blue-700",
+        });
         setSelectedServiceForUpdate(null);
         response = await axios.put(
           `${process.env.NEXT_PUBLIC_SERVER_URL}services/updateServiceById/${selectedServiceForUpdate.id}`,
           formData
         );
+        setPromptMessage({
+          message: response.data.message,
+          styling: "bg-green-300 text-green-700",
+        });
       } else {
+        setShowPrompt(true);
+        setPromptMessage({
+          message: "Adding Service...",
+          styling: "bg-blue-300 text-blue-700",
+        });
         response = await axios.post(
           `${process.env.NEXT_PUBLIC_SERVER_URL}services/addNewServiceWithImages`,
           formData
         );
+        setPromptMessage({
+          message: response.data.message,
+          styling: "bg-green-300 text-green-700",
+        });
       }
       fetchServices();
+      setTimeout(() => {
+        setShowPrompt(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -194,7 +217,6 @@ const ServicesPanel = ({ services }) => {
       flex: 1,
       renderCell: (params) => {
         const onClickEdit = () => {
-          console.log(params);
           setIsUpdate(true);
           setButtonLabel("Update");
           setAddNewForm(true);
@@ -234,13 +256,20 @@ const ServicesPanel = ({ services }) => {
 
   return (
     <div className="font-poppins">
+      {showPrompt && (
+        <div
+          className={`${promptMessage.styling} px-4 py-2 text-center text-[20px] font-bold rounded-md absolute bottom-10 right-10`}
+        >
+          {promptMessage.message}
+        </div>
+      )}
       {initialLoading ? (
         <div className="flex justify-center items-center h-screen">
           <ReactLoading type="spin" color="#000" />
         </div>
       ) : (
         <div>
-          <div className="mb-2 flex flex-row justify-between">
+          <div className="mb-2 flex flex-row justify-between items-center">
             <div className="text-3xl">Services</div>
             <button
               className="py-2 px-4 bg-orange-400 rounded-md"

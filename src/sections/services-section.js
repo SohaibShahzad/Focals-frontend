@@ -53,9 +53,9 @@ const ServicesSection = () => {
               {servicesData.map((service) => (
                 <div
                   key={service._id}
-                  className="p-5 glassmorphism rounded-md flex gap-5 flex-col justify-between h-full"
+                  className="p-5 glassmorphism-projects rounded-md flex gap-5 flex-col justify-between h-full"
                 >
-                  <div className="">
+                  <div>
                     <div className="flex justify-center my-3">
                       <img
                         src={service.thumbnail}
@@ -66,11 +66,14 @@ const ServicesSection = () => {
                     <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
                       {service.title}
                     </h3>
-
-                    <p
-                      className="pt-2 px-2 md:pt-1 text-[18px] pb-2 text-center flex justify-center"
-                      dangerouslySetInnerHTML={{ __html: service.description }}
-                    />
+                    <div className="flex flex-col justify-around items-center">
+                      <p
+                        className="pt-2 px-2 md:pt-1 text-[18px] pb-2 text-center"
+                        dangerouslySetInnerHTML={{
+                          __html: service.description,
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <Link

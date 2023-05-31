@@ -17,7 +17,9 @@ export default function BlogsPage({ blogs }) {
     return includeTitle;
   });
   return (
-    <div className={`${styles.paddings} text-white font-poppins`}>
+    <div
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins`}
+    >
       <div className="flex justify-between items-center">
         <h1 className="md:text-[64px] text-[50px] font-extrabold light-text ">
           Our Blogs
@@ -58,7 +60,11 @@ export default function BlogsPage({ blogs }) {
             className="glassmorphism rounded-xl justify-between h-full"
           >
             <div className="flex justify-center items-center h-[150px]">
-              <img src={blog.image} alt={blog.title} className="rounded-t-xl w-[100%] h-[100%] object-cover" />
+              <img
+                src={blog.image}
+                alt={blog.title}
+                className="rounded-t-xl w-[100%] h-[100%] object-cover"
+              />
             </div>
             <div className="p-5 flex flex-col">
               <div>

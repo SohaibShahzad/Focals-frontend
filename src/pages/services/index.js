@@ -12,7 +12,9 @@ export default function ServicesPage({ services }) {
     service.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
-    <div className={`${styles.paddings} text-white font-poppins`}>
+    <div
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins`}
+    >
       <div className="flex justify-between items-center">
         <h1 className="md:text-[64px] text-[50px] font-extrabold light-text ">
           Our Services
@@ -43,11 +45,11 @@ export default function ServicesPage({ services }) {
       ) : (
         <div></div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 m-4 ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
         {filteredServices.map((service) => (
           <div
             key={service._id}
-            className="p-5 glassmorphism rounded-xl mb-5 flex gap-5 flex-col justify-between h-full"
+            className="p-5 glassmorphism-projects rounded-xl mb-5 flex gap-5 flex-col justify-between h-full"
           >
             <div className="flex flex-col justify-center items-center">
               <div className="flex justify-center my-3">
@@ -60,8 +62,10 @@ export default function ServicesPage({ services }) {
               <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
                 {service.title}
               </h3>
-              <p className="mt-2 items-center text-center md:pt-1 text-[18px] " dangerouslySetInnerHTML={{ __html: service.description }}/>
-
+              <p
+                className="mt-2 items-center text-center md:pt-1 text-[18px] "
+                dangerouslySetInnerHTML={{ __html: service.description }}
+              />
             </div>
             <Link
               href={`/services/${service._id}`}
