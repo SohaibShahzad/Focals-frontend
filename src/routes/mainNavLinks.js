@@ -1,8 +1,8 @@
 export const mainNavLinks = [
-  // {
-  //   title: "Home",
-  //   link: "/",
-  // },
+  {
+    title: "Home",
+    link: "/",
+  },
   {
     title: "Services",
     link: "/services",

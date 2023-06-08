@@ -302,3 +302,16 @@
     padding-bottom: 75%; /* Adjust aspect ratio for smaller screens */
   }
 }
+
+
+.aspect-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%; /* 100% / 16:9 Aspect Ratio */
+}
+
+.video-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

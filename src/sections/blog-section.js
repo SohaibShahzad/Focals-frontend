@@ -9,7 +9,7 @@ import { CustomCarousel } from "../components/blogCarouselNew";
 
 const BlogSection = () => {
   const [blogData, setBlogData] = useState([]);
-  const [itemsToShow, setItemsToShow] = useState(4);
+  const [itemsToShow, setItemsToShow] = useState(3);
 
   const updateItemsToShow = () => {
     const screenWidth = window.innerWidth;

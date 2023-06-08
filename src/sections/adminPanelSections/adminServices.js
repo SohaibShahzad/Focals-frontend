@@ -7,7 +7,7 @@ import ReactLoading from "react-loading";
 import DialogActions from "@mui/material/DialogActions";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import ViewAgendaRoundedIcon from "@mui/icons-material/ViewAgendaRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { IconButton, Dialog, DialogContent } from "@mui/material";
 import axios from "axios";
@@ -247,7 +247,7 @@ const ServicesPanel = ({ services }) => {
         return (
           <>
             <IconButton onClick={onClickView}>
-              <ViewAgendaRoundedIcon />
+              <VisibilityRoundedIcon />
             </IconButton>
             <IconButton onClick={onClickEdit}>
               <EditRoundedIcon />

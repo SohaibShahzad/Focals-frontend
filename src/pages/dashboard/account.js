@@ -123,7 +123,7 @@ export default function AccountSettings({ user }) {
           )}
         </div>
         {resetPassword && (
-          <div className="bg-gray-100 p-4 mt-2 rounded-md">
+          <div className="bg-[#333333] p-4 mt-2 rounded-md">
             <div className="flex justify-between sm:pb-4 items-center">
               <h1 className="text-xl font-bold">Change Password</h1>
               <div
@@ -134,7 +134,7 @@ export default function AccountSettings({ user }) {
               </div>
             </div>
 
-            <form>
+            <form onSubmit={handleUpdatePassword}>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="flex flex-col sm:items-center sm:gap-5 mt-3 sm:mt-0">
                   {confirmPassword ? (
@@ -151,7 +151,7 @@ export default function AccountSettings({ user }) {
                           errorMessage
                             ? "border-red-500 border-4"
                             : " border-2 border-gray-500"
-                        } rounded-md p-2`}
+                        } rounded-md p-2 bg-transparent`}
                         value={prevPassword}
                         onChange={(e) => {
                           setErrorMessage("");
@@ -173,7 +173,7 @@ export default function AccountSettings({ user }) {
                           errorMessage
                             ? "border-red-500 border-4"
                             : " border-2 border-gray-500"
-                        } rounded-md p-2`}
+                        } rounded-md p-2 bg-transparent`}
                         value={password}
                         onChange={(e) => {
                           setErrorMessage("");
@@ -194,6 +194,7 @@ export default function AccountSettings({ user }) {
                   </div>
                 )}
                 <button
+                type="submit"
                   onClick={handleUpdatePassword}
                   className="px-7 py-2 rounded-md bg-green-500 text-white text-[18px]"
                 >

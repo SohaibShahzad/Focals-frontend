@@ -7,6 +7,7 @@ import io from "socket.io-client";
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import { TbSend } from "react-icons/tb";
 import ProgressBar from "../../components/progressBar";
+import { RiChat1Line } from "react-icons/ri";
 
 const jwt_decode = jwt.decode;
 let socket;
@@ -39,6 +40,7 @@ function ProjectChat({ chatId, userData }) {
         );
       });
       socket.on("chat", messageHandler);
+      socket.emit("requestChatHistory", { chatId });
     }
 
     return () => {
@@ -101,6 +103,8 @@ function ProjectChat({ chatId, userData }) {
 export default function UserProjects({ userProjects, userData }) {
   const [activeTab, setActiveTab] = useState(0);
   const [expandedProject, setExpandedProject] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatId, setChatId] = useState(null);
 
   useEffect(() => {
     socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
@@ -119,6 +123,7 @@ export default function UserProjects({ userProjects, userData }) {
     if (expandedProject === project._id) {
       setExpandedProject(null);
       socket.emit("leave", { chatId: expandedProject });
+      setShowChat(false);
     } else {
       setExpandedProject(project._id);
       socket.emit("join", {
@@ -130,6 +135,11 @@ export default function UserProjects({ userProjects, userData }) {
 
   const handleTabChange = (index) => {
     setActiveTab(index);
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -173,19 +183,28 @@ export default function UserProjects({ userProjects, userData }) {
                           Date:
                           {project.startDate === null
                             ? "TBD"
-                            : project.startDate}
-                          - {project.endDate === null ? "TBD" : project.endDate}
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
                         </p>
                       </div>
                       {expandedProject === project._id ? (
                         <MdKeyboardArrowDown
                           className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                          onClick={() => handleExpand(project)}
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
                         />
                       ) : (
                         <MdKeyboardArrowRight
                           className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                          onClick={() => handleExpand(project)}
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
                         />
                       )}
                     </div>
@@ -210,11 +229,26 @@ export default function UserProjects({ userProjects, userData }) {
                               <p>{project.status}</p>
                             </div>
                           </div>
+                        </div>
+                        <button
+                          className="p-1 rounded-full bg-orange-500"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setShowChat(true);
+                              setChatId(project._id);
+                            }
+                          }}
+                        >
+                          <RiChat1Line className="w-7 h-7" />
+                        </button>
+                        {showChat && chatId === project._id && (
                           <ProjectChat
                             chatId={project._id}
                             userData={userData}
                           />
-                        </div>
+                        )}
                       </>
                     )}
                   </div>
@@ -240,8 +274,11 @@ export default function UserProjects({ userProjects, userData }) {
                           Date:
                           {project.startDate === null
                             ? "TBD"
-                            : project.startDate}
-                          - {project.endDate === null ? "TBD" : project.endDate}
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
                         </p>
                       </div>
                       {expandedProject === project._id ? (

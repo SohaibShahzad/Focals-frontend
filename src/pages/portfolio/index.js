@@ -81,16 +81,15 @@ export default function PortfolioPage({ portfolios }) {
         </h4>
         <div className="mb-[50px] h-[2px] bg-white opacity-20" />
       </div>
+      <div className="relative grid lg:grid-cols-2 gap-10 md:gap-20">
+        <div className="gradient-03" />
+        <div className="gradient-02" />
       {portfolios.map((portfolio, index) => {
         const media = [...portfolio.url, ...portfolio.images];
         return (
-          <div className="relative grid lg:grid-cols-3 gap-10 items-center mb-10 border-b-2 pb-10 border-[#555555]">
-            <div className="gradient-03" />
-            <div className="gradient-02" />
+          <div className="items-center ">
             <div
-              className={`lg:col-span-2 text-center rounded-md  ${
-                index % 2 === 0 ? "lg:order-first" : "lg:order-last"
-              }`}
+              className={` text-center rounded-md  `}
             >
               <div className="relative w-full">
                 <div style={{ paddingBottom: "56.25%" }} />
@@ -106,7 +105,7 @@ export default function PortfolioPage({ portfolios }) {
                       x: { type: "spring", stiffness: 300, damping: 30 },
                       opacity: { duration: 0.2 },
                     }}
-                    className="absolute inset-0 flex items-center justify-center rounded-lg overflow-hidden"
+                    className="absolute inset-0 flex items-center justify-center rounded-t-lg overflow-hidden"
                   >
                     {activeImageIndexes[index] < portfolio.url.length ? (
                       <ReactPlayer
@@ -125,7 +124,7 @@ export default function PortfolioPage({ portfolios }) {
                     ) : (
                       <img
                         src={media[activeImageIndexes[index]]}
-                        className="rounded-lg"
+                        className="rounded-t-lg"
                       />
                     )}
                   </motion.div>
@@ -147,26 +146,27 @@ export default function PortfolioPage({ portfolios }) {
                   &gt;
                 </button>
               </div>
-            </div>
             <div
-              className={`rounded-md glassmorphism-projects z-30 p-2 ${
+              className={`rounded-b-lg bg-[#222222]  p-2 ${
                 index % 2 === 0 ? "lg:order-last" : "lg:order-first"
               }`}
             >
               <h1 className="text-[24px] text-center font-bold tracking-wide">
                 {portfolio.title}
               </h1>
-              <div className="text-[20px] text-[#dddddd]">
+              {/* <div className="text-[20px] text-[#dddddd]">
                 {portfolio.description}
               </div>
               <div className="flex items-center justify-between">
                 <h3 className="text-[#BBBBBB]">{portfolio.clientName}</h3>
                 <RatingStars rating={portfolio.stars} />
-              </div>
+              </div> */}
+            </div>
             </div>
           </div>
         );
       })}
+      </div>
     </div>
   );
 }

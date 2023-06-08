@@ -70,8 +70,6 @@ const UserPanel = ({ user }) => {
   const [ongoingProjectsCount, setOngoingProjectsCount] = useState(0);
   const [completedProjectsCount, setCompletedProjectsCount] = useState(0);
 
-  const totalProjects = ongoingProjectsCount + completedProjectsCount;
-
   useEffect(() => {
     const fetchProjectsCount = async () => {
       try {
@@ -125,10 +123,10 @@ const UserPanel = ({ user }) => {
       </main>
       <div>
         <h1 className="text-2xl md:text-3xl pb-3">At a Glance!</h1>
-      <div className="bg-[#333333] pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
-        <span className="text-center">Projects</span>
-        <Doughnut data={data} options={options} />
-      </div>
+        <div className="bg-[#333333] pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
+          <span className="text-center">Projects</span>
+          <Doughnut data={data} options={options} />
+        </div>
       </div>
     </div>
   );

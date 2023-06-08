@@ -416,8 +416,7 @@ export default function LoginRegister() {
             {login && !forgotPassword && (
               <form
                 onSubmit={(e) => {
-                  console.log("Login");
-                  e.preventDefault();
+                  handleLogin(e, setAuthenticated);
                 }}
               >
                 <div className="flex flex-col gap-4">
@@ -460,6 +459,7 @@ export default function LoginRegister() {
                       </label>
                     </div>
                     <button
+                    type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         setLogin(false);
@@ -468,6 +468,7 @@ export default function LoginRegister() {
                         resetForm();
                         setForgotPassword(true);
                         setResetPassword(false);
+                        setLoginError(false);
                       }}
                       className="underline text-xs z-30"
                     >
@@ -514,7 +515,7 @@ export default function LoginRegister() {
                     className="bg-orange-700 py-[8px] px-[24px] w-full rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
                     onClick={handlePasswordResetRequest}
                   >
-                    Sent OTP
+                    Send OTP
                   </button>
                   {loginError && (
                     <div
@@ -674,7 +675,7 @@ export default function LoginRegister() {
                     <div className="space-x-1">
                       {otp.map((value, index) => (
                         <input
-                          type="text"
+                          type="tel"
                           key={index}
                           value={value}
                           maxLength="1"

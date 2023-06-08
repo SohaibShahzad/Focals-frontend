@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { MdTune } from "react-icons/md";
+import { FiSearch } from "react-icons/fi";
 import styles from "../../styles";
 
 export default function ServicesPage({ services }) {
@@ -23,20 +23,20 @@ export default function ServicesPage({ services }) {
           className="object-contain cursor-pointer"
           onClick={() => setFilterToggle((prev) => !prev)}
         >
-          <MdTune style={{ color: "white", fontSize: "2rem" }} />
+          <FiSearch style={{ color: "white", fontSize: "2rem" }} />
         </div>
       </div>
-      <div className="mb-[50px] h-[2px]  bg-white opacity-20" />
+      <div className="mb-[20px] h-[2px]  bg-white opacity-20" />
       {filterToggle ? (
         <div className="flex flex-row gap-9 flex-wrap md:flex-nowrap">
           <div className="mb-5">
             <label htmlFor="title-filter" className="light-text mr-3">
-              Filter by Name:
+              Search by Name:
             </label>
             <input
               placeholder="Enter Name"
               type="text"
-              className="text-gray-700 px-5 py-1.5 rounded-md placeholder:text-gray-700"
+              className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

@@ -1,96 +1,143 @@
 import ReactPlayer from "react-player";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { portfolioVariants } from "../helper/motion";
+import {
+  BsFillArrowLeftSquareFill,
+  BsFillArrowRightSquareFill,
+} from "react-icons/bs";
+import {
+  TiStarFullOutline,
+  TiStarHalfOutline,
+  TiStarOutline,
+} from "react-icons/ti";
+import { HiPlay } from "react-icons/hi";
 
 const variants = {
-  visible: (direction = 0) => {
+  enter: (direction) => {
     return {
-      opacity: 1,
-      x: 0,
-      transition: {
-        x: { type: "spring", stiffness: 300, damping: 30 },
-      },
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
     };
   },
-  hidden: (direction = 0) => {
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => {
     return {
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
       opacity: 0,
-      x: direction > 0 ? 100 : -100,
     };
   },
 };
 
-export const VideoCarousel = () => {
-  const [portfolioData, setPortfolioData] = useState([]);
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+const RatingStars = ({ rating }) => {
+  const fullStars = Math.floor(rating);
+  const halfStars = rating % 1 !== 0;
+  const emptyStars = 5 - fullStars - (halfStars ? 1 : 0);
+
+  return (
+    <div className="flex items-center">
+      {[...Array(fullStars)].map((_, index) => (
+        <TiStarFullOutline
+          key={index}
+          className="text-yellow-400 w-5 h-5 mr-1"
+        />
+      ))}
+      {halfStars && (
+        <TiStarHalfOutline className="text-yellow-400 w-5 h-5 mr-1" />
+      )}
+      {[...Array(emptyStars)].map((_, index) => (
+        <TiStarOutline key={index} className="text-yellow-400 w-5 h-5 mr-1" />
+      ))}
+    </div>
+  );
+};
+
+export const VideoCarousel = ({ items, itemsToShow }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [visibleItems, setVisibleItems] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getSpecialPortfolio`
-      );
+    setVisibleItems(items.slice(currentIndex, currentIndex + itemsToShow));
+  }, [currentIndex, items, itemsToShow]);
 
-      // Iterate through the data and push only the URLs into the portfolioData array
-      const urlArray = [];
-      res.data.forEach((item) => {
-        item.url.forEach((url) => {
-          urlArray.push(url);
-        });
-      });
-      setPortfolioData(urlArray);
-      console.log(portfolioData);
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setDirection(-1);
     }
-    fetchData();
-  }, []);
+  };
 
-  const paginate = (newDirection) => {
-    setDirection(newDirection);
-    setCurrentVideoIndex(
-      (prevIndex) =>
-        (prevIndex + newDirection + portfolioData.length) % portfolioData.length
-    );
+  const handleNext = () => {
+    if (currentIndex < items.length - itemsToShow) {
+      setCurrentIndex(currentIndex + 1);
+      setDirection(1);
+    }
   };
 
   return (
-    <div
-      className=""
-      style={{ maxWidth: "80%", margin: "0 auto", width: "100%" }}
-    >
-      <div style={{ paddingBottom: "56.25%" }} />
+    <div className="relative flex flex-col items-center gap-10">
+      <div className="gradient-03"/>
+      <div className="gap-5 flex transition-all duration-500 ease-in-out">
+        {items.length === 0 ? (
+          <div className={`p-5 glassmorphism rounded-lg h-full mx-2`}>
+            <div className="flex flex-col gap-5 justify-center items-center">
+              <h3 className="text-[24px]">No blogs available</h3>
+            </div>
+          </div>
+        ) : (
+          visibleItems.map((item, index) => (
+            <motion.div
+              custom={direction}
+              key={item._id}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="w-full md:w-[80%] lg:w-[60%] mx-2 flex flex-col justify-between"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+            >
+              <div className="glassmorphism-projects rounded-lg">
+                <ReactPlayer
+                  url={item.url[0]}
+                  controls={true}
+                  // light={true}
+                  playIcon={
+                    <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
+                      <HiPlay className="w-16 h-16" />
+                    </button>
+                  }
+                  className="object-cover "
+                  width="auto"
+                  height="auto"
+                />
+                <div className="flex flex-col py-4 items-center font-poppins justify-center">
 
-      <AnimatePresence initial={false} custom={direction}>
-        <motion.div
-          custom={direction}
-          key={currentVideoIndex}
-          variants={portfolioVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          className=" w-full overflow-hidden"
-        >
-          <ReactPlayer
-            url={portfolioData[currentVideoIndex]}
-            className="absolute top-0 object-cover"
-            width="100%"
-            height="100%"
-          />
-        </motion.div>
-      </AnimatePresence>
-      <button
-        onClick={() => paginate(-1)}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md z-10"
-      >
-        &lt;
-      </button>
-      <button
-        onClick={() => paginate(1)}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md z-10"
-      >
-        &gt;
-      </button>
+                  <h3 className="text-[24px]">{item.title}</h3>
+                  <RatingStars rating={item.stars} />
+                </div>
+              </div>
+            </motion.div>
+          ))
+        )}
+      </div>
+      {items.length > itemsToShow && (
+        <div className="space-x-5">
+          <button className="" onClick={handlePrev}>
+            <BsFillArrowLeftSquareFill className="text-orange-600 hover:text-orange-800 rounded-md bg-white w-9 h-9 " />
+          </button>
+          <button className="" onClick={handleNext}>
+            <BsFillArrowRightSquareFill className="text-orange-600 hover:text-orange-800 rounded-md bg-white w-9 h-9" />
+          </button>
+        </div>
+      )}{" "}
     </div>
   );
 };

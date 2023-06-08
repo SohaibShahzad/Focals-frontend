@@ -35,6 +35,8 @@ const NavBar = () => {
   const token = cookies.token;
   const isAuthenticated = !!token;
   const isUser = token ? jwt_decode(token).type === "user" : false;
+  const isAdmin = token ? jwt_decode(token).type === "admin" : false;
+  const isSub = token ? jwt_decode(token).type === "subadmin" : false;
 
   useEffect(() => {
     async function fetchData() {
@@ -53,7 +55,7 @@ const NavBar = () => {
           setShowDropdown(false);
         }, 100);
       }
-    }
+    };
     document.addEventListener("mouseup", handleClickOutside);
     return () => {
       document.removeEventListener("mouseup", handleClickOutside);
@@ -179,7 +181,7 @@ const NavBar = () => {
         </Link>
 
         <div className={`${classes.menuItems}`}>
-          <ul className="list-none md:flex hidden justify-end items-center">
+          <ul className="list-none lg:flex hidden justify-end items-center">
             {mainNavLinks.map((link, index) => (
               <li
                 key={index}
@@ -289,7 +291,12 @@ const NavBar = () => {
                             ${calculateTotalPrice()}
                           </span>
                         </div>
-                        <Link href="/cart-checkout" className="bg-orange-800 hover:bg-orange-600 rounded-md mt-2 py-1 items-center flex justify-center">Proceed to Checkout</Link>
+                        <Link
+                          href="/cart-checkout"
+                          className="bg-orange-800 hover:bg-orange-600 rounded-md mt-2 py-1 items-center flex justify-center"
+                        >
+                          Proceed to Checkout
+                        </Link>
                       </>
                     ) : (
                       <div>No Item</div>
@@ -343,7 +350,7 @@ const NavBar = () => {
                 </div>
               )}
             </div>
-            {isAuthenticated && isUser ? (
+            {isAuthenticated ? (
               <div className="relative">
                 <button
                   className="ml-4 bg-orange-700 hover:bg-orange-500 rounded-full p-1 "
@@ -360,7 +367,17 @@ const NavBar = () => {
                     className="space-y-1 p-6 absolute top-10 right-0 mt-2 rounded-lg bg-gray-900 navbar-sm-animation z-50"
                   >
                     <li className="mb-5 cursor-pointer">
-                      <Link href="/dashboard">Dashboard</Link>
+                      <Link
+                        href={
+                          isAdmin
+                            ? "/admin/dashboard"
+                            : isSub
+                            ? "/subadmin/dashboard"
+                            : "/dashboard"
+                        }
+                      >
+                        Dashboard
+                      </Link>{" "}
                     </li>
                     <li className="cursor-pointer" onClick={handleLogout}>
                       Logout
@@ -378,7 +395,7 @@ const NavBar = () => {
             )}
           </ul>
           {/* //!Mobile Navbar */}
-          <div className="md:hidden flex flex-1 justify-end items-center">
+          <div className="lg:hidden flex flex-1 justify-end items-center">
             {isAuthenticated && isUser && (
               <div className="relative">
                 <div className="relative">
@@ -394,7 +411,6 @@ const NavBar = () => {
                     )}
                   </Link>
                 </div>
-                
               </div>
             )}
             {isAuthenticated && isUser ? (

@@ -17,6 +17,7 @@ const PortfolioPanel = ({ portfolios }) => {
   const [stars, setStars] = useState(0);
   const [images, setImages] = useState([]);
   const [url, setUrl] = useState([]);
+  const [category , setCategory] = useState([]);
   const [isSpecial, setIsSpecial] = useState(false);
   const [selectedPortfolioForUpdate, setSelectedPortfolioForUpdate] =
     useState(null);
@@ -36,6 +37,7 @@ const PortfolioPanel = ({ portfolios }) => {
     setTitle(selectedPortfolioForUpdate?.portfolioName || "");
     setUrl(selectedPortfolioForUpdate?.url || []);
     setClientName(selectedPortfolioForUpdate?.clientName || "");
+    setCategory(selectedPortfolioForUpdate?.category || "");
     setDescription(selectedPortfolioForUpdate?.description || "");
     setStars(selectedPortfolioForUpdate?.stars || 0);
     setImages(selectedPortfolioForUpdate?.images || []);
@@ -48,6 +50,7 @@ const PortfolioPanel = ({ portfolios }) => {
       portfolioName: portfolio.title,
       url: portfolio.url,
       clientName: portfolio.clientName,
+      category: portfolio.category,
       description: portfolio.description,
       stars: portfolio.stars,
       images: portfolio.images,
@@ -66,6 +69,7 @@ const PortfolioPanel = ({ portfolios }) => {
           portfolioName: portfolio.title,
           url: portfolio.url,
           clientName: portfolio.clientName,
+          category: portfolio.category,
           description: portfolio.description,
           stars: portfolio.stars,
           images: portfolio.images,
@@ -82,6 +86,7 @@ const PortfolioPanel = ({ portfolios }) => {
     setUrl([]);
     setClientName("");
     setDescription("");
+    setCategory("");
     setStars(0);
     setImages(null);
     setIsSpecial(false);
@@ -114,6 +119,7 @@ const PortfolioPanel = ({ portfolios }) => {
     formData.append("clientName", clientName);
     formData.append("description", description);
     formData.append("stars", stars);
+    formData.append("category", category);
     formData.append("isSpecial", isSpecial);
 
     images.forEach((image) => {
@@ -355,6 +361,19 @@ const PortfolioPanel = ({ portfolios }) => {
                       setUrl(e.target.value.split(",").map((str) => str.trim()))
                     }
                   />
+
+                    {/* <label htmlFor="category" className="font-bold">
+                    Category
+                  </label>
+                  <input 
+                    type="radio"
+                    className="border-[2px] border-gray-300 rounded-md"
+                    id="category"
+                    value={category}
+                    checked={category}
+                    onChange={(e) => setCategory(e.target.checked)}
+                  /> */}
+
                   <input
                     type="checkbox"
                     className="border-[2px] border-gray-300 rounded-md"

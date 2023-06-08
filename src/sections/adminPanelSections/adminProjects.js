@@ -228,7 +228,11 @@ function EditProjectForm({ project, onDone, fetchProjects }) {
             <option value="Scheduled">Scheduled</option>
           </select>
         </label> */}
-        <input type="submit" value="Submit" className="bg-orange-600 mt-2 py-1 hover:bg-orange-500 cursor-pointer rounded-md"/>
+        <input
+          type="submit"
+          value="Submit"
+          className="bg-orange-600 mt-2 py-1 hover:bg-orange-500 cursor-pointer rounded-md"
+        />
       </form>
     </Dialog>
   );
@@ -249,6 +253,8 @@ const ProjectsPanel = ({ projectsData }) => {
   const [editingProject, setEditingProject] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatId, setChatId] = useState(null);
+  const [projectDetails, setProjectDetails] = useState(null);
+  const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [clientDetails, setClientDetails] = useState(false);
 
@@ -606,7 +612,10 @@ const ProjectsPanel = ({ projectsData }) => {
                       </div>
                     )}
                     <div className="xs:hidden">
-                      <button onClick={() => setClientDetails(true)}>
+                      <button
+                        onClick={() => setClientDetails(true)}
+                        className="text-center bg-orange-700 rounded-md p-1 px-2 mt-2"
+                      >
                         Clients Details
                       </button>
                       {userDetails && (
@@ -644,26 +653,117 @@ const ProjectsPanel = ({ projectsData }) => {
                         </Dialog>
                       )}
                     </div>
-                    {/* <button onClick={() => handleEdit(project)}>Edit</button>
+                    <div className="xs:hidden">
+                      <button
+                        onClick={() => setShowProjectDetails(true)}
+                        className="text-center bg-orange-700 rounded-md p-1 px-2 mt-2"
+                      >
+                        Project Details
+                      </button>
+                      {showProjectDetails && (
+                        <Dialog
+                          open={showProjectDetails}
+                          onClose={() => showProjectDetails(false)}
+                          className="font-poppins "
+                        >
+                          <div className="p-2 flex flex-col gap-2 bg-[#333333] text-white">
+                            <h1 className="text-center text-[18px] font-bold">
+                              Project Details
+                            </h1>
+                            <span className="text-gray-400">
+                              Progress:
+                              <p className="text-white font-bold">
+                                {project.progress}%
+                              </p>
+                            </span>
+                            <span className="text-gray-400">
+                              Status:
+                              <p className="text-white font-bold">
+                                {project.status}
+                              </p>
+                            </span>
+                            <span className="text-gray-400">
+                              StartDate:
+                              <p className="text-white font-bold">
+                                {project.startDate === null
+                                  ? "TBD"
+                                  : formatDate(project.startDate)}
+                              </p>
+                            </span>
+                            <span className="text-gray-400">
+                              Deadline:
+                              <p className="text-white font-bold">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : formatDate(project.endDate)}
+                              </p>
+                            </span>
+                            <span className="text-gray-400">
+                              Total Time:
+                              <p className="text-white font-bold">
+                                {project.endDate === project.startDate
+                                  ? "1 day"
+                                  : calculateTotalTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </span>
+                            <span className="text-gray-400">
+                              Remaining Time:
+                              <p className="text-white font-bold">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : calculateRemainingTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </span>
+                            <DialogActions>
+                              <button
+                                className="bg-orange-500 p-2 rounded-md"
+                                onClick={() => {
+                                  handleEdit(project);
+                                  setShowProjectDetails(false);
+                                }}
+                              >
+                                Edit Details
+                              </button>
+                              <button
+                                className="bg-orange-500 p-2 rounded-md"
+                                onClick={() => setShowProjectDetails(false)}
+                              >
+                                Close
+                              </button>
+                            </DialogActions>
+                          </div>
+                        </Dialog>
+                      )}
+                    </div>
+
                     {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
                         project={editingProject}
                         onDone={() => handleEdit(project)}
                       />
-                    )} */}
-                    <button
-                      className="p-1 rounded-full bg-orange-500"
-                      onClick={() => {
-                        if (chatId === project._id && showChat) {
-                          setShowChat(false);
-                        } else {
-                          setChatId(project._id);
-                          setShowChat(true);
-                        }
-                      }}
-                    >
-                      <RiChat1Line className="w-7 h-7" />
-                    </button>
+                    )}
+
+                    <div className="flex justify-end mt-3">
+                      <button
+                        className="p-1 rounded-full bg-orange-500"
+                        onClick={() => {
+                          if (chatId === project._id && showChat) {
+                            setShowChat(false);
+                          } else {
+                            setChatId(project._id);
+                            setShowChat(true);
+                          }
+                        }}
+                      >
+                        <RiChat1Line className="w-7 h-7" />
+                      </button>
+                    </div>
                     {showChat && chatId === project._id && (
                       <AdminChat chatId={chatId} />
                     )}
