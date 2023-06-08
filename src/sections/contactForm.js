@@ -127,12 +127,12 @@ const ContactSection = () => {
                 Send Message
               </button>
               {successMessage && (
-                <p className="text-white px-4 py-2 rounded-md bg-green-700">
+                <p className="text-white px-4 py-2 rounded-md bg-green-700 font-poppins">
                   <CheckCircleRoundedIcon /> {successMessage}
                 </p>
               )}
               {errorMessage && (
-                <p className="text-white px-4 py-2 rounded-md bg-red-700">
+                <p className="text-white px-4 py-2 rounded-md bg-red-700 font-poppins">
                   <ErrorRoundedIcon /> {errorMessage}
                 </p>
               )}

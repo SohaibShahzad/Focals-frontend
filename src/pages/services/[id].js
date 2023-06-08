@@ -1,9 +1,12 @@
 import axios from "axios";
 import styles from "../../styles";
 import Link from "next/link";
+import { portfolioVariants } from "../../helper/motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { useState, useEffect } from "react";
-import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
+import { HiPlay } from "react-icons/hi";
+import ReactPlayer from "react-player";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -20,6 +23,7 @@ export default function SingleService({ serviceData }) {
   const [formOpen, setFormOpen] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const { cart, setCart } = useStateContext();
 
   useEffect(() => {
@@ -34,7 +38,7 @@ export default function SingleService({ serviceData }) {
     const existingCartItem = cart.find(
       (item) => item.serviceId === serviceData._id
     );
-  
+
     if (existingCartItem) {
       newCart = cart.map((item) =>
         item.serviceId === serviceData._id
@@ -89,11 +93,10 @@ export default function SingleService({ serviceData }) {
         },
       ];
     }
-  
+
     setCart(newCart);
     localStorage.setItem("cart", JSON.stringify(newCart));
   };
-  
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -114,10 +117,15 @@ export default function SingleService({ serviceData }) {
   };
 
   const changeImageIndex = (newIndex) => {
+    const mediaCount = serviceData.url.length + serviceData.images.length;
     if (newIndex < 0) {
-      newIndex = serviceData.images.length - 1;
-    } else if (newIndex >= serviceData.images.length) {
-      newIndex = 0;
+      newIndex = mediaCount - 1; // Go to the last media item
+      setDirection(-1);
+    } else if (newIndex >= mediaCount) {
+      newIndex = 0; // Go to the first media item
+      setDirection(1);
+    } else {
+      setDirection(newIndex > activeImageIndex ? 1 : -1);
     }
     setActiveImageIndex(newIndex);
   };
@@ -151,33 +159,59 @@ export default function SingleService({ serviceData }) {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-3 gap-5 items-center">
+      <div className="grid lg:grid-cols-3 gap-10 items-center">
         <div className="glassmorphism text-center lg:col-span-2 rounded-md">
           <div className="relative w-full">
             <div style={{ paddingBottom: "56.25%" }} />
-            <div className="absolute inset-0 flex items-center justify-center">
-              {serviceData.images.map(
-                (imageUrl, index) =>
-                  index === activeImageIndex && (
-                    <img
-                      key={index}
-                      src={imageUrl}
-                      alt={`Image ${index}`}
-                      onClick={() => openFullScreen(imageUrl)}
-                      className="rounded-md w-full h-full object-contain cursor-zoom-in"
-                    />
-                  )
-              )}
-            </div>
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.div
+                key={activeImageIndex}
+                custom={direction}
+                variants={portfolioVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="absolute inset-0 flex items-center justify-center rounded-md overflow-hidden"
+              >
+                {activeImageIndex < serviceData.url.length ? (
+                  <ReactPlayer
+                    url={serviceData.url[activeImageIndex]}
+                    controls={true}
+                    light={true}
+                    playIcon={
+                      <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
+                        <HiPlay className="w-16 h-16" />
+                      </button>
+                    }
+                    className="object-cover"
+                    width="100%"
+                    height="100%"
+                  />
+                ) : (
+                  <img
+                    src={
+                      serviceData.images[
+                        activeImageIndex - serviceData.url.length
+                      ]
+                    }
+                    className="object-contain h-full rounded-md overflow-hidden"
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
             <button
               onClick={() => changeImageIndex(activeImageIndex - 1)}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
+              className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
             >
               &lt;
             </button>
             <button
               onClick={() => changeImageIndex(activeImageIndex + 1)}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
+              className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-orange-600 p-2 font-bold text-white rounded-md"
             >
               &gt;
             </button>

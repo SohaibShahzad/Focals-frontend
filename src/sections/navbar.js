@@ -53,6 +53,15 @@ const NavBar = () => {
           setShowDropdown(false);
         }, 100);
       }
+    }
+    document.addEventListener("mouseup", handleClickOutside);
+    return () => {
+      document.removeEventListener("mouseup", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
       if (
         searchBarRef.current &&
         !searchBarRef.current.contains(event.target)
@@ -74,7 +83,7 @@ const NavBar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef, searchBarRef, mobileMenuRef, toggle]);
+  }, [searchBarRef, mobileMenuRef, toggle]);
 
   const handleLogout = async () => {
     try {
@@ -295,6 +304,7 @@ const NavBar = () => {
                 onClick={() => {
                   setShowSearch((prev) => !prev);
                   setSearchQuery("");
+                  setToggle(false);
                 }}
               >
                 <RiSearchLine className="w-5 h-5 hover:w-6 hover:h-6 " />
@@ -336,7 +346,7 @@ const NavBar = () => {
             {isAuthenticated && isUser ? (
               <div className="relative">
                 <button
-                  className="ml-4 bg-orange-700 rounded-full p-1"
+                  className="ml-4 bg-orange-700 hover:bg-orange-500 rounded-full p-1 "
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
@@ -367,6 +377,7 @@ const NavBar = () => {
               </Link>
             )}
           </ul>
+          {/* //!Mobile Navbar */}
           <div className="md:hidden flex flex-1 justify-end items-center">
             {isAuthenticated && isUser && (
               <div className="relative">

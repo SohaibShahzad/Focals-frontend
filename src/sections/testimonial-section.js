@@ -17,7 +17,7 @@ const TestimonialSection = () => {
     } else if (screenWidth < 768) {
       setItemsToShow(2);
     } else if (screenWidth < 1024) {
-      setItemsToShow(3);
+      setItemsToShow(2);
     } else {
       setItemsToShow(3);
     }

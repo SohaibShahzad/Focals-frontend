@@ -62,6 +62,22 @@ export const textVariant = (delay) => ({
   },
 });
 
+export const portfolioVariants = {
+  hidden: (direction) => ({
+    x: direction > 0 ? 1000 : -1000,
+    opacity: 0,
+  }),
+  visible: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => ({
+    x: direction < 0 ? 1000 : -1000,
+    opacity: 0,
+  }),
+};
+
+
 export const textContainer = {
   hidden: {
     opacity: 0,

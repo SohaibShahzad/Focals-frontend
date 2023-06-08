@@ -274,15 +274,31 @@
   filter: blur(150px);
 }
 
-/* * > *{
-  font-family: 'Poppins', sans-serif;
+.fade-enter {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
 }
- */
-/* a {
-  color: inherit;
-  /* text-decoration: none; */
-/* } */
 
-/* * {
-  box-sizing: border-box;
-} */
+.fade-enter-active {
+  opacity: 1;
+}
+
+.fade-exit {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+
+.fade-exit-active {
+  opacity: 0;
+}
+.aspect-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .aspect-wrapper {
+    padding-bottom: 75%; /* Adjust aspect ratio for smaller screens */
+  }
+}

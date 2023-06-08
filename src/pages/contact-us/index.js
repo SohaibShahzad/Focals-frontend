@@ -11,8 +11,18 @@ export default function ContactUsPage() {
   const [message, setMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [messageError, setMessageError] = useState("");
   const inputStyle =
-    "border-[3px] border-[#5f2300] rounded-md p-2 mb-5 z-10 bg-transparent focus:outline-none focus:border-[#ff7e34]";
+    "border-[3px] border-[#5f2300] rounded-md p-2 z-10 bg-transparent focus:outline-none focus:border-[#ff7e34]";
+
+  const validateEmail = (email) => {
+    var re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,11 +31,34 @@ export default function ContactUsPage() {
     formData.append("email", email);
     formData.append("message", message);
 
-    if (!name || !email || !message) {
-      setErrorMessage("Please fill all the fields");
-      setSuccessMessage("");
-      return;
+    // Validate Fields
+    let error = false;
+
+    if (!name) {
+      setNameError("Please enter your name");
+      error = true;
+    } else {
+      setNameError("");
     }
+
+    if (!email) {
+      setEmailError("Please enter your email");
+      error = true;
+    } else if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email");
+      error = true;
+    } else {
+      setEmailError("");
+    }
+
+    if (!message) {
+      setMessageError("Please enter your message");
+      error = true;
+    } else {
+      setMessageError("");
+    }
+
+    if (error) return;
 
     try {
       const res = await axios.post(
@@ -35,11 +68,9 @@ export default function ContactUsPage() {
       setSuccessMessage("Message sent successfully!! We will contact you soon");
       setErrorMessage("");
       resetForm();
-      console.log(res);
     } catch (error) {
       setSuccessMessage("");
       setErrorMessage("Something went wrong. Please try again later");
-      console.log(error);
     }
   };
 
@@ -47,10 +78,15 @@ export default function ContactUsPage() {
     setName("");
     setEmail("");
     setMessage("");
+    setNameError("");
+    setEmailError("");
+    setMessageError("");
   };
 
   return (
-    <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative pt-10`}>
+    <div
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative pt-10`}
+    >
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="text-[40px] text-center font-bold">Tell Us Your Idea</h1>
@@ -59,21 +95,27 @@ export default function ContactUsPage() {
         <form className="my-10">
           <div className="flex flex-col gap-5">
             <div className="md:flex md:flex-row gap-5">
-              <div className="flex flex-col w-full md:w-1/2 gap-2">
+              <div className="flex flex-col gap-2 w-full md:w-1/2">
                 <label htmlFor="name">Name</label>
                 <input
                   type="text"
                   id="name"
                   value={name}
                   onChange={(e) => {
-                    setSuccessMessage("");
-                    setErrorMessage("");
+                    setNameError("");
                     setName(e.target.value);
                   }}
                   className={inputStyle}
                   autoComplete="off"
                   placeholder="Enter your name"
                 />
+                <div className="flex mb-2 z-30">
+                  {nameError && (
+                    <div className="text-white px-4 py-2 rounded-md bg-red-700">
+                      <ErrorRoundedIcon /> {nameError}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col w-full md:w-1/2 gap-2">
                 <label htmlFor="email">Email</label>
@@ -82,14 +124,20 @@ export default function ContactUsPage() {
                   id="email"
                   value={email}
                   onChange={(e) => {
-                    setSuccessMessage("");
-                    setErrorMessage("");
+                    setEmailError("");
                     setEmail(e.target.value);
                   }}
                   className={inputStyle}
                   autoComplete="off"
                   placeholder="Enter your email"
                 />
+                <div className="flex z-30 mb-2">
+                  {emailError && (
+                    <div className="text-white px-4 py-2 rounded-md bg-red-700">
+                      <ErrorRoundedIcon /> {emailError}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex flex-col w-full gap-2">
@@ -99,14 +147,20 @@ export default function ContactUsPage() {
                 id="message"
                 value={message}
                 onChange={(e) => {
-                  setSuccessMessage("");
-                  setErrorMessage("");
+                  setMessageError("");
                   setMessage(e.target.value);
                 }}
                 placeholder="Enter the Requirements"
                 autoComplete="off"
                 className={inputStyle}
               />
+              <div className="flex mb-2 z-30">
+                {messageError && (
+                  <div className="text-white px-4 py-2 rounded-md bg-red-700">
+                    <ErrorRoundedIcon /> {messageError}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-7 mt-7 sm:flex-row sm:justify-between sm:mt-10 sm:items-center">
@@ -118,12 +172,12 @@ export default function ContactUsPage() {
             </button>
 
             {successMessage && (
-              <p className="text-white px-4 py-2 rounded-md bg-green-700">
+              <p className="text-white px-4 py-2 rounded-md bg-green-700 z-30">
                 <CheckCircleRoundedIcon /> {successMessage}
               </p>
             )}
             {errorMessage && (
-              <p className="text-white px-4 py-2 rounded-md bg-red-700">
+              <p className="text-white px-4 py-2 rounded-md bg-red-700 z-30">
                 <ErrorRoundedIcon /> {errorMessage}
               </p>
             )}

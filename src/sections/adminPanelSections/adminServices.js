@@ -20,6 +20,7 @@ const ServicesPanel = ({ services }) => {
   const [description, setDescription] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [image, setImage] = useState([]);
+  const [url, setUrl] = useState([]);
   const [newPackages, setNewPackages] = useState([]);
   const [selectedServiceForUpdate, setSelectedServiceForUpdate] =
     useState(null);
@@ -42,6 +43,7 @@ const ServicesPanel = ({ services }) => {
     setDescription(selectedServiceForUpdate?.description || "");
     setNewPackages(selectedServiceForUpdate?.packages || []);
     setImage(selectedServiceForUpdate?.image || []);
+    setUrl(selectedServiceForUpdate?.url || []);
     setThumbnail(selectedServiceForUpdate?.thumbnail || null);
   }, [selectedServiceForUpdate]);
 
@@ -53,6 +55,7 @@ const ServicesPanel = ({ services }) => {
       packages: service.packages,
       thumbnail: service.thumbnail,
       image: service.images,
+      url: service.url,
     }))
   );
 
@@ -69,6 +72,7 @@ const ServicesPanel = ({ services }) => {
           packages: service.packages,
           thumbnail: service.thumbnail,
           image: service.images,
+          url: service.url,
         }))
       );
     } catch (error) {
@@ -80,6 +84,7 @@ const ServicesPanel = ({ services }) => {
     setTitle("");
     setDescription("");
     setImage(null);
+    setUrl([]);
     setNewPackages([]);
   };
 
@@ -115,6 +120,9 @@ const ServicesPanel = ({ services }) => {
 
     const updatedNewPackages = newPackages;
     formData.append("newPackages", JSON.stringify(updatedNewPackages));
+
+    const updatedUrl = url;
+    formData.append("url", JSON.stringify(updatedUrl));
 
     try {
       let response;
@@ -233,7 +241,6 @@ const ServicesPanel = ({ services }) => {
           }
         };
         const onClickView = () => {
-          console.log(params);
           setSelectedService(params);
           setOpenDialog(true);
         };
@@ -300,7 +307,6 @@ const ServicesPanel = ({ services }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
-
                   <label htmlFor="thumbnail" className="font-bold">
                     Thumbnail
                   </label>
@@ -330,7 +336,6 @@ const ServicesPanel = ({ services }) => {
                     accept="image/*"
                     onChange={(e) => setThumbnail(e.target.files[0])}
                   />
-
                   <label htmlFor="description" className="font-bold">
                     Description
                   </label>
@@ -344,7 +349,19 @@ const ServicesPanel = ({ services }) => {
                       setDescription(editor.getHTML())
                     }
                   />
-
+                  <label htmlFor="url" className="font-bold">
+                    YouTube URLs
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
+                    id="url"
+                    placeholder="Enter URLs"
+                    value={url.join(",")} // Join the array values with commas
+                    onChange={(e) =>
+                      setUrl(e.target.value.split(",").map((str) => str.trim()))
+                    }
+                  />
                   <label htmlFor="image" className="font-bold">
                     Image
                   </label>

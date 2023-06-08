@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
 import { motion } from "framer-motion";
 import styles from "../styles";
 import { slideIn, staggerContainer, textVariant } from "../helper/motion";
-import classes from "../styles/hero.module.css"
+import classes from "../styles/hero.module.css";
 import Link from "next/link";
 
 const Hero = () => (
@@ -20,29 +20,48 @@ const Hero = () => (
           variants={textVariant(0.2)}
           className={`${styles.heroHeading}`}
         >
-          Create Video Magic
+          Our Services Will Help
         </motion.h1>
         <motion.h1
           variants={textVariant(0.5)}
           className={`${styles.heroHeading}`}
         >
-          With Us
+          You To Grow
         </motion.h1>
       </div>
       <motion.div
         variants={slideIn("right", "tween", 0.2, 0.75)}
         className="relative w-full md:-mt-[20px] mt-[12px]"
       >
-        <motion.div className={`text-white text-center mt-7 font-nova px-5 sm:px-[60px] md:px-[140px] text-[20px]`}>
-          We Specialize in crafting visually stunning videos that captivate audiences and elevate brands. Let us help you tell your story like never before.
+        <motion.div
+          className={`text-white text-center mt-7 font-nova px-5 sm:px-[60px] md:px-[140px] text-[20px]`}
+        >
+          We Specialize in crafting visually stunning videos that captivate
+          audiences and elevate brands. Let us help you tell your story like
+          never before.
         </motion.div>
       </motion.div>
 
       <motion.div className="flex flex-col sm:flex-row justify-center items-center text-white mt-7 gap-5">
-        <Link href='/contact-us' className={`${classes.buttonStyle} flex items-center z-40 bg-orange-700`}>Watch demo video</Link>
-        <Link href="/contact-us" className={`${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}>Let's have a talk</Link>
+        <Link
+          href="/portfolio"
+          className={`${classes.buttonStyle} flex items-center z-40 bg-orange-700`}
+        >
+          Watch demo video
+        </Link>
+        <a
+          onClick={() => {
+            if (typeof window.smartsupp !== "undefined") {
+              window.smartsupp("chat:open");
+            } else {
+              console.error("Smartsupp is not defined.");
+            }
+          }}
+          className={`${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
+        >
+          Let's have a talk
+        </a>
       </motion.div>
-
     </motion.div>
   </section>
 );
