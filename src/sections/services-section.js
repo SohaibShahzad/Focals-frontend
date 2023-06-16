@@ -51,16 +51,17 @@ const ServicesSection = () => {
           <div className={`${styles.yPaddings} text-white`}>
             <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-8  ">
               {servicesData.map((service) => (
-                <div
+                <Link
                   key={service._id}
-                  className="p-5 glassmorphism-projects rounded-md flex gap-5 flex-col justify-between h-full"
-                >
+                  href={`/services/${service._id}`}
+                  className="p-4 glassmorphism-projects hover:bg-orange-800  rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
+                  >
                   <div>
                     <div className="flex justify-center my-3">
                       <img
                         src={service.thumbnail}
                         alt={service.title}
-                        className="w-[auto] h-[75px]"
+                        className="w-[auto] h-[75px] transform transition-all duration-300 hover:scale-110"
                       />
                     </div>
                     <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
@@ -75,14 +76,7 @@ const ServicesSection = () => {
                       />
                     </div>
                   </div>
-
-                  <Link
-                    href={`/services/${service._id}`}
-                    className="text-center bg-orange-900 font-bold rounded-md py-2 z-40 md:px-5"
-                  >
-                    Details
-                  </Link>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

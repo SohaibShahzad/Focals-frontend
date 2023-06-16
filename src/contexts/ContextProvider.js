@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { parseCookies } from "nookies";
+import * as jwt from "jsonwebtoken";
+
+const jwt_decode = jwt.decode;
 
 const StateContext = createContext();
 
@@ -11,7 +14,35 @@ const initialState = {
 };
 
 const ContextProvider = ({ children }) => {
-  const [cart, setCart] = useLocalStorage("cart", []);
+  const cookies = parseCookies();
+  const token = cookies.token;
+  let userId;
+  if (token) {
+    const decodedToken = jwt_decode(token);
+    userId = decodedToken?.id;
+  }
+
+  const [cart, setCart] = useState([]);
+  
+  useEffect(() => {
+    const cartKey = userId ? `${userId}_cart` : "guest_cart";
+
+    if (typeof window !== 'undefined') {
+      const localData = localStorage.getItem(cartKey);
+      setCart(localData ? JSON.parse(localData) : []);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const cartKey = userId ? `${userId}_cart` : "guest_cart";
+    if (userId) {
+      localStorage.removeItem("guest_cart");
+    }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(cartKey, JSON.stringify(cart));
+    }
+  }, [cart, userId]);
+
   const [screenSize, setScreenSize] = useState(undefined);
   const [currentColor, setCurrentColor] = useState("#03C9D7");
   const [currentMode, setCurrentMode] = useState("Light");

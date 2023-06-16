@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useStateContext } from "../contexts/ContextProvider";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 import { RiSearchLine } from "react-icons/ri";
 import styles from "../styles";
 import { navVariants } from "../helper/motion";
@@ -21,22 +22,31 @@ import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
 const NavBar = () => {
+  const { asPath } = useRouter();
   const [toggle, setToggle] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [servicesData, setServicesData] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isSub, setIsSub] = useState(false);
   const { cart, setCart } = useStateContext();
   const dropdownRef = useRef(null);
   const searchBarRef = useRef(null);
   const mobileMenuRef = useRef(null);
-  const cookies = parseCookies();
-  const token = cookies.token;
-  const isAuthenticated = !!token;
-  const isUser = token ? jwt_decode(token).type === "user" : false;
-  const isAdmin = token ? jwt_decode(token).type === "admin" : false;
-  const isSub = token ? jwt_decode(token).type === "subadmin" : false;
+
+  useEffect(() => {
+    const cookies = parseCookies();
+    const token = cookies.token;
+    const auth = !!token;
+    setIsAuthenticated(auth);
+    setIsUser(auth ? jwt_decode(token).type === "user" : false);
+    setIsAdmin(auth ? jwt_decode(token).type === "admin" : false);
+    setIsSub(auth ? jwt_decode(token).type === "subadmin" : false);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -92,17 +102,25 @@ const NavBar = () => {
       await axios.delete("/api/session", { withCredentials: true });
       localStorage.removeItem("token");
       setShowDropdown(false);
+      setIsAuthenticated(false);
+      setIsUser(false);
+      setIsAdmin(false);
+      setIsSub(false);
     } catch (err) {
       console.log("Error logging out: ", err);
     }
   };
 
   const handleSearch = (query) => {
-    if (query.length < 3) {
+    if (!query.includes(" ")) {
+      // Check if query contains a space
       return [];
     }
+    const queryWords = query.split(" ").filter((word) => word.length > 0); // Exclude any empty strings
     return servicesData.filter((service) =>
-      service.title.toLowerCase().includes(query.toLowerCase())
+      queryWords.some((word) =>
+        service.title.toLowerCase().includes(word.toLowerCase())
+      )
     );
   };
 
@@ -173,7 +191,7 @@ const NavBar = () => {
       <div
         className={`${styles.innerWidth} mx-auto flex justify-between gap-2 items-center`}
       >
-        <Link href="/" className="z-10 flex flex-row items-center gap-1">
+        <Link href="/" className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110">
           <img src="/Logo.png" alt="FutureFocals" />
           <span className="flex hidden md:flex text-white font-extrabold text-[16px] md:text-[20px]">
             FutureFocals
@@ -182,21 +200,28 @@ const NavBar = () => {
 
         <div className={`${classes.menuItems}`}>
           <ul className="list-none lg:flex hidden justify-end items-center">
+            <div className="nav-ul lg:flex hidden justify-end items-center">
+
             {mainNavLinks.map((link, index) => (
               <li
                 key={index}
-                className={`${
+                className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
                   index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
-                }`}
+                } ${
+                  asPath === link.link
+                    ? "bg-orange-700 rounded-[5px] scale-110"
+                    : ""
+                } nav-item`}
               >
                 <Link href={link.link}>{link.title}</Link>
               </li>
             ))}
+            </div>
             {isAuthenticated && isUser && (
               <div className="relative">
                 <li className="relative">
                   <button
-                    className="ml-4 bg-orange-700 rounded-full p-2 hidden md:flex hover:bg-orange-500"
+                    className="ml-4 bg-orange-700 rounded-full p-2 hidden md:flex hover:bg-orange-500 transform transition-all duration-300 hover:scale-125"
                     onClick={() => {
                       setShowCart((prev) => !prev);
                     }}
@@ -210,7 +235,7 @@ const NavBar = () => {
                   </button>
                 </li>
                 {showCart && (
-                  <div className="absolute top-10 right-0 px-3 py-2 navbar-sm-animation bg-[#333333] rounded-md">
+                  <div className="absolute top-10 right-0 px-3 py-2 navbar-sm-animation bg-[#333333] rounded-md ">
                     {cart.length > 0 ? (
                       <>
                         <div className="flex flex-col gap-2 p-2">
@@ -238,7 +263,7 @@ const NavBar = () => {
                                               {/* <span>Qty:</span> */}
                                               <div className="flex gap-2 justify-center items-center">
                                                 <span
-                                                  className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                                                  className="text-orange-700 bg-white hover:text-orange-500 rounded-full cursor-pointer"
                                                   onClick={() =>
                                                     addToCart(
                                                       item.serviceId,
@@ -253,7 +278,7 @@ const NavBar = () => {
                                                   {bundle.quantity}
                                                 </span>
                                                 <span
-                                                  className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                                                  className="text-orange-700 bg-white hover:text-orange-500 rounded-full cursor-pointer"
                                                   onClick={() =>
                                                     addToCart(
                                                       item.serviceId,
@@ -295,7 +320,7 @@ const NavBar = () => {
                           href="/cart-checkout"
                           className="bg-orange-800 hover:bg-orange-600 rounded-md mt-2 py-1 items-center flex justify-center"
                         >
-                          Proceed to Checkout
+                          Proceed
                         </Link>
                       </>
                     ) : (
@@ -307,14 +332,14 @@ const NavBar = () => {
             )}
             <div className="relative">
               <button
-                className="ml-4 bg-orange-700 hover:bg-orange-500 rounded-full p-2 hidden md:flex"
+                className="ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-125 rounded-full p-2 hidden md:flex"
                 onClick={() => {
                   setShowSearch((prev) => !prev);
                   setSearchQuery("");
                   setToggle(false);
                 }}
               >
-                <RiSearchLine className="w-5 h-5 hover:w-6 hover:h-6 " />
+                <RiSearchLine className="w-5 h-5 " />
               </button>
               {showSearch && (
                 <div className="absolute right-0 top-10 p-2 rounded-md bg-gray-900 px-4 navbar-sm-animation ">
@@ -353,7 +378,7 @@ const NavBar = () => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
-                  className="ml-4 bg-orange-700 hover:bg-orange-500 rounded-full p-1 "
+                  className="ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-125 rounded-full p-1 "
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
@@ -377,7 +402,7 @@ const NavBar = () => {
                         }
                       >
                         Dashboard
-                      </Link>{" "}
+                      </Link>
                     </li>
                     <li className="cursor-pointer" onClick={handleLogout}>
                       Logout
@@ -413,7 +438,7 @@ const NavBar = () => {
                 </div>
               </div>
             )}
-            {isAuthenticated && isUser ? (
+            {isAuthenticated ? (
               <div>
                 <button
                   className="mr-3 bg-orange-700 rounded-full p-1"
@@ -430,7 +455,17 @@ const NavBar = () => {
                     className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-900 navbar-sm-animation"
                   >
                     <li className="mb-5 cursor-pointer">
-                      <Link href="/dashboard">Dashboard</Link>
+                      <Link
+                        href={
+                          isAdmin
+                            ? "/admin/dashboard"
+                            : isSub
+                            ? "/subadmin/dashboard"
+                            : "/dashboard"
+                        }
+                      >
+                        Dashboard
+                      </Link>
                     </li>
                     <li className="cursor-pointer" onClick={handleLogout}>
                       Logout

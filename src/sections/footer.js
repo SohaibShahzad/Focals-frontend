@@ -8,12 +8,14 @@ import DialogActions from "@mui/material/DialogActions";
 import { footerVariants } from "../helper/motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 const Footer = () => {
   const [contentDialog, setContentDialog] = useState(false);
   const [contentParagraph, setContentParagraph] = useState("");
   const [contentHeading, setContentHeading] = useState("");
   const [completeContent, setCompleteContent] = useState([]);
+  const [socialLinks, setSocialLinks] = useState([]);
 
   useEffect(() => {
     async function fetchContent() {
@@ -26,6 +28,17 @@ const Footer = () => {
         console.log(error);
       }
     }
+    async function fetchSocials() {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}socials/getAllSocialLinks`
+        );
+        setSocialLinks(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchSocials();
     fetchContent();
   }, []);
 
@@ -43,7 +56,7 @@ const Footer = () => {
       variants={footerVariants}
       initial="hidden"
       whileInView="show"
-      className={`${styles.paddings} py-8 relative font-poppins`}
+      className={`${styles.xPaddings} ${styles.yPaddings} py-8 relative font-poppins`}
     >
       <div className="footer-gradient" />
       <div className={`${styles.innerWidth} mx-auto flex flex-col gap-8`}>
@@ -74,14 +87,14 @@ const Footer = () => {
                         className="text-justify"
                         dangerouslySetInnerHTML={{ __html: contentParagraph }}
                       />
-                  <DialogActions>
-                    <button
-                      onClick={() => setContentDialog(false)}
-                      className="bg-orange-700 font-bold px-4 py-2 rounded-md"
-                    >
-                      Close
-                    </button>
-                  </DialogActions>
+                      <DialogActions>
+                        <button
+                          onClick={() => setContentDialog(false)}
+                          className="bg-orange-700 font-bold px-4 py-2 rounded-md"
+                        >
+                          Close
+                        </button>
+                      </DialogActions>
                     </div>
                   </div>
                 </Dialog>
@@ -91,14 +104,26 @@ const Footer = () => {
               Copyright © 2023 FutureFocals. All rights reserved
             </p>
             <div className="flex gap-4">
-              {socials.map((social, index) => (
-                <img
-                  key={index}
-                  src={social.url}
-                  alt={social.name}
-                  className="w-[24px] h-[24px] object-contain cursor-pointer"
-                />
-              ))}
+              {socialLinks.map((link, index) => {
+                const matchingSocial = socials.find(
+                  (social) => social.name === link.linkName
+                );
+                return (
+                  <Link
+                    href={link.linkURL}
+                    target="_blank"
+                    rel="noreferrer"
+                    key={index}
+                    className="z-40"
+                  >
+                    <img
+                      src={matchingSocial ? matchingSocial.url : ""}
+                      alt={link.linkName}
+                      className="w-[24px] h-[24px] object-contain cursor-pointer "
+                    />
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

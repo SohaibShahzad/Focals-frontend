@@ -81,7 +81,7 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
               <Link
                 key={item._id}
                 href={`/blogs/${item._id}`}
-                className="glassmorphism hover:bg-orange-500 rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
+                className="glassmorphism hover:bg-orange-800 rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
               >
                 <div className="flex justify-center items-center h-[150px]">
                   <img
@@ -92,7 +92,7 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
                 </div>
                 <div className="px-5 py-3 flex flex-col">
                   <div>
-                    <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
+                    <h3 className="text-center font-bold text-[24px] ">
                       {item.title}
                     </h3>
                   </div>

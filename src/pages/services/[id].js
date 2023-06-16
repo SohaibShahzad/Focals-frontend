@@ -10,11 +10,15 @@ import ReactPlayer from "react-player";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import CalendlyWidget from "../../components/calendlyWidget";
 import { Dialog } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import classes from "../../styles/contactSection.module.css";
 import { IoMdCloseCircle } from "react-icons/io";
+import { parseCookies } from "nookies";
+import * as jwt from "jsonwebtoken";
+import { useRouter } from "next/router";
+
+const jwt_decode = jwt.decode;
 
 export default function SingleService({ serviceData }) {
   const [email, setEmail] = useState("");
@@ -25,6 +29,11 @@ export default function SingleService({ serviceData }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const { cart, setCart } = useStateContext();
+  const router = useRouter();
+  const cookies = parseCookies();
+  const token = cookies.token;
+  const isAuthenticated = !!token;
+  const isUser = token ? jwt_decode(token).type === "user" : false;
 
   useEffect(() => {
     const cartFromStorage = localStorage.getItem("cart");
@@ -33,7 +42,20 @@ export default function SingleService({ serviceData }) {
     }
   }, []);
 
+  const scheduleHandler = () => {
+    if (!isUser) {
+      router.push("/login");
+      return;
+    }
+    setWidgetOpen(true);
+  }
+
   const addToCart = (bundle, action) => {
+    if (!isUser) {
+      router.push("/login");
+      return;
+    }
+
     let newCart = [];
     const existingCartItem = cart.find(
       (item) => item.serviceId === serviceData._id
@@ -95,7 +117,7 @@ export default function SingleService({ serviceData }) {
     }
 
     setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    // localStorage.setItem("cart", JSON.stringify(newCart));
   };
 
   const handleFormSubmit = async (e) => {
@@ -253,48 +275,50 @@ export default function SingleService({ serviceData }) {
                     ))}
                   </ul>
                   <div>
-                    {/* <div
-                      onClick={() => setFormOpen(true)}
-                      className="2xl:w-1/2 bg-orange-700 rounded-md py-1 items-center text-center cursor-pointer"
-                    >
-                      Continue <ArrowRightAltRoundedIcon />
-                    </div> */}
                     <div className="my-[10px] h-[2px] rounded-md bg-white opacity-50" />
                     {cart.find(
                       (item) =>
                         item.serviceId === serviceData._id &&
                         item.bundles.some((b) => b.id === bundle._id)
-                    ) ? (
-                      <div className="flex items-center justify-between ">
-                        <div className="text-[22px]">Quantity: </div>
-                        <div className="flex gap-3 justify-center items-center">
-                          <span
-                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
-                            onClick={() => addToCart(bundle, "decrease")}
-                          >
-                            <FaMinusCircle className="w-7 h-7" />
-                          </span>
-                          <span className="text-[26px]">
-                            {
-                              cart
-                                .find(
-                                  (item) => item.serviceId === serviceData._id
-                                )
-                                .bundles.find((b) => b.id === bundle._id)
-                                .quantity
-                            }
-                          </span>
-                          <span
-                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
-                            onClick={() => addToCart(bundle, "increase")}
-                          >
-                            <FaPlusCircle className="w-7 h-7" />
-                          </span>
+                    ) && isUser ? (
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <div className="text-[22px]">Quantity: </div>
+                          <div className="flex gap-3 justify-center items-center">
+                            <span
+                              className="text-orange-700 bg-white hover:text-orange-500 rounded-full transition-all duration-200 ease-in-out hover:scale-110 cursor-pointer"
+                              onClick={() => addToCart(bundle, "decrease")}
+                            >
+                              <FaMinusCircle className="w-7 h-7" />
+                            </span>
+                            <span className="text-[26px]">
+                              {
+                                cart
+                                  .find(
+                                    (item) => item.serviceId === serviceData._id
+                                  )
+                                  .bundles.find((b) => b.id === bundle._id)
+                                  .quantity
+                              }
+                            </span>
+                            <span
+                              className="text-orange-700 bg-white hover:text-orange-500 rounded-full transition-all duration-200 ease-in-out hover:scale-110 cursor-pointer"
+                              onClick={() => addToCart(bundle, "increase")}
+                            >
+                              <FaPlusCircle className="w-7 h-7" />
+                            </span>
+                          </div>
                         </div>
+                        <Link
+                          href="/cart-checkout"
+                          className="button-animation-reverse flex justify-center hover:scale-110 mt-1 rounded-md py-1 items-center text-center cursor-pointer text-[20px]"
+                        >
+                          Proceed to Checkout
+                        </Link>
                       </div>
                     ) : (
                       <div
-                        className="bg-orange-700 hover:bg-orange-500 hover:font-bold mt-1 rounded-md py-1 items-center text-center cursor-pointer text-[20px]"
+                        className="button-animation-reverse hover:scale-110 mt-1 rounded-md py-1 items-center text-center cursor-pointer text-[20px]"
                         onClick={() => addToCart(bundle, "increase")}
                       >
                         Add to Cart <AddShoppingCartRoundedIcon />
@@ -339,17 +363,6 @@ export default function SingleService({ serviceData }) {
                       </div>
                     </div>
                   </Dialog>
-                  <Dialog
-                    open={widgetOpen}
-                    onClose={() => setWidgetOpen(false)}
-                    className="fixed z-10 inset-0 overflow-y-auto"
-                  >
-                    <CalendlyWidget
-                      bundle={bundle}
-                      serviceData={serviceData}
-                      email={email}
-                    />
-                  </Dialog>
                 </div>
               </TabPanel>
             ))}
@@ -358,7 +371,7 @@ export default function SingleService({ serviceData }) {
       </div>
       <div className="flex justify-around mt-5">
         <Link href="/contact-us">
-          <div className="cursor-pointer bg-orange-700 py-2 px-5 rounded-md font-bold">
+          <div className="button-animation-reverse cursor-pointer bg-orange-700 py-2 px-5 rounded-md ">
             Let's Discuss
           </div>
         </Link>
@@ -373,7 +386,6 @@ export async function getServerSideProps(context) {
     `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServiceDataAndImages/${id}`
   );
   const serviceData = res.data;
-  console.log(serviceData);
   return {
     props: {
       serviceData,

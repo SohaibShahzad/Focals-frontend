@@ -182,10 +182,10 @@ export default function SubAdmins({ subAdmins }) {
         return (
           <>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon />
+              <EditRoundedIcon className="text-white"/>
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon />
+              <DeleteRoundedIcon className="text-white"/>
             </IconButton>
           </>
         );

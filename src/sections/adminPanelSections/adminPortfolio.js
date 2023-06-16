@@ -222,10 +222,10 @@ const PortfolioPanel = ({ portfolios }) => {
         return (
           <>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon />
+              <EditRoundedIcon className="text-white"/>
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon />
+              <DeleteRoundedIcon className="text-white"/>
             </IconButton>
           </>
         );

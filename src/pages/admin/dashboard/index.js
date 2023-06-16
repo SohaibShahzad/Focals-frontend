@@ -71,6 +71,8 @@ export default function AdminDashboarding({ admin }) {
   const [completedProjectsCount, setCompletedProjectsCount] = useState(0);
   const [totalUsersCount, setTotalUsersCount] = useState(0);
   const [totalSubAdminsCount, setTotalSubAdminsCount] = useState(0);
+  const [totalServicesCount, setTotalServicesCount] = useState(0);
+  const [totalBlogsCount, setTotalBlogsCount] = useState(0);
 
   useEffect(() => {
     const getProjectsCount = async () => {
@@ -98,9 +100,27 @@ export default function AdminDashboarding({ admin }) {
       setTotalSubAdminsCount(sa_data);
     };
 
+    const getServicesCount = async () => {
+      const servicesResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getTotalServicesCount`
+      );
+      const s_data = servicesResponse.data;
+      setTotalServicesCount(s_data);
+    };
+
+    const getBlogsCount = async () => {
+      const blogsResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}blogs/getTotalBlogsCount`
+      );
+      const b_data = blogsResponse.data;
+      setTotalBlogsCount(b_data);
+    };
+
     getProjectsCount();
     getUsersCount();
     getSubadminsCount();
+    getServicesCount();
+    getBlogsCount();
 
     const intervalId = setInterval(getProjectsCount, 30000); // Fetch every 30 seconds
 
@@ -142,24 +162,37 @@ export default function AdminDashboarding({ admin }) {
       </main>
       <div className="flex flex-col lg:flex-row gap-5">
         <div>
-          <h1 className="text-2xl md:text-3xl pb-3">At a Glance!</h1>
-          <div className="bg-[#333333] pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
+          <h1 className="text-2xl md:text-3xl pb-3">At a Glance</h1>
+          <div className="glassmorphism-projects pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
             <span className="text-center">Projects</span>
             <Doughnut data={data} options={options} />
           </div>
         </div>
         <div>
-          <h1 className="text-2xl md:text-3xl pb-3">Personnel!</h1>
-          <div className="flex flex-col gap-3">
-            <div className="bg-[#333333] p-3 rounded-md flex flex-row justify-between gap-5">
-              <h1 className="text-xl md:text-2xl">Users:</h1>
-              <p className="text-2xl">{totalUsersCount}</p>
+          <h1 className="text-2xl md:text-3xl pb-3">Summary</h1>
+          <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
+            <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
+              <div className="h-[7px] bg-orange-600"/>
+              <h1 className="text-lg text-[#CCCCCC] px-3">Registered Users</h1>
+              <p className="text-3xl font-bold px-3 text-center">{totalUsersCount}</p>
             </div>
-            <div className="bg-[#333333] p-3 rounded-md flex flex-row justify-between gap-5">
-              <h1 className="text-xl md:text-2xl">Sub-Admins:</h1>
-              <p className="text-2xl">{totalSubAdminsCount}</p>
+            <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
+              <div className="h-[7px] bg-orange-600"/>
+              <h1 className="text-lg text-[#CCCCCC] px-3">Active Sub-Admins</h1>
+              <p className="text-3xl font-bold px-3 text-center">{totalSubAdminsCount}</p>
             </div>
-          
+          </div>
+          <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 mt-3">
+            <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
+              <div className="h-[7px] bg-orange-600"/>
+              <h1 className="text-lg text-[#CCCCCC] px-3">Active Services</h1>
+              <p className="text-3xl font-bold px-3 text-center">{totalServicesCount}</p>
+            </div>
+            <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
+              <div className="h-[7px] bg-orange-600"/>
+              <h1 className="text-lg text-[#CCCCCC] px-3">Total Blogs</h1>
+              <p className="text-3xl font-bold px-3 text-center">{totalBlogsCount}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -182,7 +215,6 @@ export async function getServerSideProps(context) {
 
   try {
     const decoded = jwt_decode(token);
-    console.log(decoded);
     if (decoded.type !== "admin") {
       return {
         redirect: {

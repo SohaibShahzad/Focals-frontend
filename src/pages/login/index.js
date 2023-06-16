@@ -8,7 +8,9 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import { setCookie } from "nookies";
+import { setCookie, parseCookies } from "nookies";
+import * as jwt from "jsonwebtoken";
+const jwt_decode = jwt.decode;
 
 export default function LoginRegister() {
   const router = useRouter();
@@ -41,18 +43,30 @@ export default function LoginRegister() {
 
   const handleOTPinput = (e, index) => {
     const value = e.target.value;
+
+    // Update the OTP state
     setOtp((prev) => {
       const newOtp = [...prev];
       newOtp[index] = value;
       return newOtp;
     });
 
+    // If input is not empty and the next input field exists, move focus to the next input field
     if (
       e.target.nextSibling &&
       value &&
       typeof e.target.nextSibling.focus === "function"
     ) {
       e.target.nextSibling.focus();
+    }
+
+    // If input is empty and the backspace key is pressed, move focus to the previous input field
+    if (
+      e.nativeEvent.inputType === "deleteContentBackward" &&
+      e.target.previousSibling &&
+      typeof e.target.previousSibling.focus === "function"
+    ) {
+      e.target.previousSibling.focus();
     }
   };
 
@@ -261,8 +275,6 @@ export default function LoginRegister() {
       });
       setLoginError(true);
     }
-
-    console.log(username);
   };
 
   const handleNewPassword = async (e) => {
@@ -319,7 +331,6 @@ export default function LoginRegister() {
         resetForm();
       }
     } catch (error) {
-      console.log(error);
       setErrorMessage({
         message: "Error in resetting password",
         icon: <CancelRoundedIcon />,
@@ -330,7 +341,6 @@ export default function LoginRegister() {
   };
 
   const handleLogin = async (e, setAuthenticated) => {
-    console.log("Login");
     e.preventDefault();
     if (!username || !password) {
       setErrorMessage({
@@ -372,7 +382,7 @@ export default function LoginRegister() {
           path: "/",
         });
         setAuthenticated(true);
-        router.push("/dashboard");
+        router.push("/");
       } else {
         setErrorMessage({
           message: "Invalid Credentials",
@@ -400,7 +410,7 @@ export default function LoginRegister() {
         className={`${styles.paddings} text-white font-poppins z-30 relative`}
       >
         <div className="grid grid-cols-1">
-          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:mx-[200px]">
+          <div className="text-center py-10 xs:mx-10 md:mx-0 lg:w-[400px] lg:mx-auto">
             <div className="pb-8">
               <div
                 className={`lg:text-[45px] md:text-[35px] text-[40px] font-bold font-tungsten`}
@@ -459,7 +469,7 @@ export default function LoginRegister() {
                       </label>
                     </div>
                     <button
-                    type="button"
+                      type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         setLogin(false);
@@ -744,4 +754,33 @@ export default function LoginRegister() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  const cookies = parseCookies(context);
+  const token = cookies.token;
+
+  if (token) {
+    try {
+      const decoded = jwt_decode(token);
+      if (decoded.type === "user") {
+        return {
+          redirect: {
+            destination: "/dashboard",
+            permanent: false,
+          },
+        };
+      }
+    } catch (error) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+  }
+  return {
+    props: {},
+  };
 }

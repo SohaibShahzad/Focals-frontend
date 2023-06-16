@@ -85,14 +85,14 @@ export default function ContactUsPage() {
 
   return (
     <div
-      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative pt-10`}
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative pt-10 xl:h-screen xl:flex xl:flex-col xl:justify-center `}
     >
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="text-[40px] text-center font-bold">Tell Us Your Idea</h1>
       <p className="text-center">Describe your need and we will contact you</p>
       <div>
-        <form className="my-10">
+        <form className="my-10 md:mx-24 lg:mx-48">
           <div className="flex flex-col gap-5">
             <div className="md:flex md:flex-row gap-5">
               <div className="flex flex-col gap-2 w-full md:w-1/2">
@@ -145,6 +145,7 @@ export default function ContactUsPage() {
               <textarea
                 type="message"
                 id="message"
+                height="300px"
                 value={message}
                 onChange={(e) => {
                   setMessageError("");
@@ -152,7 +153,7 @@ export default function ContactUsPage() {
                 }}
                 placeholder="Enter the Requirements"
                 autoComplete="off"
-                className={inputStyle}
+                className={`${inputStyle} h-[200px]`}
               />
               <div className="flex mb-2 z-30">
                 {messageError && (

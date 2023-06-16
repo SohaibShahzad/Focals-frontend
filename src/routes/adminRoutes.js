@@ -11,6 +11,7 @@ import { HiOutlineUserGroup, HiOutlineUsers } from "react-icons/hi";
 import { RiAdminLine, RiChat1Line } from "react-icons/ri";
 import { CgWebsite } from "react-icons/cg";
 import { FiLink2 } from "react-icons/fi";
+import {IoShareSocialSharp} from "react-icons/io5";
 
 export const adminLinks = [
   {
@@ -70,6 +71,11 @@ export const adminLinks = [
         name: "Terms & Policy",
         icon: <FiLink2 />,
         linkName: "/termpolicy",
+      },
+      {
+        name: "Social Links",
+        icon: <IoShareSocialSharp />,
+        linkName: "/sociallinks",
       },
     ],
   },

@@ -45,19 +45,20 @@ const Hero = () => (
       <motion.div className="flex flex-col sm:flex-row justify-center items-center text-white mt-7 gap-5">
         <Link
           href="/portfolio"
-          className={`${classes.buttonStyle} flex items-center z-40 bg-orange-700`}
+          className={`button-animation-reverse ${classes.buttonStyle} flex items-center z-40 `}
         >
           Watch demo video
         </Link>
+
         <a
           onClick={() => {
-            if (typeof window.smartsupp !== "undefined") {
-              window.smartsupp("chat:open");
+            if (typeof Tawk_API !== "undefined") {
+              Tawk_API.maximize();
             } else {
-              console.error("Smartsupp is not defined.");
+              console.error("Tawk.to API is not defined.");
             }
           }}
-          className={`${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
+          className={`button-animation ${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
         >
           Let's have a talk
         </a>

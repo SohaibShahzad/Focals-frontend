@@ -122,7 +122,7 @@ const ContactSection = () => {
             <div className="flex flex-col gap-7 mt-7 sm:flex-row justify-center sm:mt-10 sm:items-center">
               <button
                 onClick={handleSubmit}
-                className={`bg-orange-700 hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white rounded-md py-[10px] px-[24px] z-[100] hover:font-bold font-poppins`}
+                className={`button-animation-reverse rounded-md py-[10px] px-[24px] z-[100] font-poppins`}
               >
                 Send Message
               </button>

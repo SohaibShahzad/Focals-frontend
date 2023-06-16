@@ -24,7 +24,7 @@ export default function Users({ users }) {
         return (
           <>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon />
+              <DeleteRoundedIcon className="text-white"/>
             </IconButton>
           </>
         );

@@ -58,24 +58,23 @@ export default function BlogsPage({ blogs }) {
           <Link
             key={blog._id}
             href={`/blogs/${blog._id}`}
-            className="glassmorphism hover:bg-orange-500 rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
+            className="glassmorphism-projects hover:bg-orange-800 rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
             >
-            <div className="flex justify-center items-center h-[150px]">
+            <div className="flex justify-center items-center h-[150px] sm:h-[250px]">
               <img
                 src={blog.image}
                 alt={blog.title}
                 className="rounded-t-xl w-[100%] h-[100%] object-cover transform transition-all duration-300 hover:scale-110"
                 />
             </div>
-            <div className="p-5 flex flex-col">
+            <div className="py-3 px-2 flex flex-col">
               <div>
-                <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">
+                <h3 className="text-center font-bold text-[24px]">
                   {blog.title}
                 </h3>
               </div>
               <div>
-                <span className="text-sm text-gray-400">by:</span>
-                <p className="text-[18px]">{blog.author}</p>
+                <p className="text-[16px] text-center text-[#AAAAAA] mt-2 font-bold">{blog.date}</p>
               </div>
               
             </div>

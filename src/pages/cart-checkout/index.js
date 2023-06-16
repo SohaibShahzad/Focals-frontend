@@ -1,12 +1,35 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-
+import { Dialog } from "@mui/material";
+import DialogActions from "@mui/material/DialogActions";
+import CalendlyWidget from "../../components/calendlyWidget";
 import { useStateContext } from "../../contexts/ContextProvider";
 import styles from "../../styles";
+import { parseCookies } from "nookies";
+import * as jwt from "jsonwebtoken";
+const jwt_decode = jwt.decode;
 
 export default function CartCheckoutPage() {
   const { cart, setCart } = useStateContext();
+  // useEffect(() => {
+  //   const cookies = parseCookies();
+  //   const token = cookies.token;
+  //   let userId;
+  //   if (token) {
+  //     const decodedToken = jwt_decode(token);
+  //     userId = decodedToken?.id;
+  //   }
+  //   const cartKey = userId ? `${userId}_cart` : "guest_cart";
+
+  //   if (typeof window !== "undefined") {
+  //     const localData = localStorage.getItem(cartKey);
+  //     if (cart.length === 0 && localData) {
+  //       setCart(JSON.parse(localData));
+  //     }
+  //   }
+  // }, []);
+  const [calendlyOpen, setCalendlyOpen] = useState(false);
 
   const totalQuantity = cart.reduce((total, item) => {
     return (
@@ -64,7 +87,9 @@ export default function CartCheckoutPage() {
   };
 
   return (
-    <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}>
+    <div
+      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}
+    >
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="md:text-[64px] text-[50px] font-extrabold text-white relative">
@@ -104,7 +129,7 @@ export default function CartCheckoutPage() {
                         </div>
                         <div className="flex flex-col justify-center border-l-2 pl-3 border-gray-500 items-center">
                           <button
-                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full  cursor-pointer"
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full transition-all duration-200 ease-in-out hover:scale-110  cursor-pointer"
                             onClick={() =>
                               addToCart(service.serviceId, bundle, "increase")
                             }
@@ -117,7 +142,7 @@ export default function CartCheckoutPage() {
                             {bundle.quantity}
                           </h1>
                           <button
-                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full cursor-pointer"
+                            className="text-orange-700 bg-white hover:text-orange-500 rounded-full transition-all duration-200 ease-in-out hover:scale-110 cursor-pointer"
                             onClick={() =>
                               addToCart(service.serviceId, bundle, "decrease")
                             }
@@ -133,6 +158,17 @@ export default function CartCheckoutPage() {
                 </div>
               </div>
             ))}
+            <div className="flex button-animation-reverse rounded-md hover:scale-100 py-1">
+              <button
+                onClick={() => setCalendlyOpen(true)}
+                className="text-[18px] py-1 sm:p-1 sm:px-2 "
+              >
+                Schedule Meeting
+              </button>
+            </div>
+            <Dialog open={calendlyOpen} onClose={() => setCalendlyOpen(false)}>
+              <CalendlyWidget />
+            </Dialog>
           </div>
           <div className="lg:w-1/3">
             <div className="glassmorphism-projects rounded-xl p-2 relative">
@@ -145,16 +181,16 @@ export default function CartCheckoutPage() {
                 </span>
                 <div>
                   <div className="h-[2px] bg-[#666666] mb-2" />
-                  <div className="flex flex-col  gap-2">
-                    <button className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md">
-                      <h1 className="text-[20px] font-bold">Payment</h1>
+                  <div className="flex flex-col gap-2">
+                    <button className="button-animation-reverse hover:scale-100 hover:border-[3px] py-1 sm:p-1 sm:px-2 rounded-md">
+                      <h1 className="text-[20px]">Payment</h1>
                     </button>
 
                     <Link
-                      className="bg-orange-700 py-1 sm:p-1 sm:px-2 rounded-md hover:bg-orange-500"
+                      className="button-animation-reverse hover:scale-100 hover:border-[3px] py-1 sm:p-1 sm:px-2 rounded-md "
                       href="/services"
                     >
-                      <h1 className="text-[20px] text-center font-bold">
+                      <h1 className="text-[20px] text-center">
                         + Add More Items
                       </h1>
                     </Link>
@@ -167,4 +203,50 @@ export default function CartCheckoutPage() {
       )}
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  const cookies = parseCookies(context);
+  const token = cookies.token;
+  const decoded = jwt.decode(token);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  } else {
+    try {
+      if (decoded.type !== "user") {
+        return {
+          redirect: {
+            destination: "/login",
+            permanent: false,
+          },
+        };
+      }
+    } catch (err) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+  }
+
+  // // Fetch cart from localStorage
+  // const cartKey = decoded.id ? `${decoded.id}_cart` : "guest_cart";
+  // let cart = [];
+  // if (typeof window !== "undefined") {
+  //   const localData = localStorage.getItem(cartKey);
+  //   cart = localData ? JSON.parse(localData) : [];
+  // }
+
+  return {
+    props: {
+    },
+  };
 }

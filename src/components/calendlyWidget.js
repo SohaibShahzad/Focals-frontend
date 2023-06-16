@@ -13,44 +13,44 @@ function CalendlyWidget({ bundle, serviceData, email }) {
     head.appendChild(script);
 
     // Add event listener for Calendly event_scheduled event
-    const handleEventScheduled = (event) => {
+    // const handleEventScheduled = (event) => {
+    //   if (event.data && event.data.event === "calendly.event_scheduled") {
+    //     console.log("Event scheduled");
 
-      if (event.data && event.data.event === "calendly.event_scheduled") {
-        console.log("Event scheduled");
+    //     const formData = new FormData();
+    //     formData.append("email", email);
+    //     // formData.append("projectName", serviceData.title);
 
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("projectName", serviceData.title)
+    //     // Send data to server
+    //     axios
+    //       .post(
+    //         `${process.env.NEXT_PUBLIC_SERVER_URL}projects/addNewProject`,
+    //         formData
+    //       )
+    //       .then((res) => {
+    //         console.log(res);
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //       });
+    //   }
+    // };
 
-        // Send data to server
-        axios
-          .post(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}projects/addNewProject`,
-            formData
-          )
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    };
+    // window.addEventListener("message", handleEventScheduled);
 
-    window.addEventListener("message", handleEventScheduled);
-
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener("message", handleEventScheduled);
-    };
+    // // Clean up event listener on component unmount
+    // return () => {
+    //   window.removeEventListener("message", handleEventScheduled);
+    // };
   }, []);
 
   return (
     <div
       className="calendly-inline-widget"
-      data-url={`https://calendly.com/focals-calendy/project-discussion?primary_color=ff6b00&a1=${encodeURIComponent(
-        `Service: *${serviceData.title}* \nBundle-Name: ${bundle.name}, Price: ${bundle.price}`
-      )}&email=${encodeURIComponent(email)}`}
+      data-url={`https://calendly.com/futurefocals?primary_color=ff6b00`}
+      // data-url={`https://calendly.com/futurefocals?primary_color=ff6b00&a1=${encodeURIComponent(
+      //   `Service: *${serviceData.title}* \nBundle-Name: ${bundle.name}, Price: ${bundle.price}`
+      // )}&email=${encodeURIComponent(email)}`}
       style={{ minWidth: "320px", height: "700px" }}
     ></div>
   );

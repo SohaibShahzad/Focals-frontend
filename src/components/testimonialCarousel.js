@@ -118,7 +118,7 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
                 <div>
                   <h3 className="text-[24px]">{item.testimonialHeading}</h3>
                   <button
-                    className="text-orange-500"
+                    className="text-orange-500 transition-all duration-500 ease-in-out hover:scale-110 "
                     onClick={() => {
                       setCurrentDialog(item);
                       setOpenDialog(true);
@@ -127,7 +127,9 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
                     ... Read Full
                   </button>
                 </div>
-                <p className="text-[#BBBBBB] font-bold text-[20px]">{item.name}</p>
+                <p className="text-[#BBBBBB] font-bold text-[20px]">
+                  {item.name}
+                </p>
               </div>
             </motion.div>
           ))
@@ -136,10 +138,10 @@ export const CustomCarousel = ({ items, itemsToShow = 3 }) => {
       {items.length > itemsToShow && (
         <div className="space-x-5 z-30">
           <button className="" onClick={handlePrev}>
-            <BsFillArrowLeftSquareFill className="text-orange-600 hover:text-orange-800 rounded-md bg-white w-9 h-9" />
+            <BsFillArrowLeftSquareFill className="text-orange-600 rounded-md bg-white w-9 h-9 transition-all duration-200 ease-in-out hover:scale-125" />
           </button>
           <button className="" onClick={handleNext}>
-            <BsFillArrowRightSquareFill className="text-orange-600 hover:text-orange-800 rounded-md bg-white w-9 h-9" />
+            <BsFillArrowRightSquareFill className="text-orange-600 rounded-md bg-white w-9 h-9 transition-all duration-200 ease-in-out hover:scale-125" />
           </button>
         </div>
       )}

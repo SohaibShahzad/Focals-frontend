@@ -60,7 +60,7 @@ const Explore = () => {
         </div>
         <Button
           title="Explore Further >"
-          styling="bg-orange-700 font-poppins hover:bg-orange-800 hover:drop-shadow-[0_5px_5px_rgba(255,167,49,0.25)] text-white hover:font-bold"
+          styling="font-poppins text-white"
           link="/portfolio"
         />
       </motion.div>

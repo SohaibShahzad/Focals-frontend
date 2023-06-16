@@ -1,25 +1,22 @@
-// // hooks/useTawkTo.js
+// hooks/useTawkTo.js
 import { useEffect } from "react";
 
 const useTawkTo = () => {
   useEffect(() => {
-    const smartsuppScript = document.createElement("script");
-    smartsuppScript.type = "text/javascript";
-    smartsuppScript.async = true;
-    smartsuppScript.src = "https://www.smartsuppchat.com/loader.js?";
-    smartsuppScript.charset = "utf-8";
+    const tawkToScript = document.createElement("script");
+    tawkToScript.type = "text/javascript";
+    tawkToScript.async = true;
+    tawkToScript.src =
+      "https://embed.tawk.to/648bf151cc26a871b022df57/1h31ada2k";
+    tawkToScript.charset = "UTF-8";
+    tawkToScript.setAttribute("crossorigin", "*");
     const firstScript = document.getElementsByTagName("script")[0];
-    firstScript.parentNode.insertBefore(smartsuppScript, firstScript);
-
-    window._smartsupp = window._smartsupp || {};
-    window._smartsupp.key = "40b35cf5de75f86fce1f64d5c804df59aabc88f0";
+    firstScript.parentNode.insertBefore(tawkToScript, firstScript);
 
     return () => {
-      smartsuppScript.remove();
+      tawkToScript.remove();
     };
   }, []);
-
 };
 
 export default useTawkTo;
-

@@ -8,7 +8,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { IconButton, Dialog, DialogContent } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 
-export default function Links({ socialLink, termPolicy }) {
+export default function Links({ termPolicy }) {
   const [contentId, setContentId] = useState("");
   const [contentName, setContentName] = useState("");
   const [contentPara, setContentPara] = useState("");
@@ -87,7 +87,7 @@ export default function Links({ socialLink, termPolicy }) {
         return (
           <>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon />
+              <EditRoundedIcon className="text-white"/>
             </IconButton>
           </>
         );
@@ -173,11 +173,6 @@ export default function Links({ socialLink, termPolicy }) {
 }
 
 export async function getServerSideProps() {
-  const linkRes = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}socials/getAllSocialLinks`
-  );
-  const socialLink = linkRes.data;
-
   const termAndPolicyRes = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}termsPolicy/getAllContent`
   );
@@ -185,7 +180,6 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      socialLink,
       termPolicy,
     },
   };

@@ -53,7 +53,7 @@ export const Sidebar = ({ role }) => {
       });
   }
 
-  const baseHref = !role ? '/admin/dashboard' : '/subadmin/dashboard';  // add this line
+  const baseHref = !role ? "/admin/dashboard" : "/subadmin/dashboard"; // add this line
 
   return (
     <div
@@ -63,18 +63,14 @@ export const Sidebar = ({ role }) => {
       {activeMenu && (
         <>
           <div className="flex justify-between items-center">
-            {/* <Link
-              href="/dashboard"
-              onClick={handleCloseSidebar}
-              className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
-            > */}
-            <div className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900">
-              <div className="p-2">
-                <img src="/Logo.png" alt="FutureFocals" />
+            <Link href="/admin/dashboard">
+              <div className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900">
+                <div className="p-2">
+                  <img src="/Logo.png" alt="FutureFocals" />
+                </div>
+                <div className="text-white">FutureFocals</div>
               </div>
-              <div className="text-white">FutureFocals</div>
-            </div>
-            {/* </Link> */}
+            </Link>
             <button
               type="button"
               onClick={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
@@ -89,9 +85,10 @@ export const Sidebar = ({ role }) => {
                 <p className="text-gray-400 m-3 mt-4 uppercase">{link.title}</p>
                 {link.links.map((link, index) => (
                   <ActiveLink
-                    onClick={handleCloseSidebar}
+                    key={index}
                     href={`${baseHref}${link.linkName.toLowerCase()}`}
                     styles="flex items-center gap-5 pl-4 py-3 rounded-lg text-lg text-white text-gray-700 hover:bg-[#d8730e] m-2"
+                    onClick={handleCloseSidebar}
                   >
                     {link.icon}
                     <span className="capitalize">{link.name}</span>

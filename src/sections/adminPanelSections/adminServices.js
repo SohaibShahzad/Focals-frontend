@@ -247,13 +247,13 @@ const ServicesPanel = ({ services }) => {
         return (
           <>
             <IconButton onClick={onClickView}>
-              <VisibilityRoundedIcon />
+              <VisibilityRoundedIcon className="text-white"/>
             </IconButton>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon />
+              <EditRoundedIcon className="text-white"/>
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon />
+              <DeleteRoundedIcon className="text-white"/>
             </IconButton>
           </>
         );

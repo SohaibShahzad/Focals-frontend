@@ -303,7 +303,6 @@
   }
 }
 
-
 .aspect-container {
   position: relative;
   overflow: hidden;
@@ -314,4 +313,119 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.nav-ul:hover .nav-item:not(:hover) {
+  transform: scale(0.9);
+}
+
+.nav-item {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  transition: 0.5s;
+}
+
+.nav-item:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  background: #f97315;
+  transition: 0.3s;
+  transform-origin: right;
+  transform: scaleX(0);
+  z-index: -1;
+}
+
+.nav-item:hover:before {
+  transition: transform 0.3s;
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+.nav-item:hover {
+  transform: scale(2);
+  opacity: 1;
+  filter: blur(0);
+  text-decoration: none;
+  color: #fff;
+}
+
+.button-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  transition: transform 0.5s, background 0.3s;
+  z-index: 1;
+}
+
+.button-animation:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #c2410c;
+  transition: transform 0.3s;
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: -1;
+}
+
+.button-animation:hover:before {
+  transform: scaleX(1);
+}
+
+.button-animation:hover {
+  transform: scale(1.2);
+  background: #c2410c;
+}
+
+.button-animation-reverse {
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  background: #c2410c;
+  border: 2px solid #c2410c;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s, background 0.3s;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.button-animation-reverse:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #c2410c;
+  transition: transform 0.3s;
+  transform-origin: right;
+  transform: scaleX(1);
+  z-index: -1;
+}
+
+.button-animation-reverse:hover:before {
+  transform: scaleX(0);
+}
+
+.button-animation-reverse:hover {
+  background: transparent;
+  transform: scale(1.2);
 }

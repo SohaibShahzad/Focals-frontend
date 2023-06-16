@@ -1,27 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-export default function useLocalStorage(key, initialValue) {
+export default function useLocalStorage(storageKey, initialValue) {
   const readValue = () => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
-    const item = window.localStorage.getItem(key);
+    const item = window.localStorage.getItem(storageKey);
     return item ? JSON.parse(item) : initialValue;
   };
+
   const [storedValue, setStoredValue] = useState(readValue);
+
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     if (storedValue) {
-      window.localStorage.setItem(key, JSON.stringify(storedValue));
+      window.localStorage.setItem(storageKey, JSON.stringify(storedValue));
     } else {
-      window.localStorage.removeItem(key);
+      window.localStorage.removeItem(storageKey);
     }
-  }, [key, storedValue]);
+  }, [storageKey, storedValue]);
 
   return [storedValue, setStoredValue];
 }
-

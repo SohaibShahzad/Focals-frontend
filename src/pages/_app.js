@@ -23,8 +23,8 @@ registerLicense(
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const is404Route = router.pathname.endsWith("/404");
   const isClientRoute = router.pathname.startsWith("/dashboard");
-  const isTestRoute = router.pathname.startsWith("/dashboard/cart-checkout");
   const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
   const isSubAdminRoute = router.pathname.startsWith("/subadmin/dashboard");
   const ProtectedComponent =
@@ -48,7 +48,7 @@ export default function App({ Component, pageProps }) {
     ? (props) => <ClientLayout {...props} />
     : isSubAdminRoute
     ? (props) => <SubAdminLayout {...props} />
-    : isTestRoute
+    : is404Route
     ? (props) => <TestMainLayout {...props} />
     : (props) => <MainLayout {...props} />;
 
