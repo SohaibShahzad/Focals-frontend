@@ -66,10 +66,10 @@ const Footer = () => {
             <div className="text-white">
               <h4 className="font-extrabold text-[24px]">Future Focals</h4>
               <div className="flex flex-row text-[12px] gap-4 underline text-secondary-white">
-                <button onClick={() => extractData("Privacy Policy")}>
+                <button onClick={() => extractData("Privacy Policy")} className="transition transform-all ease-in-out duration-300 hover:scale-110 hover:font-bold">
                   Privacy Policy
                 </button>
-                <button onClick={() => extractData("Terms and Conditions")}>
+                <button onClick={() => extractData("Terms and Conditions")} className="transition transform-all ease-in-out duration-300 hover:scale-110 hover:font-bold">
                   Terms & Conditions
                 </button>
 
@@ -119,7 +119,7 @@ const Footer = () => {
                     <img
                       src={matchingSocial ? matchingSocial.url : ""}
                       alt={link.linkName}
-                      className="w-[24px] h-[24px] object-contain cursor-pointer "
+                      className="w-[24px] h-[24px] object-contain cursor-pointer transition transform-all hover:scale-125 ease-in-out duration-300 hover:fill-current hover:text-orange-700"
                     />
                   </Link>
                 );

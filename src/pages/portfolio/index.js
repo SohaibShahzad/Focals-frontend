@@ -111,12 +111,12 @@ export default function PortfolioPage({ portfolios }) {
                       <ReactPlayer
                         url={media[activeImageIndexes[index]]}
                         controls={true}
-                        light={true}
-                        playIcon={
-                          <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
-                            <HiPlay className="w-16 h-16" />
-                          </button>
-                        }
+                        // light={true}
+                        // playIcon={
+                        //   <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
+                        //     <HiPlay className="w-16 h-16" />
+                        //   </button>
+                        // }
                         className="object-cover"
                         width="100%"
                         height="100%"
