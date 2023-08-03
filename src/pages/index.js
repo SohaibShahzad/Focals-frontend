@@ -24,6 +24,10 @@ export default function WebApp() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const props = {
+    signup: true,
+    signin: false,
+  };
 
   useEffect(() => {
     const cookies = parseCookies();
@@ -81,6 +85,11 @@ export default function WebApp() {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
         });
+        setCookie(null, "user", JSON.stringify(response.data.user), {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+        console.log(response.data.user);
         setPopup(false);
         setAuthenticated(true);
         router.push("/");
@@ -98,7 +107,7 @@ export default function WebApp() {
           onClose={() => setPopup(false)}
           className="navbar-sm-animation"
         >
-          <div className="bg-[#222222] text-white font-poppins px-2 md:px-5 py-3 flex flex-col gap-4">
+          <div className="bg-[#222222] text-white font-poppins px-2 md:px-5 py-3 flex flex-col gap-4 px-4">
             <div className="text-center">
               <h1 className="text-xl md:text-2xl font-bold text-center">
                 Welcome to Future Focals!
@@ -152,16 +161,22 @@ export default function WebApp() {
 
             <div className="text-center">
               <p>Don't have an account?</p>
-              <Link href="/login" className="text-center text-orange-500 hover:text-orange-700">
-                  Register
-                
+              <Link
+                href={`/login?prop=${encodeURIComponent(
+                  JSON.stringify(props)
+                )}`}
+                className="text-center text-orange-500 hover:text-orange-700"
+              >
+                Register
               </Link>
             </div>
             <DialogActions>
               <button
                 className="bg-red-700 hover:bg-red-500 py-1 rounded-md px-4"
                 onClick={() => setPopup(false)}
-              >Do it later </button>
+              >
+                Do it later{" "}
+              </button>
             </DialogActions>
           </div>
         </Dialog>
