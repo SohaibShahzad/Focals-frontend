@@ -51,7 +51,7 @@ function CalendlyWidget({ bundle, serviceData, email }) {
       // data-url={`https://calendly.com/futurefocals?primary_color=ff6b00&a1=${encodeURIComponent(
       //   `Service: *${serviceData.title}* \nBundle-Name: ${bundle.name}, Price: ${bundle.price}`
       // )}&email=${encodeURIComponent(email)}`}
-      style={{ minWidth: "320px", height: "700px" }}
+      style={{ minWidth: "420px", height: "700px" }}
     ></div>
   );
 }

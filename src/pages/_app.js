@@ -27,6 +27,7 @@ export default function App({ Component, pageProps }) {
   const isClientRoute = router.pathname.startsWith("/dashboard");
   const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
   const isSubAdminRoute = router.pathname.startsWith("/subadmin/dashboard");
+  
   const ProtectedComponent =
     isClientRoute || isAdminRoute || isSubAdminRoute
       ? withAuth(Component)

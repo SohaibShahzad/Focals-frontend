@@ -24,7 +24,9 @@ const jwt_decode = jwt.decode;
 const NavBar = () => {
   const { asPath } = useRouter();
   const [toggle, setToggle] = useState(false);
+  const [serviceTitleData, setServiceTitleData] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [servicesData, setServicesData] = useState([]);
@@ -37,10 +39,19 @@ const NavBar = () => {
   const dropdownRef = useRef(null);
   const searchBarRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const [user, setUser] = useState({});
+  const props = {
+    signup: false,
+    signin: true,
+  };
 
   useEffect(() => {
     const cookies = parseCookies();
     const token = cookies.token;
+    const userData = cookies.user;
+    try {
+      setUser(JSON.parse(userData));
+    } catch (error) {}
     const auth = !!token;
     setIsAuthenticated(auth);
     setIsUser(auth ? jwt_decode(token).type === "user" : false);
@@ -55,7 +66,15 @@ const NavBar = () => {
       );
       setServicesData(resServices.data);
     }
+    async function fetchServiceData() {
+      const serviceData = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesTitle`
+      );
+      setServiceTitleData(serviceData.data);
+      console.log(serviceData.data);
+    }
     fetchData();
+    fetchServiceData();
   }, []);
 
   useEffect(() => {
@@ -191,7 +210,10 @@ const NavBar = () => {
       <div
         className={`${styles.innerWidth} mx-auto flex justify-between gap-2 items-center`}
       >
-        <Link href="/" className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110">
+        <Link
+          href="/"
+          className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110"
+        >
           <img src="/Logo.png" alt="FutureFocals" />
           <span className="flex hidden md:flex text-white font-extrabold text-[16px] md:text-[20px]">
             FutureFocals
@@ -201,21 +223,52 @@ const NavBar = () => {
         <div className={`${classes.menuItems}`}>
           <ul className="list-none lg:flex hidden justify-end items-center">
             <div className="nav-ul lg:flex hidden justify-end items-center">
-
-            {mainNavLinks.map((link, index) => (
-              <li
-                key={index}
-                className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
-                  index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
-                } ${
-                  asPath === link.link
-                    ? "bg-orange-700 rounded-[5px] scale-110"
-                    : ""
-                } nav-item`}
-              >
-                <Link href={link.link}>{link.title}</Link>
-              </li>
-            ))}
+              {mainNavLinks.map((link, index) => (
+                <li
+                  key={index}
+                  className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
+                    index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
+                  } ${
+                    asPath === link.link
+                      ? "bg-orange-700 rounded-[5px] scale-110"
+                      : ""
+                  } nav-item`}
+                >
+                  {link.title === "Services" ? (
+                    <>
+                      <div
+                        className={classes.serviceOnHover}
+                        onClick={() => {
+                          setShowServicesDropdown((prev) => !prev);
+                          setToggle(false);
+                        }}
+                      >
+                        {link.title}
+                      </div>
+                      {showServicesDropdown && (
+                        <ul
+                          ref={dropdownRef}
+                          className="space-y-1 p-6 absolute top-10 right-0 mt-2 rounded-lg bg-gray-900 navbar-sm-animation z-50"
+                        >
+                          {serviceTitleData.map((element) => {
+                            return (
+                              <>
+                                <li className="mb-5 cursor-pointer">
+                                  <Link href={`${link.link}/${element.id}`}>
+                                    {element.title}
+                                  </Link>
+                                </li>
+                              </>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </>
+                  ) : (
+                    <Link href={link.link}>{link.title}</Link>
+                  )}
+                </li>
+              ))}
             </div>
             {isAuthenticated && isUser && (
               <div className="relative">
@@ -384,7 +437,10 @@ const NavBar = () => {
                     setToggle(false);
                   }}
                 >
-                  <FaUserCircle className="w-7 h-7 " />
+<div className={classes.profile}>
+                    <FaUserCircle className="w-7 h-7 " />
+                    {user.firstName} <MdKeyboardArrowDown />
+</div>
                 </button>
                 {showDropdown && (
                   <ul
@@ -412,7 +468,9 @@ const NavBar = () => {
               </div>
             ) : (
               <Link
-                href="/login"
+                href={`/login?prop=${encodeURIComponent(
+                  JSON.stringify(props)
+                )}`}
                 className="ml-5 bg-orange-700 rounded-md px-5 py-1"
               >
                 Login

@@ -3,3 +3,12 @@
     z-index: 100;
     color: white;
 }
+
+.serviceOnHover:hover{
+    cursor: pointer;
+}
+
+.profile{
+    display: flex;
+    align-items: center;
+}

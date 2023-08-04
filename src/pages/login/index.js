@@ -1,5 +1,5 @@
 import styles from "../../styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classes from "../../styles/contactSection.module.css";
 import axios from "axios";
 import { useAuth } from "../../contexts/auth";
@@ -14,6 +14,7 @@ const jwt_decode = jwt.decode;
 
 export default function LoginRegister() {
   const router = useRouter();
+  const obj = JSON.parse(router.query.prop);
   const { authenticated, setAuthenticated } = useAuth();
 
   const [fname, setFname] = useState("");
@@ -21,8 +22,8 @@ export default function LoginRegister() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [signup, setSignup] = useState(false);
-  const [login, setLogin] = useState(true);
+  const [signup, setSignup] = useState(obj.signup || false);
+  const [login, setLogin] = useState(obj.signin && true);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -378,6 +379,10 @@ export default function LoginRegister() {
       );
       if (response.status === 200) {
         setCookie(null, "token", response.data.token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+        setCookie(null, "user", JSON.stringify(response.data.user), {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
         });
