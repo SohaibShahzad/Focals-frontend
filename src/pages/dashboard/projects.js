@@ -13,6 +13,7 @@ const jwt_decode = jwt.decode;
 let socket;
 
 function ProjectChat({ chatId, userData }) {
+  console.log(userData)
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -40,7 +41,7 @@ function ProjectChat({ chatId, userData }) {
         );
       });
       socket.on("chat", messageHandler);
-      socket.emit("requestChatHistory", { chatId });
+      socket.emit("requestChatHistory", { chatType: "project", chatId });
     }
 
     return () => {
@@ -55,7 +56,12 @@ function ProjectChat({ chatId, userData }) {
   const sendMessage = (event) => {
     event.preventDefault();
     if (message) {
-      socket.emit("chat", { chatId, user: userData.firstName, message });
+      socket.emit("chat", {
+        chatType: "project",
+        chatId,
+        user: userData.firstName,
+        message,
+      });
       setMessage("");
     }
   };
@@ -122,11 +128,12 @@ export default function UserProjects({ userProjects, userData }) {
   const handleExpand = (project) => {
     if (expandedProject === project._id) {
       setExpandedProject(null);
-      socket.emit("leave", { chatId: expandedProject });
+      socket.emit("leave", { chatType: "project", chatId: expandedProject });
       setShowChat(false);
     } else {
       setExpandedProject(project._id);
       socket.emit("join", {
+        chatType: "project",
         chatId: project._id,
         user: userProjects.user,
       });

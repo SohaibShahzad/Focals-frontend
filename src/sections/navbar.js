@@ -15,6 +15,7 @@ import { parseCookies } from "nookies";
 import { FaUserCircle } from "react-icons/fa";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
+import { TbLetterA, TbLetterS } from "react-icons/tb";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
 import axios from "axios";
@@ -112,11 +113,12 @@ const NavBar = () => {
   };
 
   const handleSearch = (query) => {
-    if (!query.includes(" ")) {
-      // Check if query contains a space
-      return [];
-    }
-    const queryWords = query.split(" ").filter((word) => word.length > 0); // Exclude any empty strings
+    //! if include the below if it registers the search after we type a space in the search bar
+    // if (!query.includes(" ")) {
+    //   // Check if query contains a space
+    //   return [];
+    // }
+    const queryWords = query.split(" ").filter((word) => word.length > 0);
     return servicesData.filter((service) =>
       queryWords.some((word) =>
         service.title.toLowerCase().includes(word.toLowerCase())
@@ -191,7 +193,10 @@ const NavBar = () => {
       <div
         className={`${styles.innerWidth} mx-auto flex justify-between gap-2 items-center`}
       >
-        <Link href="/" className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110">
+        <Link
+          href="/"
+          className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110"
+        >
           <img src="/Logo.png" alt="FutureFocals" />
           <span className="flex hidden md:flex text-white font-extrabold text-[16px] md:text-[20px]">
             FutureFocals
@@ -201,21 +206,20 @@ const NavBar = () => {
         <div className={`${classes.menuItems}`}>
           <ul className="list-none lg:flex hidden justify-end items-center">
             <div className="nav-ul lg:flex hidden justify-end items-center">
-
-            {mainNavLinks.map((link, index) => (
-              <li
-                key={index}
-                className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
-                  index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
-                } ${
-                  asPath === link.link
-                    ? "bg-orange-700 rounded-[5px] scale-110"
-                    : ""
-                } nav-item`}
-              >
-                <Link href={link.link}>{link.title}</Link>
-              </li>
-            ))}
+              {mainNavLinks.map((link, index) => (
+                <li
+                  key={index}
+                  className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
+                    index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
+                  } ${
+                    asPath === link.link
+                      ? "bg-orange-700 rounded-[5px] scale-110"
+                      : ""
+                  } nav-item`}
+                >
+                  <Link href={link.link}>{link.title}</Link>
+                </li>
+              ))}
             </div>
             {isAuthenticated && isUser && (
               <div className="relative">
@@ -384,7 +388,13 @@ const NavBar = () => {
                     setToggle(false);
                   }}
                 >
-                  <FaUserCircle className="w-7 h-7 " />
+                  {isAdmin ? (
+                    <TbLetterA className="w-7 h-7" />
+                  ) : isSub ? (
+                    <TbLetterS className="w-7 h-7" />
+                  ) : (
+                    <FaUserCircle className="w-7 h-7" />
+                  )}
                 </button>
                 {showDropdown && (
                   <ul
@@ -441,13 +451,19 @@ const NavBar = () => {
             {isAuthenticated ? (
               <div>
                 <button
-                  className="mr-3 bg-orange-700 rounded-full p-1"
+                  className="mr-3 bg-orange-700 rounded-full p-1 transform transition-all duration-300 hover:scale-125"
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
                   }}
                 >
-                  <FaUserCircle className="w-7 h-7 !important" />
+                  {isAdmin ? (
+                    <TbLetterA className="w-7 h-7" />
+                  ) : isSub ? (
+                    <TbLetterS className="w-7 h-7" />
+                  ) : (
+                    <FaUserCircle className="w-7 h-7" />
+                  )}
                 </button>
                 {showDropdown && (
                   <ul
@@ -483,16 +499,22 @@ const NavBar = () => {
             )}
 
             <div
-              className="object-contain cursor-pointer"
+              className="object-contain cursor-pointer "
               onClick={() => {
                 setToggle((prev) => !prev);
                 setShowDropdown(false);
               }}
             >
               {toggle ? (
-                <CgClose style={{ fontSize: "2rem" }} />
+                <CgClose
+                  className="transform transition-all duration-300 hover:scale-125"
+                  style={{ fontSize: "2rem" }}
+                />
               ) : (
-                <CgMenuRight style={{ fontSize: "2rem" }} />
+                <CgMenuRight
+                  className="transform transition-all duration-300 hover:scale-125"
+                  style={{ fontSize: "2rem" }}
+                />
               )}
               <div
                 ref={mobileMenuRef}

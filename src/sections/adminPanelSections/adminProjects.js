@@ -12,12 +12,15 @@ import { TbSend } from "react-icons/tb";
 import { RiChat1Line } from "react-icons/ri";
 import DialogActions from "@mui/material/DialogActions";
 import { Dialog } from "@mui/material";
+import { useStateContext } from "../../contexts/ContextProvider";
 
 let socket;
 
 function AdminChat({ chatId }) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const { unreadProjectMessages, setUnreadProjectMessages } = useStateContext();
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -31,6 +34,7 @@ function AdminChat({ chatId }) {
         ...oldMessages,
         { user: displayName, message },
       ]);
+      setHasUnreadMessages(true);
     };
 
     if (socket) {
@@ -41,25 +45,31 @@ function AdminChat({ chatId }) {
             message,
           }))
         );
+        setHasUnreadMessages(history.some((message) => !message.read));
       });
       socket.on("chat", messageHandler);
-      socket.emit("requestChatHistory", { chatId });
+      socket.emit("requestChatHistory", { chatType: "project", chatId });
     }
 
     return () => {
       if (socket) {
         socket.off("chat", messageHandler);
-        socket.emit("leave", { chatId, user: "Admin" });
+        // socket.emit("leave", { chatType: "project", chatId, user: "Admin" });
       }
     };
-  }, []);
+  }, [chatId]);
 
   useEffect(scrollToBottom, [messages]);
 
   const sendMessage = (event) => {
     event.preventDefault();
     if (message) {
-      socket.emit("chat", { chatId, user: "Admin", message });
+      socket.emit("chat", {
+        chatType: "project",
+        chatId,
+        user: "Admin",
+        message,
+      });
       setMessage("");
     }
   };
@@ -232,7 +242,8 @@ const ProjectsPanel = ({ initialProjectsData }) => {
   const [editingProject, setEditingProject] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatId, setChatId] = useState(null);
-  const [projectDetails, setProjectDetails] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState({});
+  const { unreadProjectMessages, setUnreadProjectMessages } = useStateContext();
   const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [clientDetails, setClientDetails] = useState(false);
@@ -243,7 +254,6 @@ const ProjectsPanel = ({ initialProjectsData }) => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
       );
       setProjects(res.data);
-      console.log("Here in fetching");
     } catch (error) {
       console.error(error);
     }
@@ -280,16 +290,26 @@ const ProjectsPanel = ({ initialProjectsData }) => {
 
   useEffect(() => {
     socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
-
     socket.on("connect", () => {
-      console.log("connected to the server");
+      // Join all ongoing project chats when the socket is connected
+      ongoingProjects.forEach((project) => {
+        socket.emit("join", {
+          chatType: "project",
+          chatId: project._id,
+          user: "Admin",
+        });
+      });
+    });
+    socket.on("chat", ({ chatId }) => {
+      setUnreadMessages((unread) => ({ ...unread, [chatId]: true }));
+      setUnreadProjectMessages(true);
     });
 
     return () => {
-      console.log("disconnecting from the server");
+      socket.off("chat");
       socket.disconnect();
     };
-  }, []);
+  }, [ongoingProjects]);
 
   const handleTabChange = (index) => {
     setActiveTab(index);
@@ -303,20 +323,21 @@ const ProjectsPanel = ({ initialProjectsData }) => {
     }
   };
 
-  const onDone = () => {
-    setEditingProject(null);
-  };
-
   const handleExpand = (project) => {
     if (expandedProject === project._id) {
       setExpandedProject(null);
       setUserDetails(null);
-      socket.emit("leave", { chatId: expandedProject });
-      setShowChat(false); // Close chat when project is collapsed
+      if (showChat) {
+        socket.emit("leave", { chatType: "project", chatId: expandedProject });
+        setUnreadMessages((unread) => ({ ...unread, [project._id]: false }));
+        setUnreadProjectMessages(false);
+      }
+      setShowChat(false);
     } else {
       setUserDetails(null);
       setExpandedProject(project._id);
       socket.emit("join", {
+        chatType: "project",
         chatId: project._id,
         user: "Admin",
       });
@@ -736,10 +757,15 @@ const ProjectsPanel = ({ initialProjectsData }) => {
 
                     <div className="flex justify-end mt-3">
                       <button
-                        className="p-1 rounded-full bg-orange-500"
+                        className="p-1 rounded-full bg-orange-500 relative"
                         onClick={() => {
                           if (chatId === project._id && showChat) {
                             setShowChat(false);
+                            setUnreadMessages((unread) => ({
+                              ...unread,
+                              [project._id]: false,
+                            }));
+                            setUnreadProjectMessages(false);
                           } else {
                             setChatId(project._id);
                             setShowChat(true);
@@ -747,6 +773,11 @@ const ProjectsPanel = ({ initialProjectsData }) => {
                         }}
                       >
                         <RiChat1Line className="w-7 h-7" />
+                        {!showChat && unreadProjectMessages && (
+                          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
+                            •
+                          </span>
+                        )}
                       </button>
                     </div>
                     {showChat && chatId === project._id && (

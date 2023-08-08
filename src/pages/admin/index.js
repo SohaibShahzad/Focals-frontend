@@ -1,5 +1,5 @@
 import styles from "../../styles";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import classes from "../../styles/contactSection.module.css";
 import axios from "axios";
 import { useAuth } from "../../contexts/auth";
@@ -8,11 +8,14 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
 import { setCookie } from "nookies";
+import io from "socket.io-client";
 
-export default function AdminLogin() {
+let socket;
+
+export default function AdminLogin({ initialProjectsData }) {
   const router = useRouter();
   const { setAuthenticated } = useAuth();
-
+  const [ongoingProjects, setOngoingProjects] = useState([]);
   const [username, setUsername] = useState("");
   const [passsword, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState("admin");
@@ -23,6 +26,22 @@ export default function AdminLogin() {
     icon: null,
     styling: "",
   });
+
+  useEffect(() => {
+    const ongoing = [];
+
+    initialProjectsData.forEach((userProject) => {
+      userProject.ongoingProjects.forEach((project) => {
+        ongoing.push({
+          ...project,
+          email: userProject.email,
+          userId: userProject.user,
+        });
+      });
+    });
+
+    setOngoingProjects(ongoing);
+  }, [initialProjectsData]);
 
   const resetForm = () => {
     setUsername("");
@@ -63,6 +82,17 @@ export default function AdminLogin() {
             path: "/",
           });
           setAuthenticated(true);
+          socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
+          socket.on("connect", () => {
+            console.log("connected to the server");
+          });
+          ongoingProjects.forEach((project) => {
+            socket.emit("join", {
+              chatType: "project",
+              chatId: project._id,
+              user: "Admin",
+            });
+          });
           router.push("/admin/dashboard");
         } else {
           setErrorMessage({
@@ -234,4 +264,17 @@ export default function AdminLogin() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
+  );
+  const initialProjectsData = response.data;
+
+  return {
+    props: {
+      initialProjectsData,
+    },
+  };
 }
