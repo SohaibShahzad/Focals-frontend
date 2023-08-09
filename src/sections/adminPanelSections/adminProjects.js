@@ -258,6 +258,18 @@ const ProjectsPanel = ({ projectsData }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [clientDetails, setClientDetails] = useState(false);
 
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
+      );
+      setProjects(res.data);
+      console.log("Here in fetching");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -312,15 +324,8 @@ const ProjectsPanel = ({ projectsData }) => {
     }
   };
 
-  const fetchProjects = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
-      );
-      setProjects(res.data);
-    } catch (error) {
-      console.error(error);
-    }
+  const onDone = () => {
+    setEditingProject(null);
   };
 
   const handleExpand = (project) => {
