@@ -6,42 +6,11 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useAuth } from "../../contexts/auth";
-import io from "socket.io-client";
-import { useState, useEffect } from "react";
-
-let socket;
 
 export const Sidebar = ({ role }) => {
   const router = useRouter();
   const { setAuthenticated } = useAuth();
-  const {
-    activeMenu,
-    setActiveMenu,
-    screenSize,
-    unreadProjectMessages,
-    setUnreadProjectMessages,
-  } = useStateContext();
-  const [notification, setNotification] = useState(false);
-
-  useEffect(() => {
-    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
-
-    // Listen for the "notification" event from the server
-    socket.on("notification", () => {
-      setNotification(true); // Set the notification state to true
-    });
-
-    // Listen for the "unreadMessages" event from the server
-    socket.on("unreadMessages", (unreadMessages) => {
-      // Update the unreadProjectMessages state with the received object
-      setUnreadProjectMessages(unreadMessages);
-    });
-    console.log("unreadProjectMessages", unreadProjectMessages);
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [unreadProjectMessages]);
+  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
 
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {
@@ -123,13 +92,6 @@ export const Sidebar = ({ role }) => {
                   >
                     {link.icon}
                     <span className="capitalize">{link.name}</span>
-                    {link.name === "Projects" &&
-                      unreadProjectMessages &&
-                      unreadProjectMessages.projects > 0 && (
-                        <span className="bg-red-500 text-white rounded-full px-2 py-1 text-xs">
-                          {unreadProjectMessages[link.name.toLowerCase()] || 0}
-                        </span>
-                      )}
                   </ActiveLink>
                 ))}
               </div>
@@ -146,8 +108,6 @@ export const Sidebar = ({ role }) => {
               className="m-3 text-center text-lg text-black bg-[#f3993f] w-[91%] py-3 rounded-lg hover:bg-[#d8730e] hover:text-white"
               onClick={() => {
                 handleLogout(setAuthenticated);
-                socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
-                socket.disconnect();
               }}
             >
               Logout

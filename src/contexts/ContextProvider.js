@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
-import io from "socket.io-client";
 
 const jwt_decode = jwt.decode;
 
@@ -50,7 +49,6 @@ const ContextProvider = ({ children }) => {
   const [themeSettings, setThemeSettings] = useState(false);
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
-  const [unreadProjectMessages, setUnreadProjectMessages] = useState({});
 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
@@ -64,24 +62,6 @@ const ContextProvider = ({ children }) => {
 
   const handleClick = (clicked) =>
     setIsClicked({ ...initialState, [clicked]: true });
-
-  useEffect(() => {
-    const socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
-
-    // Listen for the "notification" event from the server
-    socket.on("notification", () => {
-      console.log("notification");
-      setUnreadProjectMessages((prevState) => ({
-        ...prevState,
-        projectId: (prevState.projectId || 0) + 1,
-      }));
-    }
-    );
-
-    return () => {
-      socket.off("notification");
-    }
-  }, [])
 
   return (
     <StateContext.Provider
@@ -104,8 +84,6 @@ const ContextProvider = ({ children }) => {
         setColor,
         themeSettings,
         setThemeSettings,
-        unreadProjectMessages,
-        setUnreadProjectMessages,
       }}
     >
       {children}
