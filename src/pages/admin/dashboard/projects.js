@@ -1,19 +1,19 @@
 import ProjectsPanel from "../../../sections/adminPanelSections/adminProjects";
 import axios from "axios";
 
-export default function AdminProjects({ initialProjectsData }) {
-  return <ProjectsPanel initialProjectsData={initialProjectsData} />;
+export default function AdminProjects({ projectsData }) {
+  return <ProjectsPanel projectsData={projectsData} />;
 }
 
 export async function getServerSideProps() {
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
   );
-  const initialProjectsData = response.data;
+  const projectsData = response.data;
 
   return {
     props: {
-      initialProjectsData,
+      projectsData,
     },
   };
 }

@@ -113,7 +113,7 @@ const formatDateToYYYYMMDD = (dateString) => {
   return `${year}-${month}-${day}`;
 };
 
-function EditProjectForm({ project, onDone, fetchProject }) {
+function EditProjectForm({ project, onDone, fetchProjects }) {
   const [status, setStatus] = useState(project.status);
   const [projectName, setProjectName] = useState(project.projectName);
   const [startDate, setStartDate] = useState(
@@ -133,23 +133,17 @@ function EditProjectForm({ project, onDone, fetchProject }) {
         `${process.env.NEXT_PUBLIC_SERVER_URL}projects/updateProject/${project.userId}/${project._id}`,
         {
           status,
+          //   projectName,
           startDate,
           endDate,
           progress,
+          //   price,
+          //   meetingStatus,
         }
       );
-      if (typeof fetchProject === "function") {
-        fetchProject(); // Fetch the updated list of projects
-      } else {
-        console.log("fetchProjects is not a function", fetchProject);
-      }
-      if (typeof onDone === "function") {
-        console.log("onDone is a function", onDone);
-        onDone(); // Fetch the updated list of projects
-      } else {
-        console.log("onDone is not a function", onDone);
-      }
-      // onDone();
+      fetchProjects();
+      // If successful, exit edit mode
+      onDone();
     } catch (error) {
       console.error(error);
     }
@@ -162,7 +156,15 @@ function EditProjectForm({ project, onDone, fetchProject }) {
         className="bg-[#333333] text-white font-poppins p-2 flex flex-col gap-2"
       >
         <h1 className="text-center text-[20px] font-bold">Update Details</h1>
-
+        {/* <label>
+          Project Name:
+          <input
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="bg-transparent border-2 border-gray-200 rounded-md px-2 focus:outline-none focus:border-orange-500"
+          />
+        </label> */}
         <label className="flex flex-col">
           Start Date:
           <input
@@ -206,7 +208,26 @@ function EditProjectForm({ project, onDone, fetchProject }) {
             className={`${inputStyling} bg-transparent`}
           />
         </label>
-
+        {/* <label className="flex flex-col">
+          Price:
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          className={`${inputStyling} bg-transparent`}
+          />
+        </label>
+        <label className="flex flex-col">
+          Meeting Status:
+          <select
+            value={meetingStatus}
+            onChange={(e) => setMeetingStatus(e.target.value)}
+            className={`${inputStyling} bg-[#333333]`}
+          >
+            <option value="Not scheduled">Not scheduled</option>
+            <option value="Scheduled">Scheduled</option>
+          </select>
+        </label> */}
         <input
           type="submit"
           value="Submit"
@@ -217,8 +238,8 @@ function EditProjectForm({ project, onDone, fetchProject }) {
   );
 }
 
-const ProjectsPanel = ({ initialProjectsData }) => {
-  const [projects, setProjects] = useState(initialProjectsData);
+const ProjectsPanel = ({ projectsData }) => {
+  const [projects, setProjects] = useState(projectsData);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedProject, setExpandedProject] = useState(null);
   const [searchValueOngoing, setSearchValueOngoing] = useState("");
@@ -236,18 +257,6 @@ const ProjectsPanel = ({ initialProjectsData }) => {
   const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [clientDetails, setClientDetails] = useState(false);
-
-  const fetchProjects = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
-      );
-      setProjects(res.data);
-      console.log("Here in fetching");
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     fetchProjects();
@@ -303,8 +312,15 @@ const ProjectsPanel = ({ initialProjectsData }) => {
     }
   };
 
-  const onDone = () => {
-    setEditingProject(null);
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
+      );
+      setProjects(res.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleExpand = (project) => {
@@ -588,8 +604,8 @@ const ProjectsPanel = ({ initialProjectsData }) => {
                             editingProject._id === project._id && (
                               <EditProjectForm
                                 project={editingProject}
-                                onDone={() => setEditingProject(null)}
-                                fetchProject={fetchProjects}
+                                onDone={() => handleEdit(project)}
+                                fetchProjects={fetchProjects}
                               />
                             )}
                         </div>
@@ -729,8 +745,7 @@ const ProjectsPanel = ({ initialProjectsData }) => {
                     {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
                         project={editingProject}
-                        onDone={() => setEditingProject(null)}
-                        fetchProject={fetchProjects}
+                        onDone={() => handleEdit(project)}
                       />
                     )}
 
@@ -830,8 +845,8 @@ const ProjectsPanel = ({ initialProjectsData }) => {
                     {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
                         project={editingProject}
-                        onDone={() => setEditingProject(null)}
-                        fetchProject={fetchProjects}
+                        onDone={() => handleEdit(project)}
+                        fetchProjects={fetchProjects}
                       />
                     )}
                   </div>
