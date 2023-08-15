@@ -22,6 +22,7 @@ const ServicesPanel = ({ services }) => {
   const [image, setImage] = useState([]);
   const [url, setUrl] = useState([]);
   const [newPackages, setNewPackages] = useState([]);
+  const [category, setCategory] = useState("");
   const [selectedServiceForUpdate, setSelectedServiceForUpdate] =
     useState(null);
   const [addNewForm, setAddNewForm] = useState(false);
@@ -45,6 +46,7 @@ const ServicesPanel = ({ services }) => {
     setImage(selectedServiceForUpdate?.image || []);
     setUrl(selectedServiceForUpdate?.url || []);
     setThumbnail(selectedServiceForUpdate?.thumbnail || null);
+    setCategory(selectedServiceForUpdate?.category || "")
   }, [selectedServiceForUpdate]);
 
   const [rows, setRows] = useState(
@@ -56,6 +58,7 @@ const ServicesPanel = ({ services }) => {
       thumbnail: service.thumbnail,
       image: service.images,
       url: service.url,
+      category: service.category
     }))
   );
 
@@ -73,6 +76,7 @@ const ServicesPanel = ({ services }) => {
           thumbnail: service.thumbnail,
           image: service.images,
           url: service.url,
+          category: service.category
         }))
       );
     } catch (error) {
@@ -86,6 +90,7 @@ const ServicesPanel = ({ services }) => {
     setImage(null);
     setUrl([]);
     setNewPackages([]);
+    setCategory("");
   };
 
   const handleAddFormOpen = (e) => {
@@ -123,6 +128,7 @@ const ServicesPanel = ({ services }) => {
 
     const updatedUrl = url;
     formData.append("url", JSON.stringify(updatedUrl));
+    formData.append("category", category);
 
     try {
       let response;
@@ -349,6 +355,17 @@ const ServicesPanel = ({ services }) => {
                       setDescription(editor.getHTML())
                     }
                   />
+                  <label htmlFor="category" className="font-bold">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
+                    id="category"
+                    placeholder="Enter Service Category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  />
                   <label htmlFor="url" className="font-bold">
                     YouTube URLs
                   </label>
@@ -552,6 +569,10 @@ const ServicesPanel = ({ services }) => {
                           </div>
                         ))}
                       </div>
+                    </div>
+                    <div>
+                      <div className="underline text-xl mt-3">Category:</div>
+                      <div>{selectedService.category}</div>
                     </div>
                   </DialogContent>
                   <DialogActions>

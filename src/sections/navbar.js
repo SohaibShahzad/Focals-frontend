@@ -13,18 +13,26 @@ import { mainNavLinks } from "../routes/mainNavLinks";
 import { CgMenuRight, CgClose } from "react-icons/cg";
 import { parseCookies } from "nookies";
 import { FaUserCircle } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
-import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
+import {
+  TbSquareRoundedChevronDownFilled,
+  TbSquareRoundedChevronRightFilled,
+  TbArrowNarrowRight,
+} from "react-icons/tb";
+import { AiFillDelete } from "react-icons/ai";
 import axios from "axios";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
 const NavBar = () => {
   const { asPath } = useRouter();
+  const [chevronMenu, setChevronMenu] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const [serviceTitleData, setServiceTitleData] = useState(null);
+  const [categoryWiseServices, setCategoryWiseServices] = useState({});
   const [showDropdown, setShowDropdown] = useState(false);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,6 +47,8 @@ const NavBar = () => {
   const dropdownRef = useRef(null);
   const searchBarRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const servicesMenuRef = useRef(null);
+  const cartRef = useRef(null);
   const [user, setUser] = useState({});
   const props = {
     signup: false,
@@ -50,7 +60,7 @@ const NavBar = () => {
     const token = cookies.token;
     const userData = cookies.user;
     try {
-      setUser(JSON.parse(userData));
+      setUser(jwt_decode(token));
     } catch (error) {}
     const auth = !!token;
     setIsAuthenticated(auth);
@@ -64,17 +74,29 @@ const NavBar = () => {
       const resServices = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServicesWithoutImages`
       );
-      setServicesData(resServices.data);
+      const servicesRawData = resServices.data;
+      const categoryWiseServices = {};
+
+      for (const service of servicesRawData) {
+        const category = service.category;
+        if (!categoryWiseServices[category]) {
+          categoryWiseServices[category] = [];
+        }
+        categoryWiseServices[category].push(service);
+      }
+      setServicesData(servicesRawData);
+      setCategoryWiseServices(categoryWiseServices);
     }
-    async function fetchServiceData() {
-      const serviceData = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesTitle`
-      );
-      setServiceTitleData(serviceData.data);
-      console.log(serviceData.data);
-    }
+    // async function fetchServiceData() {
+    //   const serviceData = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesTitle`
+    //   );
+    //   setServiceTitleData(serviceData.data);
+    //   console.log(serviceData.data);
+    // }
     fetchData();
-    fetchServiceData();
+
+    // fetchServiceData();
   }, []);
 
   useEffect(() => {
@@ -84,12 +106,27 @@ const NavBar = () => {
           setShowDropdown(false);
         }, 100);
       }
+      if (
+        servicesMenuRef.current &&
+        !servicesMenuRef.current.contains(event.target)
+      ) {
+        setTimeout(() => {
+          setChevronMenu(false);
+        }, 100);
+      }
+      if (cartRef.current && !cartRef.current.contains(event.target)) {
+        setTimeout(() => {
+          setShowCart(false);
+        }, 100);
+      }
     };
     document.addEventListener("mouseup", handleClickOutside);
+    document.addEventListener("scroll", handleClickOutside);
     return () => {
       document.removeEventListener("mouseup", handleClickOutside);
+      document.addEventListener("scroll", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, [dropdownRef, servicesMenuRef, cartRef]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -207,10 +244,16 @@ const NavBar = () => {
       whileInView="show"
       className={`${styles.xPaddings} py-8 relative font-poppins`}
     >
+      {(showCart || chevronMenu) &&  (
+        <div className="fixed top-0 left-0 w-full h-full bg-black opacity-70 z-40" />
+      )}
       <div
         className={`${styles.innerWidth} mx-auto flex justify-between gap-2 items-center`}
       >
-        <Link href="/" className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110">
+        <Link
+          href="/"
+          className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110"
+        >
           <img src="/Logo.png" alt="FutureFocals" />
           <span className="flex hidden md:flex text-white font-extrabold text-[16px] md:text-[20px]">
             FutureFocals
@@ -220,21 +263,107 @@ const NavBar = () => {
         <div className={`${classes.menuItems}`}>
           <ul className="list-none lg:flex hidden justify-end items-center">
             <div className="nav-ul lg:flex hidden justify-end items-center">
+              {mainNavLinks.map((link, index) => (
+                <li
+                  key={index}
+                  className={`flex relative px-1   ${
+                    index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
+                  } ${
+                    asPath === link.link
+                      ? "bg-orange-700 rounded-[5px] scale-110"
+                      : ""
+                  } `}
+                >
+                  {link.title === "Services" ? (
+                    <div>
+                      <div className="flex items-center justify-center">
+                        <Link
+                          href="/services"
+                          className="nav-item transform transition-all duration-300 hover:scale-110"
+                        >
+                          {link.title}
+                        </Link>
+                        <div className="border-[2px] border-gray-600 h-7 rounded-full ml-[5px]" />
+                        {chevronMenu && link.title === "Services" ? (
+                          <TbSquareRoundedChevronRightFilled
+                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-300 hover:scale-125"
+                            onClick={() => {
+                              setChevronMenu(false);
+                            }}
+                          />
+                        ) : (
+                          <TbSquareRoundedChevronDownFilled
+                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-300 hover:scale-125"
+                            onClick={() => {
+                              setChevronMenu(true);
+                            }}
+                          />
+                        )}
+                      </div>
+                      {chevronMenu && link.title === "Services" && (
+                        <div className="hover:transition-none bg-gray-800 absolute top-10 right-0 px-5 py-3 navbar-sm-animation rounded-[5px]">
+                          <p className="flex justify-center font-semibold underline pb-2">
+                            Categories
+                          </p>
+                          <div
+                            className="flex gap-5 columns-2 border-b-2 border-gray-600"
+                            ref={servicesMenuRef}
+                          >
+                            {Object.keys(categoryWiseServices).map(
+                              (category, index) => (
+                                <div
+                                  key={index}
+                                  style={{
+                                    "border-left":
+                                      index === 0 ? "" : "2px solid gray",
+                                    "padding-left": index === 0 ? "" : "20px",
+                                    "margin-bottom": "10px",
+                                  }}
+                                >
+                                  <h4 style={{ "white-space": "nowrap" }} className="pb-2">
+                                    {category}
+                                  </h4>
+                                  <div className="flex flex-col gap-1">
 
-            {mainNavLinks.map((link, index) => (
-              <li
-                key={index}
-                className={`relative px-1 transform transition-all duration-300 hover:scale-110 ${
-                  index === mainNavLinks.length - 1 ? "mr-0" : "mr-4"
-                } ${
-                  asPath === link.link
-                    ? "bg-orange-700 rounded-[5px] scale-110"
-                    : ""
-                } nav-item`}
-              >
-                <Link href={link.link}>{link.title}</Link>
-              </li>
-            ))}
+                                  {categoryWiseServices[category].map(
+                                    (service) => (
+                                      <Link href={`/services/${service._id}`}>
+                                        <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-300 hover:scale-110 hover:text-white">
+                                          <TbArrowNarrowRight className="w-8 h-5" />
+                                          <span
+                                            style={{ "white-space": "nowrap" }}
+                                          >
+                                            {service.title}
+                                          </span>
+                                        </p>
+                                      </Link>
+                                    )
+                                  )}
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+                          <Link
+                            href="/services"
+                            className="opacity-50 text-xs flex items-center justify-end hover:opacity-100 hover:underline"
+                          >
+                            View all services{" "}
+                            <TbSquareRoundedChevronRightFilled className="w-4 h-4" />
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={link.link}
+                      className="nav-item transform transition-all duration-300 hover:scale-110"
+                    >
+                      {link.title}
+                    </Link>
+                  )}
+                </li>
+              ))}
             </div>
             {isAuthenticated && isUser && (
               <div className="relative">
@@ -245,7 +374,7 @@ const NavBar = () => {
                       setShowCart((prev) => !prev);
                     }}
                   >
-                    <HiShoppingCart className="w-5 h-5 hover:w-6 hover:h-6 " />
+                    <HiShoppingCart className="w-5 h-5" />
                     {totalQuantity > 0 && (
                       <span className="absolute top-[-10px] right-[-10px] bg-orange-400 text-black font-bold px-2 rounded-full">
                         {totalQuantity}
@@ -254,13 +383,30 @@ const NavBar = () => {
                   </button>
                 </li>
                 {showCart && (
-                  <div className="absolute top-10 right-0 px-3 py-2 navbar-sm-animation bg-[#333333] rounded-md ">
+                  <div
+                    ref={cartRef}
+                    className="fixed top-0 right-0 px-4 py-3 slide-rtl-animation bg-gray-800 rounded-tl-md rounded-bl-md h-full w-[300px] z-50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-[22px] font-extrabold underline">
+                        Cart
+                      </h2>
+                      {cart.length > 0 && (
+                        <button
+                          onClick={() => setCart([])}
+                          className="opacity-50 flex items-center hover:opacity-100 transition transform-all duration-300 rounded-md px-1 hover:bg-orange-600"
+                        >
+                          <AiFillDelete />
+                          <span>Clear</span>
+                        </button>
+                      )}
+                    </div>
                     {cart.length > 0 ? (
                       <>
-                        <div className="flex flex-col gap-2 p-2">
+                        <div className="flex flex-col gap-2 p-2 h-[calc(100vh-200px)] overflow-y-auto">
                           {cart.map((item) => (
                             <>
-                              <div className="justify-between items-center">
+                              <div className="justify-between items-center ">
                                 <div className="flex flex-col gap-10 justify-between">
                                   <span
                                     className="text-[18px] text-center mb-2"
@@ -329,7 +475,7 @@ const NavBar = () => {
                             </>
                           ))}
                         </div>
-                        <div className="flex items-center gap-3 justify-end">
+                        <div className="flex items-center gap-3 justify-end pt-[10px]">
                           Total:
                           <span className="font-bold text-[20px]">
                             ${calculateTotalPrice()}
@@ -337,13 +483,27 @@ const NavBar = () => {
                         </div>
                         <Link
                           href="/cart-checkout"
-                          className="bg-orange-800 hover:bg-orange-600 rounded-md mt-2 py-1 items-center flex justify-center"
+                          className="bg-orange-800 button-animation-reverse hover:scale-100 rounded-md mt-2 py-1 items-center flex justify-center"
                         >
                           Proceed
                         </Link>
+                        <Link
+                          href="/services"
+                          className="border-orange-800 button-animation hover:scale-100 border-2 rounded-md mt-2 py-1 items-center flex justify-center"
+                        >
+                          Continue Shopping
+                        </Link>
                       </>
                     ) : (
-                      <div>No Item</div>
+                      <div className="flex flex-col items-center my-auto">
+                        <p>No Item</p>
+                        <Link
+                          href="/services"
+                          className="bg-orange-800 button-animation-reverse rounded-md mt-2 py-1 items-center flex justify-center"
+                        >
+                          Let's Shop!!
+                        </Link>
+                      </div>
                     )}
                   </div>
                 )}
@@ -361,7 +521,7 @@ const NavBar = () => {
                 <RiSearchLine className="w-5 h-5 " />
               </button>
               {showSearch && (
-                <div className="absolute right-0 top-10 p-2 rounded-md bg-gray-900 px-4 navbar-sm-animation ">
+                <div className="absolute right-0 top-10 p-2 rounded-md bg-gray-800 px-4 navbar-sm-animation ">
                   <input
                     type="text"
                     ref={searchBarRef}
@@ -397,18 +557,30 @@ const NavBar = () => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
-                  className="ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-125 rounded-full p-1 "
+                  className="flex items-center gap-1 ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-110 rounded-full p-1 "
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
                   }}
                 >
-                  <FaUserCircle className="w-7 h-7 " />
+                  {isAdmin ? (
+                    <span className="bg-white text-orange-600 rounded-full px-2 font-extrabold">
+                      Admin
+                    </span>
+                  ) : isSub ? (
+                    <span className="bg-white text-orange-600 rounded-full px-2 font-extrabold">
+                      Sub
+                    </span>
+                  ) : (
+                    <FaUserCircle className="w-7 h-7 " />
+                  )}
+                  <span>{user.firstName}</span>
+                  <IoIosArrowDown />
                 </button>
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute top-10 right-0 mt-2 rounded-lg bg-gray-900 navbar-sm-animation z-50"
+                    className="space-y-1 p-6 absolute top-10 right-0 mt-2 rounded-lg bg-gray-800 navbar-sm-animation z-50"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link
@@ -434,7 +606,7 @@ const NavBar = () => {
                 href={`/login?prop=${encodeURIComponent(
                   JSON.stringify(props)
                 )}`}
-                className="ml-5 bg-orange-700 rounded-md px-5 py-1"
+                className="button-animation-reverse ml-5 bg-orange-700 rounded-md px-5 py-1"
               >
                 Login
               </Link>
@@ -462,18 +634,20 @@ const NavBar = () => {
             {isAuthenticated ? (
               <div>
                 <button
-                  className="mr-3 bg-orange-700 rounded-full p-1"
+                  className="mr-3 bg-orange-700 rounded-full p-1 flex items-center gap-1"
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
                   }}
                 >
                   <FaUserCircle className="w-7 h-7 !important" />
+                  <span>{user.firstName}</span>
+                  <IoIosArrowDown />
                 </button>
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-900 navbar-sm-animation"
+                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-800 navbar-sm-animation"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link
@@ -496,7 +670,9 @@ const NavBar = () => {
               </div>
             ) : (
               <Link
-                href="/login"
+                href={`/login?prop=${encodeURIComponent(
+                  JSON.stringify(props)
+                )}`}
                 className="mr-3 bg-orange-700 rounded-md px-5 py-1"
               >
                 Login
@@ -519,7 +695,7 @@ const NavBar = () => {
                 ref={mobileMenuRef}
                 className={`${
                   toggle ? "flex" : "hidden"
-                } p-6 bg-gray-900 navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
+                } p-6 bg-gray-800 navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
                 style={{ maxWidth: "calc(100% - 4px)" }}
               >
                 <ul className="list-none flex flex-col justify-end items-center flex-1">

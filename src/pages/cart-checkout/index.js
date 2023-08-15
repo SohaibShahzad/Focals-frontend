@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { Dialog } from "@mui/material";
+import { AiFillDelete } from "react-icons/ai";
 import DialogActions from "@mui/material/DialogActions";
 import CalendlyWidget from "../../components/calendlyWidget";
 import { useStateContext } from "../../contexts/ContextProvider";
@@ -97,16 +98,36 @@ export default function CartCheckoutPage() {
       </h1>
       <div className="mb-[30px] h-[2px]  bg-white opacity-20" />
       {cart.length === 0 ? (
-        <div className="text-[20px]">No Items in the cart</div>
+        <div className="text-[20px] flex justify-center">
+          <div className="flex flex-col gap-3 items-center">
+            <span className="text-[22px] font-semibold">No Items</span>
+            <Link href="/services">
+              <span className="button-animation-reverse hover:scale-100 border-[3px] py-1 sm:p-1 sm:px-2 rounded-md ">
+                {" "}
+                Add some!
+              </span>
+            </Link>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col md:flex-row md:space-y-0 md:justify-between gap-5">
           <div className="lg:w-1/3">
+            <div className="flex justify-between mb-4 items-center">
+              <h2 className="text-[24px] ">Item Detail</h2>
+              <button
+                onClick={() => setCart([])}
+                className="opacity-50 flex gap-1 scale-125 items-center hover:opacity-100 transition transform-all duration-300 rounded-md px-1 hover:bg-orange-600"
+              >
+                <AiFillDelete />
+                <span>Clear cart</span>
+              </button>
+            </div>
             {cart.map((service) => (
               <div
                 key={service.serviceId}
                 className="mb-5 border-b-2 border-gray-500 border-rounded-md pb-3 flex flex-col"
               >
-                <h1 className="text-[20px] text-center md:text-left mb-2 font-bold z-30">
+                <h1 className="text-[18px] text-center md:text-left mb-2 font-bold z-30">
                   {service.serviceName}
                 </h1>
                 <div className="z-30 flex flex-col gap-3">
@@ -117,7 +138,7 @@ export default function CartCheckoutPage() {
                     >
                       <div className="flex  justify-between items-center">
                         <div className="flex flex-col justify-center ">
-                          <h1 className="text-[20px] font-bold">
+                          <h1 className="text-[18px] font-bold">
                             {bundle.name}
                           </h1>
                           <span className="text-[20px] flex items-center gap-2">
@@ -158,14 +179,12 @@ export default function CartCheckoutPage() {
                 </div>
               </div>
             ))}
-            <div className="flex button-animation-reverse rounded-md hover:scale-100 py-1">
-              <button
-                onClick={() => setCalendlyOpen(true)}
-                className="text-[18px] py-1 sm:p-1 sm:px-2 "
-              >
-                Schedule Meeting
-              </button>
-            </div>
+            <button
+              onClick={() => setCalendlyOpen(true)}
+              className="text-[18px] sm:p-1 sm:px-2 w-full button-animation-reverse rounded-md hover:scale-100"
+            >
+              Schedule Meeting
+            </button>
             <Dialog open={calendlyOpen} onClose={() => setCalendlyOpen(false)}>
               <CalendlyWidget />
             </Dialog>
@@ -246,7 +265,6 @@ export async function getServerSideProps(context) {
   // }
 
   return {
-    props: {
-    },
+    props: {},
   };
 }

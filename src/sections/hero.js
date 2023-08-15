@@ -45,7 +45,7 @@ const Hero = () => (
       <motion.div className="flex flex-col sm:flex-row justify-center items-center text-white mt-7 gap-5">
         <Link
           href="/portfolio"
-          className={`button-animation-reverse ${classes.buttonStyle} flex items-center z-40 `}
+          className={`button-animation-reverse ${classes.buttonStyle} flex items-center z-30 `}
         >
           Watch demo video
         </Link>

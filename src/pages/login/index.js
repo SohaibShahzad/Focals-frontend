@@ -15,6 +15,7 @@ const jwt_decode = jwt.decode;
 export default function LoginRegister() {
   const router = useRouter();
   const obj = JSON.parse(router.query.prop);
+  console.log(obj)
   const { authenticated, setAuthenticated } = useAuth();
 
   const [fname, setFname] = useState("");
