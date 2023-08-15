@@ -112,7 +112,7 @@ export default function WebApp() {
               <h1 className="text-xl md:text-2xl font-bold text-center">
                 Welcome to Future Focals!
               </h1>
-              <p className="text-md md:text-lg font-bold">
+              <p className="text-md md:text-lg">
                 Here Vision Meets Reality
               </p>
             </div>
@@ -121,7 +121,7 @@ export default function WebApp() {
                 <label>Email</label>
                 <input
                   type="email"
-                  className="w-full bg-transparent border-[2px] border-orange-700 focus:border-orange-400 outline-none rounded-md px-2 py-2"
+                  className="w-full bg-transparent border-[2px] border-orange-700 focus:border-orange-400 outline-none rounded-md px-4 py-2"
                   placeholder="Enter Email"
                   value={username}
                   onChange={(e) => {
@@ -137,7 +137,7 @@ export default function WebApp() {
                 <label>Password</label>
                 <input
                   type="password"
-                  className="w-full bg-transparent border-[2px] border-orange-700 focus:border-orange-400 outline-none rounded-md px-2 py-2"
+                  className="w-full bg-transparent border-[2px] border-orange-700 focus:border-orange-400 outline-none rounded-md px-4 py-2"
                   placeholder="Enter Password"
                   value={password}
                   onChange={(e) => {
@@ -152,7 +152,7 @@ export default function WebApp() {
                 </div>
               </div>
               <button
-                className="bg-orange-700 hover:bg-orange-500 py-1 rounded-md mt-3 w-full"
+                className="bg-orange-700 button-animation-reverse hover:scale-100 py-1 rounded-md mt-3 w-full"
                 onClick={handleLogin}
               >
                 Login
@@ -172,7 +172,7 @@ export default function WebApp() {
             </div>
             <DialogActions>
               <button
-                className="bg-red-700 hover:bg-red-500 py-1 rounded-md px-4"
+                className="button-animation-reverse-red hover:scale-100 px-4 rounded-md "
                 onClick={() => setPopup(false)}
               >
                 Do it later{" "}

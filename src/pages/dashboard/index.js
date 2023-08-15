@@ -147,7 +147,6 @@ export async function getServerSideProps(context) {
 
   try {
     const decoded = jwt_decode(token);
-    console.log(decoded);
     if (decoded.type !== "user") {
       return {
         redirect: {
