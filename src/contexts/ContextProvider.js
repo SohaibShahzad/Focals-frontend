@@ -41,7 +41,8 @@ const ContextProvider = ({ children }) => {
   const resetCart = () => {
     dispatch({ type: 'RESET_CART' });
     const cartName = userId ? `${userId}_cart` : "guest_cart";
-    localStorage.removeItem(cartName);
+    localStorage.removeItem(`${userId}_cart`);
+    localStorage.removeItem("guest_cart");
   }
   
   useEffect(() => {
