@@ -31,18 +31,9 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
   useEffect(() => {
     if (session) {
-      console.log("0test", cart.length, cart)
-      if (cart.length > 0) {
-        localStorage.removeItem("guest_cart");
-        localStorage.removeItem(`${userData.id}_cart`);
-        console.log("test", cart.length, cart)
-        handleSuccess();
-        console.log("test1", cart.length, cart)
-        ordersArray = transformOrders(
-          session.line_items,
-          session.customer_email
-        );
-      }
+      localStorage.removeItem("guest_cart");
+      localStorage.removeItem(`${userData.id}_cart`);
+      ordersArray = transformOrders(session.line_items, session.customer_email);
     }
   }, []);
 
