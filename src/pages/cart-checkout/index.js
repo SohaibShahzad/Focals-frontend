@@ -25,7 +25,6 @@ export default function CartCheckoutPage({ session, responseFlag }) {
     if (session) {
       // if ()
       ordersArray = transformOrders(session.line_items, session.customer_email);
-      setCart([]);
     }
   }, []);
 
