@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { HiPlay } from "react-icons/hi";
 import ReactPlayer from "react-player";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { GiCancel } from "react-icons/gi";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Dialog } from "@mui/material";
@@ -23,6 +24,7 @@ const jwt_decode = jwt.decode;
 export default function SingleService({ serviceData }) {
   const [email, setEmail] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [adminError, setAdminError] = useState(false);
   const [widgetOpen, setWidgetOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -32,7 +34,7 @@ export default function SingleService({ serviceData }) {
   const router = useRouter();
   const cookies = parseCookies();
   const token = cookies.token;
-  const isAuthenticated = !!token;
+  const userData = token ? jwt_decode(token) : null;
   const isUser = token ? jwt_decode(token).type === "user" : false;
 
   useEffect(() => {
@@ -48,14 +50,9 @@ export default function SingleService({ serviceData }) {
       return;
     }
     setWidgetOpen(true);
-  }
+  };
 
   const addToCart = (bundle, action) => {
-    if (!isUser) {
-      router.push("/login");
-      return;
-    }
-
     let newCart = [];
     const existingCartItem = cart.find(
       (item) => item.serviceId === serviceData._id
@@ -112,6 +109,11 @@ export default function SingleService({ serviceData }) {
               quantity: 1,
             },
           ],
+          userDetails: {
+            email: userData.username,
+            name: userData.firstName,
+            id: userData.id,
+          },
         },
       ];
     }
@@ -157,7 +159,6 @@ export default function SingleService({ serviceData }) {
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white relative z-[10] font-poppins`}
     >
       <div className="gradient-02 z-[-1]" />
-
       <div className="md:text-[64px] text-[50px] font-extrabold ">
         {serviceData.title}
       </div>
@@ -319,9 +320,24 @@ export default function SingleService({ serviceData }) {
                     ) : (
                       <div
                         className="button-animation-reverse hover:scale-110 mt-1 rounded-md py-1 items-center text-center cursor-pointer text-[20px]"
-                        onClick={() => addToCart(bundle, "increase")}
+                        onClick={() => {
+                          if (!isUser) {
+                            setAdminError(true);
+                          } else {
+                            addToCart(bundle, "increase");
+                          }
+                        }}
                       >
                         Add to Cart <AddShoppingCartRoundedIcon />
+                      </div>
+                    )}
+                    {adminError && (
+                      <div className="bg-red-600 mt-3 py-1 rounded-md px-2 flex justify-between items-center">
+                        <span>You need to login as user!</span>
+                        <GiCancel
+                          className="w-5 h-5 cursor-pointer"
+                          onClick={() => setAdminError(false)}
+                        />
                       </div>
                     )}
                   </div>

@@ -277,13 +277,14 @@ const NavBar = () => {
                   {link.title === "Services" ? (
                     <div>
                       <div className="flex items-center justify-center">
-                        <Link
-                          href="/services"
-                          className="nav-item transform transition-all duration-300 hover:scale-110"
+                        <button
+                          onClick={() => {
+                            setChevronMenu((prev) => !prev);
+                          }}
+                          className="nav-item transform transition-all duration-300  hover:px-1"
                         >
                           {link.title}
-                        </Link>
-                        <div className="border-[2px] border-gray-600 h-7 rounded-full ml-[5px]" />
+                        </button>
                         {chevronMenu && link.title === "Services" ? (
                           <TbSquareRoundedChevronRightFilled
                             className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-300 hover:scale-125"
@@ -346,7 +347,7 @@ const NavBar = () => {
                           </div>
                           <Link
                             href="/services"
-                            className="opacity-50 text-xs flex items-center justify-end hover:opacity-100 hover:underline"
+                            className="opacity-50 text-sm mt-2 flex items-center justify-end transform transition-all duration-250 hover:opacity-100 hover:underline"
                           >
                             View all services{" "}
                             <TbSquareRoundedChevronRightFilled className="w-4 h-4" />
@@ -357,7 +358,7 @@ const NavBar = () => {
                   ) : (
                     <Link
                       href={link.link}
-                      className="nav-item transform transition-all duration-300 hover:scale-110"
+                      className="nav-item transform transition-all duration-300 hover:px-1"
                     >
                       {link.title}
                     </Link>

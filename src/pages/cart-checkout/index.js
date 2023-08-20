@@ -1,45 +1,30 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import axios from "axios";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { Dialog } from "@mui/material";
 import { AiFillDelete } from "react-icons/ai";
-import DialogActions from "@mui/material/DialogActions";
 import CalendlyWidget from "../../components/calendlyWidget";
 import { useStateContext } from "../../contexts/ContextProvider";
 import styles from "../../styles";
 import { parseCookies } from "nookies";
+import { stripe } from "../../lib/stripe";
+import transformOrders from "../../helper/transformOrders";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-export default function CartCheckoutPage() {
+export default function CartCheckoutPage({ session }) {
   const { cart, setCart } = useStateContext();
-  // useEffect(() => {
-  //   const cookies = parseCookies();
-  //   const token = cookies.token;
-  //   let userId;
-  //   if (token) {
-  //     const decodedToken = jwt_decode(token);
-  //     userId = decodedToken?.id;
-  //   }
-  //   const cartKey = userId ? `${userId}_cart` : "guest_cart";
-
-  //   if (typeof window !== "undefined") {
-  //     const localData = localStorage.getItem(cartKey);
-  //     if (cart.length === 0 && localData) {
-  //       setCart(JSON.parse(localData));
-  //     }
-  //   }
-  // }, []);
+  const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
+  let ordersArray = [];
 
-  const totalQuantity = cart.reduce((total, item) => {
-    return (
-      total +
-      item.bundles.reduce((bundleTotal, bundle) => {
-        return bundleTotal + bundle.quantity;
-      }, 0)
-    );
-  }, 0);
+  useEffect(() => {
+    if (session) {
+      console.log("session: ", session);
+      ordersArray = transformOrders(session.line_items, session.customer_email);
+    }
+  }, []);
 
   const addToCart = (targetServiceId, targetBundle, action) => {
     let tempCart = cart.map((service) => {
@@ -85,6 +70,21 @@ export default function CartCheckoutPage() {
     });
 
     return totalPrice;
+  };
+
+  const stripeCheckout = async () => {
+    try {
+      const res = await axios.post("/api/checkout", order, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const redirectUrl = res.data.url;
+      window.location.href = redirectUrl;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -201,7 +201,13 @@ export default function CartCheckoutPage() {
                 <div>
                   <div className="h-[2px] bg-[#666666] mb-2" />
                   <div className="flex flex-col gap-2">
-                    <button className="button-animation-reverse hover:scale-100 hover:border-[3px] py-1 sm:p-1 sm:px-2 rounded-md">
+                    <button
+                      onClick={() => {
+                        setOrder(cart);
+                        stripeCheckout();
+                      }}
+                      className="button-animation-reverse hover:scale-100 hover:border-[3px] py-1 sm:p-1 sm:px-2 rounded-md"
+                    >
                       <h1 className="text-[20px]">Payment</h1>
                     </button>
 
@@ -225,14 +231,27 @@ export default function CartCheckoutPage() {
 }
 
 export async function getServerSideProps(context) {
+  const parameters = context.query;
+  let session;
+  if (parameters.success) {
+    session = await stripe.checkout.sessions.retrieve(parameters.session_id, {
+      expand: ["line_items"],
+    });
+  }
   const cookies = parseCookies(context);
   const token = cookies.token;
   const decoded = jwt.decode(token);
+  const propLogin = {
+    signup: false,
+    signin: true,
+  };
 
   if (!token) {
     return {
       redirect: {
-        destination: "/login",
+        destination: `/login?prop=${encodeURIComponent(
+          JSON.stringify(propLogin)
+        )}`,
         permanent: false,
       },
     };
@@ -241,7 +260,9 @@ export async function getServerSideProps(context) {
       if (decoded.type !== "user") {
         return {
           redirect: {
-            destination: "/login",
+            destination: `/login?prop=${encodeURIComponent(
+              JSON.stringify(propLogin)
+            )}`,
             permanent: false,
           },
         };
@@ -249,22 +270,17 @@ export async function getServerSideProps(context) {
     } catch (err) {
       return {
         redirect: {
-          destination: "/login",
+          destination: `/login?prop=${encodeURIComponent(
+            JSON.stringify(propLogin)
+          )}`,
           permanent: false,
         },
       };
     }
   }
-
-  // // Fetch cart from localStorage
-  // const cartKey = decoded.id ? `${decoded.id}_cart` : "guest_cart";
-  // let cart = [];
-  // if (typeof window !== "undefined") {
-  //   const localData = localStorage.getItem(cartKey);
-  //   cart = localData ? JSON.parse(localData) : [];
-  // }
-
   return {
-    props: {},
+    props: {
+      session: session ? session : null,
+    },
   };
 }
