@@ -10,19 +10,20 @@ import styles from "../../styles";
 import { parseCookies } from "nookies";
 import { stripe } from "../../lib/stripe";
 import transformOrders from "../../helper/transformOrders";
+import Confetti from "react-confetti";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-export default function CartCheckoutPage({ session }) {
+export default function CartCheckoutPage({ session, responseFlag }) {
   const { cart, setCart } = useStateContext();
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   let ordersArray = [];
 
   useEffect(() => {
-    if (session) {
-      console.log("session: ", session);
+    if (responseFlag === "true") {
       ordersArray = transformOrders(session.line_items, session.customer_email);
+      setCart([]);
     }
   }, []);
 
@@ -91,6 +92,57 @@ export default function CartCheckoutPage({ session }) {
     <div
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}
     >
+      {responseFlag === "true" ? (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            // recycle={false}
+            numberOfPieces={200}
+          />
+          <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
+            <h1 className="text-[24px] font-bold text-center">
+              Congratulation on your Purchase!
+            </h1>
+            <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
+              <Link href="/services">
+                <button className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1">
+                  Continue Shopping
+                </button>
+              </Link>
+              <Link href="/dashboard/projects">
+                <button className="text-[18px] button-animation border-2 border-orange-700 hover:scale-100 rounded-md px-3 py-1">
+                  View Orders
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
+            <h1 className="text-[24px] font-bold text-center">
+              Sorry your payment was not successful!
+            </h1>
+            <h2>
+              Please try again or contact us below if you are having any issues.
+            </h2>
+            <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
+              <Link href="/services">
+                <button className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1">
+                  Try Again
+                </button>
+              </Link>
+              <Link href="/contact-us">
+                <button className="text-[18px] button-animation border-2 border-orange-700 hover:scale-100 rounded-md px-3 py-1">
+                  Contact Us
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+      )}
       <div className="gradient-03" />
       <div className="gradient-02" />
       <h1 className="md:text-[64px] text-[50px] font-extrabold text-white relative">
@@ -233,7 +285,7 @@ export default function CartCheckoutPage({ session }) {
 export async function getServerSideProps(context) {
   const parameters = context.query;
   let session;
-  if (parameters.success) {
+  if (parameters.success === "true") {
     session = await stripe.checkout.sessions.retrieve(parameters.session_id, {
       expand: ["line_items"],
     });
@@ -281,6 +333,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       session: session ? session : null,
+      responseFlag: parameters.success ? "true" : "false",
     },
   };
 }

@@ -14,12 +14,6 @@ const transformOrders = (lineItems, email)  => {
         ordersArray.push(order);
       }
     });
-    console.log("ordersArray: ", ordersArray);
-    return ordersArray;
-    
-
-
-
 }
 
 export default transformOrders;

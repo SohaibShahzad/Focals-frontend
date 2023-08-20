@@ -57,7 +57,7 @@ export default async (req, res) => {
         }),
         mode: "payment",
         success_url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/cart-checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/cart-checkout?canceled=true`,
+        cancel_url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/cart-checkout?success=false`,
       });
       res.send({
         url: session.url,
