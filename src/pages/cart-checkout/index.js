@@ -15,20 +15,23 @@ import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
 export default function CartCheckoutPage({ session, responseFlag }) {
-  const { cart, setCart, resetCart } = useStateContext();
+  const { cart, setCart } = useStateContext();
   const [statusFlag, setStatusFlag] = useState(responseFlag);
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   let ordersArray = [];
 
   const handleSuccess = () => {
-    resetCart();
-  }
+    setCart([]);
+  };
 
   useEffect(() => {
     if (session) {
+      console.log("0test", cart.length)
       if (cart.length > 0) {
+        console.log("test", cart.length)
         handleSuccess();
+        console.log("test1", cart.length)
         ordersArray = transformOrders(
           session.line_items,
           session.customer_email
@@ -116,12 +119,22 @@ export default function CartCheckoutPage({ session, responseFlag }) {
             </h1>
             <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
               <Link href="/services">
-                <button className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1">
+                <button
+                  className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1"
+                  onClick={() => {
+                    setCart([]);
+                  }}
+                >
                   Continue Shopping
                 </button>
               </Link>
               <Link href="/dashboard/projects">
-                <button className="text-[18px] button-animation border-2 border-orange-700 hover:scale-100 rounded-md px-3 py-1">
+                <button
+                  onClick={() => {
+                    setCart([]);
+                  }}
+                  className="text-[18px] button-animation border-2 border-orange-700 hover:scale-100 rounded-md px-3 py-1"
+                >
                   View Orders
                 </button>
               </Link>

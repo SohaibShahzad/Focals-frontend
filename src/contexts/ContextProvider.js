@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useReducer } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
 
@@ -13,18 +13,6 @@ const initialState = {
   notification: false,
 };
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'RESET_CART':
-      return {
-        ...state,
-        cart: [],
-      };
-      default:
-        return state;
-  }
-}
-
 const ContextProvider = ({ children }) => {
   const cookies = parseCookies();
   const token = cookies.token;
@@ -34,16 +22,7 @@ const ContextProvider = ({ children }) => {
     userId = decodedToken?.id;
   }
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-
   const [cart, setCart] = useState([]);
-
-  const resetCart = () => {
-    dispatch({ type: 'RESET_CART' });
-    const cartName = userId ? `${userId}_cart` : "guest_cart";
-    localStorage.removeItem(`${userId}_cart`);
-    localStorage.removeItem("guest_cart");
-  }
   
   useEffect(() => {
     const cartKey = userId ? `${userId}_cart` : "guest_cart";
@@ -87,8 +66,6 @@ const ContextProvider = ({ children }) => {
   return (
     <StateContext.Provider
       value={{
-        ...state,
-        resetCart,
         cart,
         setCart,
         currentColor,
