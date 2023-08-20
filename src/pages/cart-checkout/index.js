@@ -21,7 +21,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   let ordersArray = [];
 
   useEffect(() => {
-    if (responseFlag === "true") {
+    if (responseFlag) {
       ordersArray = transformOrders(session.line_items, session.customer_email);
       setCart([]);
     }
@@ -92,7 +92,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
     <div
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}
     >
-      {responseFlag === "true" && (
+      {responseFlag === true && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
           <Confetti
             width={window.innerWidth}
@@ -119,7 +119,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
           </div>
         </div>
       )}
-      {responseFlag === "false" && (
+      {responseFlag === false && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
           <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
             <h1 className="text-[24px] font-bold text-center">
@@ -330,10 +330,18 @@ export async function getServerSideProps(context) {
       };
     }
   }
+  let statusFlag;
+  if (parameters.success === "true") {
+    statusFlag = true;
+  } else if (parameters.success === "false") {
+    statusFlag = false;
+  } else {
+    statusFlag = null;
+  }
   return {
     props: {
       session: session ? session : null,
-      responseFlag: parameters.success ? "true" : "false",
+      responseFlag: statusFlag,
     },
   };
 }
