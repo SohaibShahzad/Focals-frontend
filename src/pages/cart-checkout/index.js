@@ -32,8 +32,8 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   useEffect(() => {
     if (session) {
       if (
-        localStorage.getItem("guest_cart") ||
-        localStorage.getItem(`${userData.id}_cart`)
+        localStorage.getItem("guest_cart").length > 0 ||
+        localStorage.getItem(`${userData.id}_cart`).length > 0
       ) {
         localStorage.removeItem("guest_cart");
         localStorage.removeItem(`${userData.id}_cart`);
