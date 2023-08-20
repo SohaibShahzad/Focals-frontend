@@ -16,15 +16,19 @@ const jwt_decode = jwt.decode;
 
 export default function CartCheckoutPage({ session, responseFlag }) {
   const { cart, setCart } = useStateContext();
-  const [statusFlag, setStatusFlag] = useState(responseFlag); 
+  const [statusFlag, setStatusFlag] = useState(responseFlag);
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   let ordersArray = [];
 
   useEffect(() => {
     if (session) {
-      // if ()
-      ordersArray = transformOrders(session.line_items, session.customer_email);
+      if (cart.length > 0) {
+        ordersArray = transformOrders(
+          session.line_items,
+          session.customer_email
+        );
+      }
     }
   }, []);
 
@@ -290,6 +294,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
 export async function getServerSideProps(context) {
   const parameters = context.query;
+  const { cart, setCart } = useStateContext();
   let session;
   if (parameters.success === "true") {
     session = await stripe.checkout.sessions.retrieve(parameters.session_id, {
@@ -338,6 +343,7 @@ export async function getServerSideProps(context) {
   }
   let statusFlag;
   if (parameters.success === "true") {
+    setCart([]);
     statusFlag = true;
   } else if (parameters.success === "false") {
     statusFlag = false;

@@ -1,9 +1,6 @@
 import axios from "axios";
-import { useStateContext } from "../contexts/ContextProvider";
 
 const transformOrders = (lineItems, email) => {
-  const { cart, setCart } = useStateContext();
-  setCart([]);
   const ordersArray = [];
   lineItems.data.forEach(async (item) => {
     for (let i = 0; i < item.quantity; i++) {
