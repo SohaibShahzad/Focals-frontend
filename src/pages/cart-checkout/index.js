@@ -19,6 +19,10 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   const [statusFlag, setStatusFlag] = useState(responseFlag);
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
+  const cookies = parseCookies();
+  const token = cookies.token;
+  const userData = token ? jwt_decode(token) : null;
+
   let ordersArray = [];
 
   const handleSuccess = () => {
@@ -27,11 +31,13 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
   useEffect(() => {
     if (session) {
-      console.log("0test", cart.length)
+      console.log("0test", cart.length, cart)
       if (cart.length > 0) {
-        console.log("test", cart.length)
+        localStorage.removeItem("guest_cart");
+        localStorage.removeItem(`${userData.id}_cart`);
+        console.log("test", cart.length, cart)
         handleSuccess();
-        console.log("test1", cart.length)
+        console.log("test1", cart.length, cart)
         ordersArray = transformOrders(
           session.line_items,
           session.customer_email
