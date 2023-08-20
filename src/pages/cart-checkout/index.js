@@ -16,6 +16,7 @@ const jwt_decode = jwt.decode;
 
 export default function CartCheckoutPage({ session, responseFlag }) {
   const { cart, setCart } = useStateContext();
+  const [statusFlag, setStatusFlag] = useState(responseFlag); 
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   let ordersArray = [];
@@ -92,7 +93,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
     <div
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}
     >
-      {responseFlag === true && (
+      {statusFlag === true && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
           <Confetti
             width={window.innerWidth}
@@ -119,7 +120,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
           </div>
         </div>
       )}
-      {responseFlag === false && (
+      {statusFlag === false && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
           <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
             <h1 className="text-[24px] font-bold text-center">
@@ -133,7 +134,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
               <button
                 className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1"
                 onClick={() => {
-                  responseFlag = null;
+                  setStatusFlag(null);
                 }}
               >
                 Try Again
