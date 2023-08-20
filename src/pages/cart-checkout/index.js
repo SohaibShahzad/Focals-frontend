@@ -15,16 +15,20 @@ import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
 export default function CartCheckoutPage({ session, responseFlag }) {
-  const { cart, setCart } = useStateContext();
+  const { cart, setCart, resetCart } = useStateContext();
   const [statusFlag, setStatusFlag] = useState(responseFlag);
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   let ordersArray = [];
 
+  const handleSuccess = () => {
+    resetCart();
+  }
+
   useEffect(() => {
     if (session) {
       if (cart.length > 0) {
-        setCart([]);
+        handleSuccess();
         ordersArray = transformOrders(
           session.line_items,
           session.customer_email
