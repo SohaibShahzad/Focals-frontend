@@ -24,6 +24,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   useEffect(() => {
     if (session) {
       if (cart.length > 0) {
+        setCart([]);
         ordersArray = transformOrders(
           session.line_items,
           session.customer_email
@@ -294,7 +295,6 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
 export async function getServerSideProps(context) {
   const parameters = context.query;
-  const { cart, setCart } = useStateContext();
   let session;
   if (parameters.success === "true") {
     session = await stripe.checkout.sessions.retrieve(parameters.session_id, {
@@ -343,7 +343,6 @@ export async function getServerSideProps(context) {
   }
   let statusFlag;
   if (parameters.success === "true") {
-    setCart([]);
     statusFlag = true;
   } else if (parameters.success === "false") {
     statusFlag = false;
