@@ -120,7 +120,12 @@ export default function CartCheckoutPage({ session, responseFlag }) {
         </div>
       )}
       {responseFlag === false && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
+        <div
+          className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50"
+          onClick={() => {
+            responseFlag = null;
+          }}
+        >
           <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
             <h1 className="text-[24px] font-bold text-center">
               Sorry your payment was not successful!
