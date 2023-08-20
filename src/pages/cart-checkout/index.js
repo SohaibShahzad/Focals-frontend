@@ -120,12 +120,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
         </div>
       )}
       {responseFlag === false && (
-        <div
-          className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50"
-          onClick={() => {
-            responseFlag = null;
-          }}
-        >
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
           <div className="glassmorphism-projects backdrop-blur-lg p-5 rounded-md flex flex-col gap-3 mx-3">
             <h1 className="text-[24px] font-bold text-center">
               Sorry your payment was not successful!
@@ -134,11 +129,16 @@ export default function CartCheckoutPage({ session, responseFlag }) {
               Please try again or contact us below if you are having any issues.
             </h2>
             <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
-              <Link href="/services">
-                <button className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1">
-                  Try Again
-                </button>
-              </Link>
+              {/* <Link href="/services"> */}
+              <button
+                className="text-[18px] button-animation-reverse hover:scale-100 rounded-md px-3 py-1"
+                onClick={() => {
+                  responseFlag = null;
+                }}
+              >
+                Try Again
+              </button>
+              {/* </Link> */}
               <Link href="/contact-us">
                 <button className="text-[18px] button-animation border-2 border-orange-700 hover:scale-100 rounded-md px-3 py-1">
                   Contact Us
