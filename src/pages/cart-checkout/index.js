@@ -22,7 +22,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   let ordersArray = [];
 
   useEffect(() => {
-    if (responseFlag) {
+    if (responseFlag === true) {
       ordersArray = transformOrders(session.line_items, session.customer_email);
       setCart([]);
     }
