@@ -11,7 +11,7 @@ import { HiOutlineUserGroup, HiOutlineUsers } from "react-icons/hi";
 import { RiAdminLine, RiChat1Line } from "react-icons/ri";
 import { CgWebsite } from "react-icons/cg";
 import { FiLink2 } from "react-icons/fi";
-import {IoShareSocialSharp} from "react-icons/io5";
+import { IoShareSocialSharp, IoChatbubblesOutline } from "react-icons/io5";
 
 export const adminLinks = [
   {
@@ -57,11 +57,11 @@ export const adminLinks = [
         icon: <CgWebsite />,
         linkName: "/projects",
       },
-      // {
-      //   name: "About-Us",
-      //   icon: <MdInfoOutline />,
-      //   linkName: "/about-us",
-      // },
+      {
+        name: "Realtime Chat",
+        icon: <IoChatbubblesOutline />,
+        linkName: "/users-chat",
+      },
       {
         name: "Contact-Us",
         icon: <MdMailOutline />,

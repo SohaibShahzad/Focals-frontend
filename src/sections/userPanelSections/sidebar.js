@@ -23,7 +23,7 @@ export const Sidebar = () => {
       await axios.delete(`/api/session`, { withCredentials: true });
       localStorage.removeItem("token");
       setAuthenticated(false);
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       console.log("Error Logging Out", error);
     }

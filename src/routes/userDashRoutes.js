@@ -2,6 +2,7 @@ import { RxDashboard } from "react-icons/rx";
 import { MdHistory, MdPayment } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
 import { CgWebsite } from "react-icons/cg";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 export const userDashLinks = [
   {
@@ -22,11 +23,11 @@ export const userDashLinks = [
         icon: <CgWebsite />,
         linkName: "/projects",
       },
-      // {
-      //   name: "History",
-      //   icon: <MdHistory />,
-      //   linkName: "/history",
-      // },
+      {
+        name: "Chat",
+        icon: <IoChatbubblesOutline />,
+        linkName: "/live-chat",
+      },
     ],
   },
   {
@@ -38,10 +39,10 @@ export const userDashLinks = [
         linkName: "/account",
       },
       // {
-        //   name: "Payment",
-        //   icon: <MdPayment />,
-        // linkName: "/payment",
-        // },
+      //   name: "Payment",
+      //   icon: <MdPayment />,
+      // linkName: "/payment",
+      // },
     ],
   },
 ];

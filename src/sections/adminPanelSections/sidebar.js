@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { MdOutlineCancel } from "react-icons/md";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { adminLinks } from "../../routes/adminRoutes";
@@ -8,11 +9,14 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../contexts/auth";
 
 export const Sidebar = ({ role }) => {
+  const sidebarRef = useRef();
   const router = useRouter();
   const { setAuthenticated } = useAuth();
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
 
   const handleCloseSidebar = () => {
+    const scrollTop = sidebarRef.current.scrollTop;
+    sessionStorage.setItem("scrollY", scrollTop);
     if (activeMenu && screenSize <= 900) {
       setActiveMenu(false);
     }
@@ -53,11 +57,16 @@ export const Sidebar = ({ role }) => {
       });
   }
 
+  useEffect(() => {
+    sidebarRef.current.scrollTop = sessionStorage.getItem("scrollY");
+  }, []);
+
   const baseHref = !role ? "/admin/dashboard" : "/subadmin/dashboard"; // add this line
 
   return (
     <div
-      className="glassmorphism-sidebar text-white font-poppins md:overflow-y-auto overflow-x-hidden overflow-auto md:hover:overflow-x-hidden pb-10 rounded-lg"
+      ref={sidebarRef}
+      className="fixed glassmorphism-sidebar text-white font-poppins md:overflow-y-auto overflow-x-hidden overflow-auto md:hover:overflow-x-hidden pb-10 rounded-lg"
       style={{ height: "calc(100vh - 20px)" }}
     >
       {activeMenu && (
