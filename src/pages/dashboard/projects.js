@@ -10,6 +10,7 @@ import ProgressBar from "../../components/progressBar";
 import { RiChat1Line } from "react-icons/ri";
 
 const jwt_decode = jwt.decode;
+// const socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
 let socket;
 
 function ProjectChat({ chatId, userData }) {
@@ -24,6 +25,7 @@ function ProjectChat({ chatId, userData }) {
   useEffect(() => {
     const messageHandler = ({ user, message }) => {
       const displayName = user === "Admin" ? "Admin" : "You";
+      console.log("Message in user", message, displayName);
       setMessages((oldMessages) => [
         ...oldMessages,
         { user: displayName, message },
@@ -107,7 +109,7 @@ export default function UserProjects({ userProjects, userData }) {
   const [chatId, setChatId] = useState(null);
 
   useEffect(() => {
-    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
+    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`)
 
     socket.on("connect", () => {
       console.log("connected to the server");

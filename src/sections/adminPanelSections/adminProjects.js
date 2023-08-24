@@ -13,7 +13,7 @@ import { RiChat1Line } from "react-icons/ri";
 import DialogActions from "@mui/material/DialogActions";
 import { Dialog } from "@mui/material";
 
-let socket;
+let socket; 
 
 function AdminChat({ chatId }) {
   const [message, setMessage] = useState("");
@@ -27,6 +27,7 @@ function AdminChat({ chatId }) {
   useEffect(() => {
     const messageHandler = ({ user, message }) => {
       const displayName = user === "Admin" ? "You" : user;
+      console.log("Message in Admin", message, displayName)
       setMessages((oldMessages) => [
         ...oldMessages,
         { user: displayName, message },
@@ -49,7 +50,7 @@ function AdminChat({ chatId }) {
     return () => {
       if (socket) {
         socket.off("chat", messageHandler);
-        socket.emit("leave", { chatId, user: "Admin" });
+        // socket.emit("leave", { chatId, user: "Admin" });
       }
     };
   }, []);
@@ -300,7 +301,7 @@ const ProjectsPanel = ({ projectsData }) => {
   }, [projects]);
 
   useEffect(() => {
-    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
+    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
 
     socket.on("connect", () => {
       console.log("connected to the server");
