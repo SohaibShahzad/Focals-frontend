@@ -115,6 +115,20 @@ const ServicesPanel = ({ services }) => {
     e.preventDefault();
     resetForm();
 
+    if(newPackages.length === 0) {
+      alert("Please add at least one package");
+      return;
+    }
+
+    const isAnyPackageFieldEmpty = newPackages.some((pkg) => 
+      Object.values(pkg).some((value) => typeof value === "string" && value.trim() === "")
+    );
+
+    if(isAnyPackageFieldEmpty) {
+      alert("Please fill all the package fields");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("thumbnail", thumbnail);
@@ -124,6 +138,7 @@ const ServicesPanel = ({ services }) => {
     });
 
     const updatedNewPackages = newPackages;
+      
     formData.append("newPackages", JSON.stringify(updatedNewPackages));
 
     const updatedUrl = url;

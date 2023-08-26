@@ -7,10 +7,11 @@ import io from "socket.io-client";
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import { TbSend } from "react-icons/tb";
 import ProgressBar from "../../components/progressBar";
+import { FaInfoCircle } from "react-icons/fa";
 import { RiChat1Line } from "react-icons/ri";
+import Link from "next/link";
 
 const jwt_decode = jwt.decode;
-// const socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
 let socket;
 
 function ProjectChat({ chatId, userData }) {
@@ -109,7 +110,7 @@ export default function UserProjects({ userProjects, userData }) {
   const [chatId, setChatId] = useState(null);
 
   useEffect(() => {
-    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`)
+    socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
 
     socket.on("connect", () => {
       console.log("connected to the server");
@@ -326,7 +327,20 @@ export default function UserProjects({ userProjects, userData }) {
           </Tabs>
         </div>
       ) : (
-        <div>No Projects Yet</div>
+        <div className="mt-10 flex flex-col gap-5 justify-center">
+          <span className="flex justify-center gap-3 opacity-50 items-center">
+            <FaInfoCircle className="w-10 h-10" />
+            <span className="text-[20px] font-bold">No Projects Yet</span>
+          </span>
+          <div className="flex justify-center">
+            <Link
+              href="/services"
+              className="text-[22px] button-animation-reverse text-center rounded-md py-2 px-6"
+            >
+              Let's Shop!
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );

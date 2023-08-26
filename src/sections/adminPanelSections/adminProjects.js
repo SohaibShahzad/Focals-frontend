@@ -73,11 +73,8 @@ function AdminChat({ chatId }) {
       <div className="overflow-y-auto mb-4 flex-grow">
         {messages.length === 0 ? (
           <div className="flex items-center gap-2 opacity-70 justify-center">
-            <FaInfoCircle className="w-7 h-7"/>
-            <span className="text-[20px]">
-            No Messages
-
-            </span>
+            <FaInfoCircle className="w-7 h-7" />
+            <span className="text-[20px]">No Messages</span>
           </div>
         ) : (
           messages.map((message, i) => (
@@ -574,23 +571,83 @@ const ProjectsPanel = ({ projectsData }) => {
                               <FiEdit2 />
                             </span>
                           </div>
-                          <div className="border-2 w-[90%] rounded-full mt-1 opacity-30" />
-                          <div className="mt-4">
-                            <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">
-                                  StartDate:
-                                </span>
-                                {project.startDate === null
-                                  ? "TBD"
-                                  : formatDate(project.startDate)}
-                              </p>
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">Deadline:</span>
-                                {project.endDate === null
-                                  ? "TBD"
-                                  : formatDate(project.endDate)}
-                              </p>
+
+                          <div className="flex gap-5 mt-4">
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Timeline
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Start-Date
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.startDate === null
+                                      ? "TBD"
+                                      : formatDate(project.startDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Dead-Line
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : formatDate(project.endDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Total Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === project.startDate
+                                      ? "1 day"
+                                      : calculateTotalTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Remaining Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : calculateRemainingTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Summary
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Progress
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.progress}%
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Status
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.status}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -601,187 +658,100 @@ const ProjectsPanel = ({ projectsData }) => {
                           onDone={() => handleEdit(project)}
                         />
                       )}
-                      {/* <div className=" rounded-md p-2 flex flex-col w-full sm:w-auto">
-                        <div>
-                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Progress:</span>
-                              {project.progress}%
-                            </p>
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Status:</span>
-                              {project.status}
-                            </p>
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">StartDate:</span>
-                              {project.startDate === null
-                                ? "TBD"
-                                : formatDate(project.startDate)}
-                            </p>
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Deadline:</span>
-                              {project.endDate === null
-                                ? "TBD"
-                                : formatDate(project.endDate)}
-                            </p>
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Total Time:</span>
-                              {project.endDate === project.startDate
-                                ? "1 day"
-                                : calculateTotalTime(
-                                    project.startDate,
-                                    project.endDate
-                                  )}
-                            </p>
-                            <p className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">
-                                Remaining Time:
-                              </span>
-                              {project.endDate === null
-                                ? "TBD"
-                                : calculateRemainingTime(
-                                    project.startDate,
-                                    project.endDate
-                                  )}
-                            </p>
-                          </div>
+                    </div>
+                    {!showChat && (
+                      <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-[16px] text-[#dddddd]">
+                            Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                          >
+                            <FiEdit2 />
+                          </span>
                         </div>
-                      </div> */}
-                    </div>
-                    <div className="xs:hidden">
-                      <button
-                        onClick={() => setClientDetails(true)}
-                        className="text-center bg-orange-700 rounded-md p-1 px-2 mt-2"
-                      >
-                        Clients Details
-                      </button>
-                      {userDetails && (
-                        <Dialog
-                          open={clientDetails}
-                          onClose={() => setClientDetails(false)}
-                          className="font-poppins "
-                        >
-                          <div className="p-2 flex flex-col gap-2 bg-[#333333] text-white">
-                            <h1 className="text-center text-[18px] font-bold">
-                              Client's Details
+                        <div className="space-y-5 mt-4">
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
                             </h1>
-                            <span className="text-gray-400">
-                              Name:
-                              <p className="text-white font-bold">
-                                {userDetails.firstName}
-                                {userDetails.lastName}
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              Email:
-                              <p className="text-white font-bold">
-                                {userDetails.username}
-                              </p>
-                            </span>
-                            <DialogActions>
-                              <button
-                                className="bg-orange-500 p-2 rounded-md"
-                                onClick={() => setClientDetails(false)}
-                              >
-                                Close
-                              </button>
-                            </DialogActions>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                        </Dialog>
-                      )}
-                    </div>
-                    <div className="xs:hidden">
-                      <button
-                        onClick={() => setShowProjectDetails(true)}
-                        className="text-center bg-orange-700 rounded-md p-1 px-2 mt-2"
-                      >
-                        Project Details
-                      </button>
-                      {showProjectDetails && (
-                        <Dialog
-                          open={showProjectDetails}
-                          onClose={() => showProjectDetails(false)}
-                          className="font-poppins "
-                        >
-                          <div className="p-2 flex flex-col gap-2 bg-[#333333] text-white">
-                            <h1 className="text-center text-[18px] font-bold">
-                              Project Details
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
                             </h1>
-                            <span className="text-gray-400">
-                              Progress:
-                              <p className="text-white font-bold">
-                                {project.progress}%
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              Status:
-                              <p className="text-white font-bold">
-                                {project.status}
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              StartDate:
-                              <p className="text-white font-bold">
-                                {project.startDate === null
-                                  ? "TBD"
-                                  : formatDate(project.startDate)}
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              Deadline:
-                              <p className="text-white font-bold">
-                                {project.endDate === null
-                                  ? "TBD"
-                                  : formatDate(project.endDate)}
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              Total Time:
-                              <p className="text-white font-bold">
-                                {project.endDate === project.startDate
-                                  ? "1 day"
-                                  : calculateTotalTime(
-                                      project.startDate,
-                                      project.endDate
-                                    )}
-                              </p>
-                            </span>
-                            <span className="text-gray-400">
-                              Remaining Time:
-                              <p className="text-white font-bold">
-                                {project.endDate === null
-                                  ? "TBD"
-                                  : calculateRemainingTime(
-                                      project.startDate,
-                                      project.endDate
-                                    )}
-                              </p>
-                            </span>
-                            <DialogActions>
-                              <button
-                                className="bg-orange-500 p-2 rounded-md"
-                                onClick={() => {
-                                  handleEdit(project);
-                                  setShowProjectDetails(false);
-                                }}
-                              >
-                                Edit Details
-                              </button>
-                              <button
-                                className="bg-orange-500 p-2 rounded-md"
-                                onClick={() => setShowProjectDetails(false)}
-                              >
-                                Close
-                              </button>
-                            </DialogActions>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                        </Dialog>
-                      )}
-                    </div>
+                        </div>{" "}
+                      </div>
+                    )}
 
                     {/* {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
@@ -793,7 +763,7 @@ const ProjectsPanel = ({ projectsData }) => {
                     {!showChat && (
                       <div className="flex justify-end mt-3">
                         <button
-                          className="py-1 px-2 rounded-md flex items-center button-animation-reverse gap-2"
+                          className="px-1 xs:py-1 xs:px-2 rounded-md flex items-center button-animation-reverse gap-1 xs:gap-2"
                           onClick={() => {
                             if (chatId === project._id && showChat) {
                               setShowChat(false);
@@ -804,14 +774,14 @@ const ProjectsPanel = ({ projectsData }) => {
                           }}
                         >
                           Chat
-                          <RiChat1Line className="w-7 h-7" />
+                          <RiChat1Line className="xs:w-7 xs:h-7 w-5 h-5" />
                         </button>
                       </div>
                     )}
                     {showChat && (
                       <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
                         <button
-                          className="py-1 px-2 rounded-md items-center button-animation-reverse gap-2"
+                          className="px-1 xs:py-1 xs:px-2 rounded-md items-center button-animation-reverse gap-1 xs:gap-2"
                           onClick={() => {
                             if (chatId === project._id && showChat) {
                               setShowChat(false);
@@ -822,7 +792,7 @@ const ProjectsPanel = ({ projectsData }) => {
                           }}
                         >
                           <IoMdArrowRoundBack className="w-5 h-5" />
-                          Close Chat
+                          Close
                         </button>
                       </div>
                     )}
@@ -934,13 +904,197 @@ const ProjectsPanel = ({ projectsData }) => {
                 </div>
                 {expandedProject === project._id && (
                   <div>
-                    <button onClick={() => handleEdit(project)}>Edit</button>
-                    {/* {editingProject && editingProject._id === project._id && (
-                      <EditProjectForm
-                        project={editingProject}
-                        onDone={() => handleEdit(project)}
-                      />
-                    )} */}
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      <div className="bg-black rounded-md p-5 bg-opacity-40">
+                        <div className="flex items-start justify-between">
+                          <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                            Project Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                          >
+                            Edit
+                            <FiEdit2 />
+                          </span>
+                        </div>
+
+                        <div className="flex gap-5 mt-4">
+                          <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
+                            </h1>
+                            <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
+                            </h1>
+                            <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                    </div>
+                    <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-[16px] text-[#dddddd]">Details:</h2>
+                        <span
+                          onClick={() => handleEdit(project)}
+                          className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                        >
+                          <FiEdit2 />
+                        </span>
+                      </div>
+                      <div className="space-y-5 mt-4">
+                        <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                          <h1 className="bg-orange-600 text-[22px] underline">
+                            Timeline
+                          </h1>
+                          <div className="flex flex-col gap-3 mt-3">
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Start-Date
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.startDate === null
+                                  ? "TBD"
+                                  : formatDate(project.startDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Dead-Line
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : formatDate(project.endDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Total Time
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === project.startDate
+                                  ? "1 day"
+                                  : calculateTotalTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Remaining Time
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : calculateRemainingTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                          <h1 className="bg-orange-600 text-[22px] underline">
+                            Summary
+                          </h1>
+                          <div className="flex flex-col gap-3 mt-3">
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Progress
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.progress}%
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Status
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.status}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>{" "}
+                    </div>
                   </div>
                 )}
               </div>

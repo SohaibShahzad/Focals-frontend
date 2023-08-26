@@ -101,15 +101,15 @@ export default function LiveChat({ userDetails }) {
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col items-start justify-start my-2 ${
+                  className={`flex flex-col items-start justify-start my-2 mr-2 ${
                     message.sender !== "admin" ? "items-end" : "items-start"
                   }`}
                 >
                   <div
                     className={`flex items-center justify-center px-2 py-1 rounded-md ${
                       message.sender !== "admin"
-                        ? "bg-[#f3993f] text-white"
-                        : "bg-gray-200 text-black"
+                        ? "bg-orange-800 text-white rounded-br-none"
+                        : "bg-gray-300 text-black rounded-bl-none"
                     }`}
                   >
                     {message.message}
