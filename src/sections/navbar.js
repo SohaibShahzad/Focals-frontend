@@ -16,7 +16,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { FaMinusCircle, FaPlusCircle, FaInfoCircle } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
 import {
   TbSquareRoundedChevronDownFilled,
@@ -78,7 +78,7 @@ const NavBar = () => {
       const categoryWiseServices = {};
 
       for (const service of servicesRawData) {
-        const category = service.category;
+        const category = service.category.toLowerCase();
         if (!categoryWiseServices[category]) {
           categoryWiseServices[category] = [];
         }
@@ -87,16 +87,7 @@ const NavBar = () => {
       setServicesData(servicesRawData);
       setCategoryWiseServices(categoryWiseServices);
     }
-    // async function fetchServiceData() {
-    //   const serviceData = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesTitle`
-    //   );
-    //   setServiceTitleData(serviceData.data);
-    //   console.log(serviceData.data);
-    // }
     fetchData();
-
-    // fetchServiceData();
   }, []);
 
   useEffect(() => {
@@ -165,6 +156,13 @@ const NavBar = () => {
     } catch (err) {
       console.log("Error logging out: ", err);
     }
+  };
+
+  const capitalizeFirstLetter = (str) => {
+    return str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   const handleSearch = (query) => {
@@ -244,15 +242,15 @@ const NavBar = () => {
       whileInView="show"
       className={`${styles.xPaddings} py-8 relative font-poppins`}
     >
-      {(showCart || chevronMenu) &&  (
-        <div className="fixed top-0 left-0 w-full h-full bg-black opacity-70 z-40" />
+      {(showCart || chevronMenu || showSearch) && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black opacity-70 z-50" />
       )}
       <div
         className={`${styles.innerWidth} mx-auto flex justify-between gap-2 items-center`}
       >
         <Link
           href="/"
-          className="z-10 flex flex-row items-center gap-1 transform transition-all duration-300 hover:scale-110"
+          className="z-10 flex flex-row items-center gap-1 transform transition-all duration-200 hover:scale-110"
         >
           <img src="/Logo.png" alt="FutureFocals" />
           <span className="flex hidden md:flex text-white font-extrabold text-[16px] md:text-[20px]">
@@ -281,20 +279,20 @@ const NavBar = () => {
                           onClick={() => {
                             setChevronMenu((prev) => !prev);
                           }}
-                          className="nav-item transform transition-all duration-300  hover:px-1"
+                          className="nav-item transform transition-all duration-200  hover:px-1"
                         >
                           {link.title}
                         </button>
                         {chevronMenu && link.title === "Services" ? (
                           <TbSquareRoundedChevronRightFilled
-                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-300 hover:scale-125"
+                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-200 hover:scale-125"
                             onClick={() => {
                               setChevronMenu(false);
                             }}
                           />
                         ) : (
                           <TbSquareRoundedChevronDownFilled
-                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-300 hover:scale-125"
+                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-200 hover:scale-125"
                             onClick={() => {
                               setChevronMenu(true);
                             }}
@@ -302,7 +300,7 @@ const NavBar = () => {
                         )}
                       </div>
                       {chevronMenu && link.title === "Services" && (
-                        <div className="hover:transition-none bg-gray-800 absolute top-10 right-0 px-5 py-3 navbar-sm-animation rounded-[5px]">
+                        <div className="hover:transition-none glassmorphism-projects backdrop-blur-2xl absolute top-10 right-0 px-5 py-3 navbar-sm-animation rounded-[5px]">
                           <p className="flex justify-center font-semibold underline pb-2">
                             Categories
                           </p>
@@ -321,25 +319,29 @@ const NavBar = () => {
                                     "margin-bottom": "10px",
                                   }}
                                 >
-                                  <h4 style={{ "white-space": "nowrap" }} className="pb-2">
-                                    {category}
+                                  <h4
+                                    style={{ "white-space": "nowrap" }}
+                                    className="pb-2"
+                                  >
+                                    {capitalizeFirstLetter(category)}
                                   </h4>
                                   <div className="flex flex-col gap-1">
-
-                                  {categoryWiseServices[category].map(
-                                    (service) => (
-                                      <Link href={`/services/${service._id}`}>
-                                        <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-300 hover:scale-110 hover:text-white">
-                                          <TbArrowNarrowRight className="w-8 h-5" />
-                                          <span
-                                            style={{ "white-space": "nowrap" }}
-                                          >
-                                            {service.title}
-                                          </span>
-                                        </p>
-                                      </Link>
-                                    )
-                                  )}
+                                    {categoryWiseServices[category].map(
+                                      (service) => (
+                                        <Link href={`/services/${service._id}`}>
+                                          <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-200 hover:scale-110 hover:text-orange-600">
+                                            <TbArrowNarrowRight className="w-8 h-5" />
+                                            <span
+                                              style={{
+                                                "white-space": "nowrap",
+                                              }}
+                                            >
+                                              {service.title}
+                                            </span>
+                                          </p>
+                                        </Link>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )
@@ -347,7 +349,7 @@ const NavBar = () => {
                           </div>
                           <Link
                             href="/services"
-                            className="opacity-50 text-sm mt-2 flex items-center justify-end transform transition-all duration-250 hover:opacity-100 hover:underline"
+                            className="opacity-50 text-sm mt-2 flex items-center justify-end transform transition-all duration-250 hover:opacity-100 hover:underline hover:text-orange-600"
                           >
                             View all services{" "}
                             <TbSquareRoundedChevronRightFilled className="w-4 h-4" />
@@ -358,7 +360,7 @@ const NavBar = () => {
                   ) : (
                     <Link
                       href={link.link}
-                      className="nav-item transform transition-all duration-300 hover:px-1"
+                      className="nav-item transform transition-all duration-200 hover:px-1"
                     >
                       {link.title}
                     </Link>
@@ -370,7 +372,7 @@ const NavBar = () => {
               <div className="relative">
                 <li className="relative">
                   <button
-                    className="ml-4 bg-orange-700 rounded-full p-2 hidden md:flex hover:bg-orange-500 transform transition-all duration-300 hover:scale-125"
+                    className="ml-4 bg-orange-700 rounded-full p-2 hidden md:flex hover:bg-orange-500 transform transition-all duration-200 hover:scale-125"
                     onClick={() => {
                       setShowCart((prev) => !prev);
                     }}
@@ -386,7 +388,7 @@ const NavBar = () => {
                 {showCart && (
                   <div
                     ref={cartRef}
-                    className="fixed top-0 right-0 px-4 py-3 slide-rtl-animation bg-gray-800 rounded-tl-md rounded-bl-md h-full w-[300px] z-50"
+                    className="fixed top-0 right-0 px-4 py-3 slide-rtl-animation glassmorphism-projects backdrop-blur-2xl rounded-tl-md rounded-bl-md h-full w-[300px] z-50"
                   >
                     <div className="flex items-center justify-between">
                       <h2 className="text-[22px] font-extrabold underline">
@@ -395,7 +397,7 @@ const NavBar = () => {
                       {cart.length > 0 && (
                         <button
                           onClick={() => setCart([])}
-                          className="opacity-50 flex items-center hover:opacity-100 transition transform-all duration-300 rounded-md px-1 hover:bg-orange-600"
+                          className="opacity-50 flex items-center hover:opacity-100 transition transform-all duration-200 rounded-md px-1 hover:bg-orange-600"
                         >
                           <AiFillDelete />
                           <span>Clear</span>
@@ -496,11 +498,14 @@ const NavBar = () => {
                         </Link>
                       </>
                     ) : (
-                      <div className="flex flex-col items-center my-auto">
-                        <p>No Item</p>
+                      <div className="flex flex-col justify-center items-center h-full">
+                        <div className="flex items-center opacity-50 gap-2">
+                          <FaInfoCircle className="w-7 h-7"/>
+                          <p className="text-[22px]">No Item</p>
+                        </div>
                         <Link
                           href="/services"
-                          className="bg-orange-800 button-animation-reverse rounded-md mt-2 py-1 items-center flex justify-center"
+                          className="bg-orange-800 button-animation-reverse rounded-md mt-2 py-1 px-3 items-center flex justify-center"
                         >
                           Let's Shop!!
                         </Link>
@@ -512,7 +517,7 @@ const NavBar = () => {
             )}
             <div className="relative">
               <button
-                className="ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-125 rounded-full p-2 hidden md:flex"
+                className="ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-200 hover:scale-125 rounded-full p-2 hidden md:flex"
                 onClick={() => {
                   setShowSearch((prev) => !prev);
                   setSearchQuery("");
@@ -522,7 +527,7 @@ const NavBar = () => {
                 <RiSearchLine className="w-5 h-5 " />
               </button>
               {showSearch && (
-                <div className="absolute right-0 top-10 p-2 rounded-md bg-gray-800 px-4 navbar-sm-animation ">
+                <div className="absolute right-0 top-10 p-2 rounded-md glassmorphism-projects backdrop-blur-2xl px-4 navbar-sm-animation ">
                   <input
                     type="text"
                     ref={searchBarRef}
@@ -541,11 +546,11 @@ const NavBar = () => {
                           className="navbar-sm-animation mb-2 group"
                         >
                           <Link href={`/services/${service._id}`}>
-                            <div className="flex items-center justify-between glassmorphism rounded-md px-2 hover:bg-orange-800">
+                            <div className="flex items-center justify-between glassmorphism rounded-md px-2 hover:bg-orange-600 transition transform-all hover:scale-110 duration-200">
                               <p className="text-white font-semibold">
                                 {service.title}
                               </p>
-                              <MdKeyboardArrowRight className="w-10 h-10 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
+                              <MdKeyboardArrowRight className="w-10 h-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                             </div>
                           </Link>
                         </li>
@@ -558,7 +563,7 @@ const NavBar = () => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
-                  className="flex items-center gap-1 ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-300 hover:scale-110 rounded-full p-1 "
+                  className="flex items-center gap-1 ml-4 bg-orange-700 hover:bg-orange-500 transform transition-all duration-200 hover:scale-110 rounded-full p-1 "
                   onClick={() => {
                     setShowDropdown((prev) => !prev);
                     setToggle(false);
@@ -581,9 +586,9 @@ const NavBar = () => {
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute top-10 right-0 mt-2 rounded-lg bg-gray-800 navbar-sm-animation z-50"
+                    className="space-y-1 py-4 px-3 absolute top-10 right-0 mt-2 rounded-lg glassmorphism-projects backdrop-blur-2xl navbar-sm-animation z-50"
                   >
-                    <li className="mb-5 cursor-pointer">
+                    <li className="cursor-pointer transform transition-all duration-200 hover:scale-110 hover:text-orange-600">
                       <Link
                         href={
                           isAdmin
@@ -596,7 +601,8 @@ const NavBar = () => {
                         Dashboard
                       </Link>
                     </li>
-                    <li className="cursor-pointer" onClick={handleLogout}>
+                    <div className="border-[1px] rounded-full opacity-40"/>
+                    <li className="cursor-pointer transform transition-all duration-200 hover:scale-110 hover:text-orange-600" onClick={handleLogout}>
                       Logout
                     </li>
                   </ul>

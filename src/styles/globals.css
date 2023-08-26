@@ -428,7 +428,7 @@
   border: 2px solid #c2410c;
   align-items: center;
   justify-content: center;
-  transition: transform 0.5s, background 0.3s;
+  transition: transform 0.2s, background 0.2s;
   /* z-index: 100; */
   overflow: hidden;
 }
@@ -441,7 +441,7 @@
   width: 100%;
   height: 100%;
   background: #c2410c;
-  transition: transform 0.3s;
+  transition: transform 0.2s;
   transform-origin: right;
   transform: scaleX(1);
   z-index: -1;

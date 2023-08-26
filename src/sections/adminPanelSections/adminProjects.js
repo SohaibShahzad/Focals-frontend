@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   MdKeyboardArrowRight,
   MdKeyboardArrowDown,
@@ -8,12 +8,15 @@ import {
   MdOutlineSearch,
 } from "react-icons/md";
 import io from "socket.io-client";
-import { TbSend } from "react-icons/tb";
 import { RiChat1Line } from "react-icons/ri";
 import DialogActions from "@mui/material/DialogActions";
 import { Dialog } from "@mui/material";
+import { FiEdit2 } from "react-icons/fi";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import { FaInfoCircle } from "react-icons/fa";
 
-let socket; 
+let socket;
 
 function AdminChat({ chatId }) {
   const [message, setMessage] = useState("");
@@ -27,7 +30,7 @@ function AdminChat({ chatId }) {
   useEffect(() => {
     const messageHandler = ({ user, message }) => {
       const displayName = user === "Admin" ? "You" : user;
-      console.log("Message in Admin", message, displayName)
+      console.log("Message in Admin", message, displayName);
       setMessages((oldMessages) => [
         ...oldMessages,
         { user: displayName, message },
@@ -66,26 +69,36 @@ function AdminChat({ chatId }) {
   };
 
   return (
-    <div className="pt-4 flex flex-col max-h-[45vh]">
+    <div className="pt-4 flex flex-col max-h-[45vh] bg-[#0d0d0d] bg-opacity-40 p-5 rounded-b-md">
       <div className="overflow-y-auto mb-4 flex-grow">
-        {messages.map((message, i) => (
-          <div
-            key={i}
-            className={`my-2 ${
-              message.user === "You" ? "text-right" : "text-left"
-            }`}
-          >
+        {messages.length === 0 ? (
+          <div className="flex items-center gap-2 opacity-70 justify-center">
+            <FaInfoCircle className="w-7 h-7"/>
+            <span className="text-[20px]">
+            No Messages
+
+            </span>
+          </div>
+        ) : (
+          messages.map((message, i) => (
             <div
-              className={`inline-block px-2 py-1 rounded-lg break-all ${
-                message.user === "You"
-                  ? "bg-orange-800 text-white rounded-br-none"
-                  : "bg-gray-300 text-black rounded-bl-none"
+              key={i}
+              className={`my-2 ${
+                message.user === "You" ? "text-right" : "text-left"
               }`}
             >
-              {message.message}
+              <div
+                className={`inline-block px-2 py-1 rounded-lg break-all ${
+                  message.user === "You"
+                    ? "bg-orange-800 text-white rounded-br-none"
+                    : "bg-gray-300 text-black rounded-bl-none"
+                }`}
+              >
+                {message.message}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
         <div ref={messagesRef} />
       </div>
       <form onSubmit={sendMessage} className="w-full flex gap-2 justify-center">
@@ -96,9 +109,9 @@ function AdminChat({ chatId }) {
         />
         <button
           type="submit"
-          className="w-1/5 xs:w-[6%] md:w-[5%] lg:w-[4%] xl:w-[3%] 2xl:w-[2%] bg-orange-500 text-white rounded-full items-center justify-center flex"
+          className="w-1/5 xs:w-[6%] md:w-[5%] lg:w-[4%] xl:w-[3%] 2xl:w-[2%] hover:text-orange-500 items-center justify-center flex"
         >
-          <TbSend className="w-5 h-5" />
+          <SendRoundedIcon className="w-5 h-5" />
         </button>
       </form>
     </div>
@@ -114,7 +127,7 @@ const formatDateToYYYYMMDD = (dateString) => {
   return `${year}-${month}-${day}`;
 };
 
-function EditProjectForm({ project, onDone, fetchProjects }) {
+function EditProjectForm({ project, onDone }) {
   const [status, setStatus] = useState(project.status);
   const [projectName, setProjectName] = useState(project.projectName);
   const [startDate, setStartDate] = useState(
@@ -142,8 +155,6 @@ function EditProjectForm({ project, onDone, fetchProjects }) {
           //   meetingStatus,
         }
       );
-      fetchProjects();
-      // If successful, exit edit mode
       onDone();
     } catch (error) {
       console.error(error);
@@ -259,7 +270,7 @@ const ProjectsPanel = ({ projectsData }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [clientDetails, setClientDetails] = useState(false);
 
-  const fetchProjects = async () => {
+  const fetchingProjects = async () => {
     try {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}projects/getAllProjects`
@@ -272,7 +283,7 @@ const ProjectsPanel = ({ projectsData }) => {
   };
 
   useEffect(() => {
-    fetchProjects();
+    fetchingProjects();
   }, []);
 
   useEffect(() => {
@@ -285,6 +296,7 @@ const ProjectsPanel = ({ projectsData }) => {
           ...project,
           email: userProject.email,
           userId: userProject.user,
+          userName: userProject.userName,
         });
       });
       userProject.projectHistory.forEach((project) => {
@@ -292,6 +304,7 @@ const ProjectsPanel = ({ projectsData }) => {
           ...project,
           email: userProject.email,
           userId: userProject.user,
+          userName: userProject.userName,
         });
       });
     });
@@ -318,6 +331,7 @@ const ProjectsPanel = ({ projectsData }) => {
   };
 
   const handleEdit = (project) => {
+    fetchingProjects();
     if (editingProject && editingProject._id === project._id) {
       setEditingProject(null);
     } else {
@@ -332,27 +346,14 @@ const ProjectsPanel = ({ projectsData }) => {
   const handleExpand = (project) => {
     if (expandedProject === project._id) {
       setExpandedProject(null);
-      setUserDetails(null);
       socket.emit("leave", { chatId: expandedProject });
       setShowChat(false); // Close chat when project is collapsed
     } else {
-      setUserDetails(null);
       setExpandedProject(project._id);
       socket.emit("join", {
         chatId: project._id,
         user: "Admin",
       });
-
-      axios
-        .get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}users/getUserbyId/${project.userId}`
-        )
-        .then((res) => {
-          setUserDetails(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     }
   };
 
@@ -500,19 +501,23 @@ const ProjectsPanel = ({ projectsData }) => {
             )}
           </div>
           <div
-            style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
-            className="overflow-y-auto"
+            style={{ maxHeight: "calc(100vh - 230px)" }}
+            className="overflow-y-auto rounded-md"
           >
             {filteredOngoingProjects.map((project) => (
               // Map each project to a component that displays the project info
               <div
                 key={project._id}
-                className="text-white bg-[#313132] rounded-md p-5 mb-3 mr-3 md:px-7"
+                className="text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7"
               >
-                <div className="flex items-center justify-between">
+                <div className="hidden md:flex items-center justify-between">
                   <h2 className="text-[18px] xs:text-[20px]">
                     {project.projectName}
                   </h2>
+                  <div className="flex flex-col items-center opacity-50 ">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
                   {expandedProject === project._id ? (
                     <MdKeyboardArrowDown
                       className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
@@ -525,40 +530,52 @@ const ProjectsPanel = ({ projectsData }) => {
                     />
                   )}
                 </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
                 {expandedProject === project._id && (
                   <div>
-                    {userDetails && (
-                      <div className="hidden xs:flex xs:flex-col xs:items-center xs:gap-5">
-                        <div className="bg-[#555555] rounded-md p-2 text-center w-full sm:w-auto">
-                          <h3 className="text-[18px] underline mb-2">
-                            Client Details:
-                          </h3>
-                          <div className="flex flex-col sm:flex-row sm:gap-5">
-                            <h3 className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Name:</span>
-                              {userDetails.firstName} {userDetails.lastName}
-                            </h3>
-                            <h3 className="font-bold text-[16px] flex items-center gap-2">
-                              <span className="text-gray-300">Email:</span>
-                              {userDetails.username}
-                            </h3>
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      {!showChat && (
+                        <div className="bg-black rounded-md p-5 bg-opacity-40">
+                          <div className="flex items-start justify-between">
+                            <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                              Project Details:
+                            </h2>
+                            <span
+                              onClick={() => handleEdit(project)}
+                              className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                            >
+                              Edit
+                              <FiEdit2 />
+                            </span>
                           </div>
-                        </div>
-                        <div className="bg-[#555555] rounded-md p-2 flex flex-col w-full sm:w-auto">
-                          <h3 className="text-[18px] underline mb-2 text-center">
-                            Project Details:
-                          </h3>
-                          <div>
-                            <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">Progress:</span>
-                                {project.progress}%
-                              </p>
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">Status:</span>
-                                {project.status}
-                              </p>
-                            </div>
+                          <div className="border-2 w-[90%] rounded-full mt-1 opacity-30" />
+                          <div className="mt-4">
                             <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
                               <p className="font-bold text-[16px] flex items-center gap-2">
                                 <span className="text-gray-300">
@@ -575,48 +592,66 @@ const ProjectsPanel = ({ projectsData }) => {
                                   : formatDate(project.endDate)}
                               </p>
                             </div>
-                            <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">
-                                  Total Time:
-                                </span>
-                                {project.endDate === project.startDate
-                                  ? "1 day"
-                                  : calculateTotalTime(
-                                      project.startDate,
-                                      project.endDate
-                                    )}
-                              </p>
-                              <p className="font-bold text-[16px] flex items-center gap-2">
-                                <span className="text-gray-300">
-                                  Remaining Time:
-                                </span>
-                                {project.endDate === null
-                                  ? "TBD"
-                                  : calculateRemainingTime(
-                                      project.startDate,
-                                      project.endDate
-                                    )}
-                              </p>
-                            </div>
                           </div>
-                          <button
-                            onClick={() => handleEdit(project)}
-                            className="bg-orange-700 rounded-md p-1 hover:bg-orange-500 mt-2"
-                          >
-                            Update Status
-                          </button>
-                          {editingProject &&
-                            editingProject._id === project._id && (
-                              <EditProjectForm
-                                project={editingProject}
-                                onDone={() => handleEdit(project)}
-                                fetchProjects={fetchProjects}
-                              />
-                            )}
                         </div>
-                      </div>
-                    )}
+                      )}
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                      {/* <div className=" rounded-md p-2 flex flex-col w-full sm:w-auto">
+                        <div>
+                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">Progress:</span>
+                              {project.progress}%
+                            </p>
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">Status:</span>
+                              {project.status}
+                            </p>
+                          </div>
+                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">StartDate:</span>
+                              {project.startDate === null
+                                ? "TBD"
+                                : formatDate(project.startDate)}
+                            </p>
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">Deadline:</span>
+                              {project.endDate === null
+                                ? "TBD"
+                                : formatDate(project.endDate)}
+                            </p>
+                          </div>
+                          <div className="flex flex-col sm:flex-row sm:gap-5 justify-evenly">
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">Total Time:</span>
+                              {project.endDate === project.startDate
+                                ? "1 day"
+                                : calculateTotalTime(
+                                    project.startDate,
+                                    project.endDate
+                                  )}
+                            </p>
+                            <p className="font-bold text-[16px] flex items-center gap-2">
+                              <span className="text-gray-300">
+                                Remaining Time:
+                              </span>
+                              {project.endDate === null
+                                ? "TBD"
+                                : calculateRemainingTime(
+                                    project.startDate,
+                                    project.endDate
+                                  )}
+                            </p>
+                          </div>
+                        </div>
+                      </div> */}
+                    </div>
                     <div className="xs:hidden">
                       <button
                         onClick={() => setClientDetails(true)}
@@ -748,28 +783,49 @@ const ProjectsPanel = ({ projectsData }) => {
                       )}
                     </div>
 
-                    {editingProject && editingProject._id === project._id && (
+                    {/* {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
                         project={editingProject}
                         onDone={() => handleEdit(project)}
                       />
-                    )}
+                    )} */}
 
-                    <div className="flex justify-end mt-3">
-                      <button
-                        className="p-1 rounded-full bg-orange-500"
-                        onClick={() => {
-                          if (chatId === project._id && showChat) {
-                            setShowChat(false);
-                          } else {
-                            setChatId(project._id);
-                            setShowChat(true);
-                          }
-                        }}
-                      >
-                        <RiChat1Line className="w-7 h-7" />
-                      </button>
-                    </div>
+                    {!showChat && (
+                      <div className="flex justify-end mt-3">
+                        <button
+                          className="py-1 px-2 rounded-md flex items-center button-animation-reverse gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          Chat
+                          <RiChat1Line className="w-7 h-7" />
+                        </button>
+                      </div>
+                    )}
+                    {showChat && (
+                      <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
+                        <button
+                          className="py-1 px-2 rounded-md items-center button-animation-reverse gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          <IoMdArrowRoundBack className="w-5 h-5" />
+                          Close Chat
+                        </button>
+                      </div>
+                    )}
                     {showChat && chatId === project._id && (
                       <AdminChat chatId={chatId} />
                     )}
@@ -780,7 +836,7 @@ const ProjectsPanel = ({ projectsData }) => {
           </div>
         </TabPanel>
         <TabPanel>
-          <div className="flex flex-col">
+          <div className="flex flex-col mr-3">
             <div className="flex items-center justify-between">
               <h3 className="font-bold underline text-[18px]">History:</h3>
               <button
@@ -820,19 +876,24 @@ const ProjectsPanel = ({ projectsData }) => {
             )}
           </div>
           <div
-            style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
+            style={{ maxHeight: "calc(100vh - 230px)" }}
             className="overflow-y-auto"
           >
             {filteredCompletedProjects.map((project) => (
               // Map each project to a component that displays the project info
               <div
                 key={project._id}
-                className="text-white bg-[#313132] rounded-md p-5 mb-3 mr-3 md:px-7"
+                className="text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7"
               >
-                <div className="flex items-center justify-between">
+                <div className="hidden md:flex items-center justify-between">
                   <h2 className="text-[18px] xs:text-[20px]">
                     {project.projectName}
                   </h2>
+                  <div className="flex flex-col items-center opacity-50">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+
                   {expandedProject === project._id ? (
                     <MdKeyboardArrowDown
                       className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
@@ -845,16 +906,41 @@ const ProjectsPanel = ({ projectsData }) => {
                     />
                   )}
                 </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
                 {expandedProject === project._id && (
                   <div>
                     <button onClick={() => handleEdit(project)}>Edit</button>
-                    {editingProject && editingProject._id === project._id && (
+                    {/* {editingProject && editingProject._id === project._id && (
                       <EditProjectForm
                         project={editingProject}
                         onDone={() => handleEdit(project)}
-                        fetchProjects={fetchProjects}
                       />
-                    )}
+                    )} */}
                   </div>
                 )}
               </div>

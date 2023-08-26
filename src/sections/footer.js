@@ -65,11 +65,11 @@ const Footer = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="text-white">
               <h4 className="font-extrabold text-[24px]">Future Focals</h4>
-              <div className="flex flex-row text-[12px] gap-4 underline text-secondary-white">
-                <button onClick={() => extractData("Privacy Policy")}>
+              <div className="flex flex-row text-[12px] gap-4 text-secondary-white">
+                <button className="hover:scale-110 duration-200 hover:text-orange-600 underline" onClick={() => extractData("Privacy Policy")}>
                   Privacy Policy
                 </button>
-                <button onClick={() => extractData("Terms and Conditions")}>
+                <button className="hover:scale-110 duration-200 hover:text-orange-600 underline" onClick={() => extractData("Terms and Conditions")}>
                   Terms & Conditions
                 </button>
 
@@ -103,7 +103,7 @@ const Footer = () => {
             <p className="font-normal text-[14px] text-white opacity-50">
               Copyright © 2023 FutureFocals. All rights reserved
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 text-right">
               {socialLinks.map((link, index) => {
                 const matchingSocial = socials.find(
                   (social) => social.name === link.linkName
@@ -114,7 +114,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noreferrer"
                     key={index}
-                    className="z-40"
+                    className="z-40 hover:scale-125 duration-200"
                   >
                     <img
                       src={matchingSocial ? matchingSocial.url : ""}
