@@ -87,7 +87,7 @@ export default function Links({ termPolicy }) {
         return (
           <>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125"/>
             </IconButton>
           </>
         );
@@ -152,13 +152,13 @@ export default function Links({ termPolicy }) {
               </form>
               <DialogActions>
                 <button
-                  className="py-2 px-4 rounded-md bg-green-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleTandPFormSubmit}
                 >
                   Update
                 </button>
                 <button
-                  className="py-2 px-4 rounded-md bg-red-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleAddContentFormClose}
                 >
                   Close

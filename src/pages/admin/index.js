@@ -212,7 +212,7 @@ export default function AdminLogin() {
                 </div>
 
                 <button
-                  className="bg-orange-700 py-[8px] px-[24px] rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
+                  className="button-animation-reverse py-[8px] px-[24px] rounded-md mt-4"
                   onClick={(e) => {
                     handleLogin(e, setAuthenticated);
                   }}

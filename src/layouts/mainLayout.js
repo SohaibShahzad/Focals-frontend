@@ -5,7 +5,7 @@ import useTawkTo from "../hooks/useTawkTo";
 const MainLayout = ({ children }) => {
   useTawkTo();
   return (
-    <div className="bg-black overflow-hidden min-h-screen flex flex-col justify-between">
+    <div className="bg-black overflow-hidden min-h-screen ">
       <NavBar />
       {children}
       <Footer />

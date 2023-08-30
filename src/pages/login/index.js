@@ -491,7 +491,7 @@ export default function LoginRegister() {
                     </button>
                   </div>
                   <button
-                    className="bg-orange-700 py-[8px] px-[24px] w-full rounded-md mt-4 hover:bg-orange-900 hover:font-bold"
+                    className="button-animation-reverse hover:scale-100 py-[8px] px-[24px] w-full rounded-md mt-4"
                     onClick={(e) => {
                       handleLogin(e, setAuthenticated);
                     }}
@@ -728,7 +728,7 @@ export default function LoginRegister() {
                   <hr className="w-full border-gray-500 border-t-2" />
                 </div>
                 <div className="space-y-4">
-                  <button className="bg-red-600 hover:font-bold hover:bg-red-900 py-[8px] w-full rounded-md flex items-center justify-center gap-4">
+                  <button className="button-animation-reverse-red hover:scale-100 py-[8px] w-full rounded-md flex items-center justify-center gap-4">
                     <img src="/gmailLogin.png" className="h-5 w-6" />
                     Continue with Google
                   </button>

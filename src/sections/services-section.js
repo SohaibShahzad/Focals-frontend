@@ -1,4 +1,5 @@
 import { TypingText, TitleText } from "../components/customText";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { staggerContainer } from "../helper/motion";
 import { motion } from "framer-motion";
 import styles from "../styles";
@@ -9,16 +10,43 @@ import { Button } from "../components/button";
 
 const ServicesSection = () => {
   const [servicesData, setServicesData] = useState([]);
+  const [uniqueCategories, setUniqueCategories] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
       );
-      setServicesData(res.data);
+      const serviceData = res.data;
+      setServicesData(serviceData);
+      setUniqueCategories(
+        [...new Set(serviceData.map((service) => service.category))].sort()
+      );
+      uniqueCategories.push("All");
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (selectedCategory === null) {
+      setServicesToDisplay(servicesData);
+    } else {
+      const filteredServices = servicesData.filter(
+        (service) => service.category === selectedCategory
+      )
+      setServicesToDisplay(filteredServices);
+    }
+
+  }, [selectedCategory, servicesData])
+
+  const handleTabChange = (index) => {
+    setActiveTab(index);
+    setSelectedCategory(uniqueCategories[index]);
+  };
+
+  const [servicesToDisplay, setServicesToDisplay] = useState(servicesData);
 
   return (
     <section className={`${styles.paddings} relative z-30`} id="blogs">
@@ -47,15 +75,28 @@ const ServicesSection = () => {
             />
           </div>
         </div>
+        <Tabs selectedIndex={activeTab} onSelect={handleTabChange}>
+          <TabList className="flex flex-row justify-center gap-5 mt-10 cursor-pointer">
+            {uniqueCategories.map((category, index) => (
+              <Tab
+                key={index}
+                selectedClassName="bg-orange-700 font-bold"
+                className="border-2 rounded-md p-2 text-white"
+              >
+                {category}
+              </Tab>
+            ))}
+          </TabList>
+        </Tabs>
         <div className="items-center flex flex-col z-40">
           <div className={`${styles.yPaddings} text-white`}>
-            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-8  ">
-              {servicesData.map((service) => (
+            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {servicesToDisplay.map((service) => (
                 <Link
                   key={service._id}
                   href={`/services/${service._id}`}
                   className="p-4 glassmorphism-projects hover:bg-orange-800  rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
-                  >
+                >
                   <div>
                     <div className="flex justify-center my-3">
                       <img

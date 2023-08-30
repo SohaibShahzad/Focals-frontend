@@ -9,12 +9,17 @@ export async function getServerSideProps() {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
   );
+  const categories = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}services/getCategories`
+  );
 
   const services = res.data;
-  console.log(services);
+  const uniqueCategories = categories.data;
+
   return {
     props: {
       services,
+      uniqueCategories,
     },
   };
 }

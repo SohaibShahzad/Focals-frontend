@@ -108,13 +108,13 @@ export const Sidebar = ({ role }) => {
             <div className="my-[20px] mx-[20px] rounded-md h-[2px] bg-white opacity-20" />
 
             <button
-              className="flex items-center text-lg text-black justify-center mx-3 text-center bg-[#f3993f] w-[91%] py-3 rounded-lg hover:bg-[#d8730e] hover:text-white"
+              className="flex items-center text-lg button-animation-reverse-orange-soft hover:scale-100 justify-center mx-3 text-center w-[91%] py-3 rounded-lg"
               onClick={handleBackToSite}
             >
               {"< "}Back to Site
             </button>
             <button
-              className="m-3 text-center text-lg text-black bg-[#f3993f] w-[91%] py-3 rounded-lg hover:bg-[#d8730e] hover:text-white"
+              className="m-3 text-center text-lg button-animation-reverse-orange-soft hover:scale-100 w-[91%] py-3 rounded-lg"
               onClick={() => {
                 handleLogout(setAuthenticated);
               }}

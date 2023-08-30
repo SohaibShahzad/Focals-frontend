@@ -242,7 +242,7 @@ const NavBar = () => {
       whileInView="show"
       className={`${styles.xPaddings} py-8 relative font-poppins`}
     >
-      {(showCart || chevronMenu || showSearch) && (
+      {(showCart || chevronMenu || showSearch || showDropdown || toggle) && (
         <div className="fixed top-0 left-0 w-full h-full bg-black opacity-70 z-50" />
       )}
       <div
@@ -500,7 +500,7 @@ const NavBar = () => {
                     ) : (
                       <div className="flex flex-col justify-center items-center h-full">
                         <div className="flex items-center opacity-50 gap-2">
-                          <FaInfoCircle className="w-7 h-7"/>
+                          <FaInfoCircle className="w-7 h-7" />
                           <p className="text-[22px]">No Item</p>
                         </div>
                         <Link
@@ -601,8 +601,11 @@ const NavBar = () => {
                         Dashboard
                       </Link>
                     </li>
-                    <div className="border-[1px] rounded-full opacity-40"/>
-                    <li className="cursor-pointer transform transition-all duration-200 hover:scale-110 hover:text-orange-600" onClick={handleLogout}>
+                    <div className="border-[1px] rounded-full opacity-40" />
+                    <li
+                      className="cursor-pointer transform transition-all duration-200 hover:scale-110 hover:text-orange-600"
+                      onClick={handleLogout}
+                    >
                       Logout
                     </li>
                   </ul>
@@ -647,14 +650,23 @@ const NavBar = () => {
                     setToggle(false);
                   }}
                 >
-                  <FaUserCircle className="w-7 h-7 !important" />
-                  <span>{user.firstName}</span>
+                  {isAdmin ? (
+                    <span className="bg-white text-orange-600 rounded-full px-2 font-extrabold">
+                      Admin
+                    </span>
+                  ) : isSub ? (
+                    <span className="bg-white text-orange-600 rounded-full px-2 font-extrabold">
+                      Sub
+                    </span>
+                  ) : (
+                    <FaUserCircle className="w-7 h-7 " />
+                  )}
                   <IoIosArrowDown />
                 </button>
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 p-6 absolute right-10 top-20 mt-2 rounded-lg bg-gray-800 navbar-sm-animation"
+                    className="space-y-1 py-4 px-3 text-center absolute right-10 top-20 mt-2 rounded-lg glassmorphism backdrop-blur-2xl navbar-sm-animation"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link
@@ -702,7 +714,7 @@ const NavBar = () => {
                 ref={mobileMenuRef}
                 className={`${
                   toggle ? "flex" : "hidden"
-                } p-6 bg-gray-800 navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
+                } p-6 glassmorphism backdrop-blur-2xl navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
                 style={{ maxWidth: "calc(100% - 4px)" }}
               >
                 <ul className="list-none flex flex-col justify-end items-center flex-1">

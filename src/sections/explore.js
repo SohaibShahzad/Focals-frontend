@@ -29,7 +29,8 @@ const Explore = () => {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}portfolio/getSpecialPortfolio`
       );
-      setPortfolioData(res.data);
+      const exploreData = res.data;
+      setPortfolioData(exploreData);
     }
     fetchData();
   }, []);

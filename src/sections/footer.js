@@ -103,7 +103,7 @@ const Footer = () => {
             <p className="font-normal text-[14px] text-white opacity-50">
               Copyright © 2023 FutureFocals. All rights reserved
             </p>
-            <div className="flex gap-4 text-right">
+            <div className="flex gap-4 w-full justify-end xs:w-auto">
               {socialLinks.map((link, index) => {
                 const matchingSocial = socials.find(
                   (social) => social.name === link.linkName

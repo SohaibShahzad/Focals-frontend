@@ -202,13 +202,13 @@ const BlogsPanel = ({ blogs }) => {
         return (
           <>
             <IconButton onClick={onClickView}>
-              <VisibilityRoundedIcon className="text-white"/>
+              <VisibilityRoundedIcon className="text-white  hover:text-orange-600 duration-100 hover:scale-125"/>
             </IconButton>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125"/>
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon className="text-white"/>
+              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125"/>
             </IconButton>
           </>
         );
@@ -221,11 +221,12 @@ const BlogsPanel = ({ blogs }) => {
       <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Blogs</div>
         <button
-          className="py-2 px-4 bg-orange-400 rounded-md"
-          onClick={handleAddFormOpen}
-        >
-          + Add New Blog
-        </button>
+              className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
+              onClick={handleAddFormOpen}
+            >
+              <span className="hidden xs:flex">+ Add New</span>
+              <span className="xs:hidden flex">+ Add</span>
+            </button>
       </div>
       <div
         style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
@@ -332,13 +333,13 @@ const BlogsPanel = ({ blogs }) => {
           </div>
           <DialogActions>
             <button
-              className="py-2 px-4 rounded-md bg-green-400 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
               onClick={handleFormSubmit}
             >
               {buttonLabel}
             </button>
             <button
-              className="py-2 px-4 rounded-md bg-red-400 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
               onClick={handleAddFormClose}
             >
               Close

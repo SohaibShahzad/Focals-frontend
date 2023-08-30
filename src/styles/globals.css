@@ -493,3 +493,115 @@
   background: transparent;
   transform: scale(1.1);
 }
+
+.button-animation-reverse-red-soft {
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  background: #f87171;
+  border: 2px solid #f87171;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s, background 0.3s;
+  /* z-index: 100; */
+  overflow: hidden;
+}
+
+.button-animation-reverse-red-soft:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f87171;
+  transition: transform 0.3s;
+  transform-origin: right;
+  transform: scaleX(1);
+  z-index: -1;
+}
+
+.button-animation-reverse-red-soft:hover:before {
+  transform: scaleX(0);
+}
+
+.button-animation-reverse-red-soft:hover {
+  background: transparent;
+  transform: scale(1.1);
+}
+.button-animation-reverse-green-soft {
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  background: #52DE80;
+  border: 2px solid #52DE80;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s, background 0.3s;
+  /* z-index: 100; */
+  overflow: hidden;
+}
+
+.button-animation-reverse-green-soft:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #52DE80;
+  transition: transform 0.3s;
+  transform-origin: right;
+  transform: scaleX(1);
+  z-index: -1;
+}
+
+.button-animation-reverse-green-soft:hover:before {
+  transform: scaleX(0);
+}
+
+.button-animation-reverse-green-soft:hover {
+  background: transparent;
+  transform: scale(1.1);
+}
+.button-animation-reverse-orange-soft {
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  font-family: "poppins";
+  color: #fff;
+  background: #FB923C;
+  border: 2px solid #FB923C;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s, background 0.3s;
+  /* z-index: 100; */
+  overflow: hidden;
+}
+
+.button-animation-reverse-orange-soft:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #FB923C;
+  transition: transform 0.3s;
+  transform-origin: right;
+  transform: scaleX(1);
+  z-index: -1;
+}
+
+.button-animation-reverse-orange-soft:hover:before {
+  transform: scaleX(0);
+}
+
+.button-animation-reverse-orange-soft:hover {
+  background: transparent;
+  transform: scale(1.1);
+}

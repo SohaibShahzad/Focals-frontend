@@ -17,7 +17,7 @@ const PortfolioPanel = ({ portfolios }) => {
   const [stars, setStars] = useState(0);
   const [images, setImages] = useState([]);
   const [url, setUrl] = useState([]);
-  const [category , setCategory] = useState([]);
+  const [category, setCategory] = useState([]);
   const [isSpecial, setIsSpecial] = useState(false);
   const [selectedPortfolioForUpdate, setSelectedPortfolioForUpdate] =
     useState(null);
@@ -125,7 +125,7 @@ const PortfolioPanel = ({ portfolios }) => {
     images.forEach((image) => {
       formData.append("images", image);
     });
-    
+
     const updatedUrls = url;
     formData.append("url", JSON.stringify(updatedUrls));
 
@@ -222,10 +222,10 @@ const PortfolioPanel = ({ portfolios }) => {
         return (
           <>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon className="text-white"/>
+              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
           </>
         );
@@ -244,10 +244,11 @@ const PortfolioPanel = ({ portfolios }) => {
           <div className="mb-2 flex flex-row justify-between">
             <div className="text-3xl">Portfolio</div>
             <button
-              className="py-2 px-4 bg-orange-400 rounded-md"
+              className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
               onClick={handleAddFormOpen}
             >
-              + Add New
+              <span className="hidden xs:flex">+ Add New</span>
+              <span className="xs:hidden flex">+ Add</span>
             </button>
           </div>
           <div
@@ -362,7 +363,7 @@ const PortfolioPanel = ({ portfolios }) => {
                     }
                   />
 
-                    {/* <label htmlFor="category" className="font-bold">
+                  {/* <label htmlFor="category" className="font-bold">
                     Category
                   </label>
                   <input 
@@ -389,13 +390,13 @@ const PortfolioPanel = ({ portfolios }) => {
               </div>
               <DialogActions>
                 <button
-                  className="py-2 px-4 rounded-md bg-green-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleFormSubmit}
                 >
                   {buttonLabel}
                 </button>
                 <button
-                  className="py-2 px-4 rounded-md bg-red-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleAddFormClose}
                 >
                   Close

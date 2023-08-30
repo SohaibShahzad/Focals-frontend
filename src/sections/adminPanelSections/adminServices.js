@@ -12,6 +12,80 @@ import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { IconButton, Dialog, DialogContent } from "@mui/material";
 import axios from "axios";
 
+const CombinedCategoryInput = ({ categories, selectedService, onCategoryChange }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  useEffect(() => {
+    setSelectedCategory(selectedService?.category || '');
+  }, [selectedService]);
+
+  const handleCategoryChange = (event) => {
+    const value = event.target.value;
+    setSelectedCategory(value);
+    onCategoryChange(value);
+  };
+
+  const handleDropdownClick = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleServiceSelection = (category) => {
+    setSelectedCategory(category);
+    onCategoryChange(category);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className="relative w-full">
+      <input
+        type="text"
+        className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2 pr-8"
+        placeholder="Select or add a category"
+        value={selectedCategory}
+        onChange={handleCategoryChange}
+      />
+      <div className="absolute bottom-6 right-3 flex items-center cursor-pointer">
+        <div
+          onClick={handleDropdownClick}
+          className={`h-5 w-5 text-gray-400 ${showDropdown ? 'transform -rotate-90' : ''}`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
+      </div>
+      {showDropdown && (
+        <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
+          <ul>
+            {categories.map((category) => (
+              <li
+                key={category}
+                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                  category === selectedCategory ? 'bg-gray-100' : ''
+                }`}
+                onClick={() => handleServiceSelection(category)}
+              >
+                {category}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ServicesPanel = ({ services }) => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptMessage, setPromptMessage] = useState({});
@@ -23,6 +97,7 @@ const ServicesPanel = ({ services }) => {
   const [url, setUrl] = useState([]);
   const [newPackages, setNewPackages] = useState([]);
   const [category, setCategory] = useState("");
+  const [otherCategory, setOtherCategory] = useState("");
   const [selectedServiceForUpdate, setSelectedServiceForUpdate] =
     useState(null);
   const [addNewForm, setAddNewForm] = useState(false);
@@ -31,6 +106,9 @@ const ServicesPanel = ({ services }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Submit");
   const [initialLoading, setInitialLoading] = useState(true);
+  let uniqueCategories = [
+    ...new Set(services.map((service) => service.category)),
+  ];
 
   useEffect(() => {
     if (services && services.length > 0) {
@@ -46,7 +124,7 @@ const ServicesPanel = ({ services }) => {
     setImage(selectedServiceForUpdate?.image || []);
     setUrl(selectedServiceForUpdate?.url || []);
     setThumbnail(selectedServiceForUpdate?.thumbnail || null);
-    setCategory(selectedServiceForUpdate?.category || "")
+    setCategory(selectedServiceForUpdate?.category || "");
   }, [selectedServiceForUpdate]);
 
   const [rows, setRows] = useState(
@@ -58,7 +136,7 @@ const ServicesPanel = ({ services }) => {
       thumbnail: service.thumbnail,
       image: service.images,
       url: service.url,
-      category: service.category
+      category: service.category,
     }))
   );
 
@@ -76,7 +154,7 @@ const ServicesPanel = ({ services }) => {
           thumbnail: service.thumbnail,
           image: service.images,
           url: service.url,
-          category: service.category
+          category: service.category,
         }))
       );
     } catch (error) {
@@ -115,16 +193,18 @@ const ServicesPanel = ({ services }) => {
     e.preventDefault();
     resetForm();
 
-    if(newPackages.length === 0) {
+    if (newPackages.length === 0) {
       alert("Please add at least one package");
       return;
     }
 
-    const isAnyPackageFieldEmpty = newPackages.some((pkg) => 
-      Object.values(pkg).some((value) => typeof value === "string" && value.trim() === "")
+    const isAnyPackageFieldEmpty = newPackages.some((pkg) =>
+      Object.values(pkg).some(
+        (value) => typeof value === "string" && value.trim() === ""
+      )
     );
 
-    if(isAnyPackageFieldEmpty) {
+    if (isAnyPackageFieldEmpty) {
       alert("Please fill all the package fields");
       return;
     }
@@ -138,7 +218,7 @@ const ServicesPanel = ({ services }) => {
     });
 
     const updatedNewPackages = newPackages;
-      
+
     formData.append("newPackages", JSON.stringify(updatedNewPackages));
 
     const updatedUrl = url;
@@ -266,17 +346,17 @@ const ServicesPanel = ({ services }) => {
           setOpenDialog(true);
         };
         return (
-          <>
+          <div className="flex items-center">
             <IconButton onClick={onClickView}>
-              <VisibilityRoundedIcon className="text-white"/>
+              <VisibilityRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon className="text-white"/>
+              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
-          </>
+          </div>
         );
       },
     },
@@ -300,10 +380,11 @@ const ServicesPanel = ({ services }) => {
           <div className="mb-2 flex flex-row justify-between items-center">
             <div className="text-3xl">Services</div>
             <button
-              className="py-2 px-4 bg-orange-400 rounded-md"
+              className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
               onClick={handleAddFormOpen}
             >
-              + Add New
+              <span className="hidden xs:flex">+ Add New</span>
+              <span className="xs:hidden flex">+ Add</span>
             </button>
           </div>
           <div
@@ -370,16 +451,11 @@ const ServicesPanel = ({ services }) => {
                       setDescription(editor.getHTML())
                     }
                   />
-                  <label htmlFor="category" className="font-bold">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                    id="category"
-                    placeholder="Enter Service Category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+
+                  <CombinedCategoryInput 
+                    categories={uniqueCategories}
+                    selectedService={selectedServiceForUpdate}
+                    onCategoryChange={(value) => setCategory(value)}
                   />
                   <label htmlFor="url" className="font-bold">
                     YouTube URLs
@@ -530,19 +606,19 @@ const ServicesPanel = ({ services }) => {
                 {newPackages.length < 3 && (
                   <button
                     onClick={handleAddPackage}
-                    className="py-2 px-4 rounded-md bg-orange-400 font-poppins"
+                    className="py-2 px-4 rounded-md button-animation-reverse-orange-soft hover:text-black hover:scale-100 font-poppins"
                   >
                     + Add Package
                   </button>
                 )}
                 <button
-                  className="py-2 px-4 rounded-md bg-green-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleFormSubmit}
                 >
                   {buttonLabel}
                 </button>
                 <button
-                  className="py-2 px-4 rounded-md bg-red-400 font-poppins"
+                  className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
                   onClick={handleAddFormClose}
                 >
                   Close

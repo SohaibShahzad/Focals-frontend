@@ -152,14 +152,14 @@ export default function Admins({ admins }) {
           }
         };
         return (
-          <>
+          <div className="flex items-center">
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon className="text-white"/>
+              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
-          </>
+          </div>
         );
       },
     },
@@ -170,10 +170,11 @@ export default function Admins({ admins }) {
       <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Admins</div>
         <button
-          className="py-2 px-4 bg-orange-400 rounded-md"
+          className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
           onClick={handleAddFormOpen}
         >
-          + Add New Admin
+          <span className="hidden xs:flex">+ Add New</span>
+          <span className="xs:hidden flex">+ Add</span>
         </button>
       </div>
       <div
@@ -229,13 +230,13 @@ export default function Admins({ admins }) {
           </div>
           <DialogActions>
             <button
-              className="py-2 px-4 rounded-md bg-green-400 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
               onClick={handleFormSubmit}
             >
               {buttonLabel}
             </button>
             <button
-              className="py-2 px-4 rounded-md bg-red-400 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
               onClick={handleAddFormClose}
             >
               Close
