@@ -17,7 +17,7 @@ export default function SubAdmins({ subAdmins }) {
     "services",
     "projects",
     "testimonials",
-    "liveChat",
+    // "liveChat",
   ]);
   const [selectedSubAdminForUpdate, setSelectedSubAdminForUpdate] =
     useState(null);

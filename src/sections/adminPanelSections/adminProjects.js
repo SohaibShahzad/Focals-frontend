@@ -760,7 +760,7 @@ const ProjectsPanel = ({ projectsData }) => {
                       />
                     )} */}
 
-                    {!showChat && (
+                    {/* {!showChat && (
                       <div className="flex justify-end mt-3">
                         <button
                           className="px-1 xs:py-1 xs:px-2 rounded-md flex items-center button-animation-reverse gap-1 xs:gap-2"
@@ -777,7 +777,7 @@ const ProjectsPanel = ({ projectsData }) => {
                           <RiChat1Line className="xs:w-7 xs:h-7 w-5 h-5" />
                         </button>
                       </div>
-                    )}
+                    )} */}
                     {showChat && (
                       <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
                         <button

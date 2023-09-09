@@ -233,7 +233,7 @@ export default function UserProjects({ userProjects, userData }) {
                             </div>
                           </div>
                         </div>
-                        <button
+                        {/* <button
                           className="p-1 rounded-full bg-orange-500"
                           onClick={() => {
                             if (chatId === project._id && showChat) {
@@ -245,7 +245,7 @@ export default function UserProjects({ userProjects, userData }) {
                           }}
                         >
                           <RiChat1Line className="w-7 h-7" />
-                        </button>
+                        </button> */}
                         {showChat && chatId === project._id && (
                           <ProjectChat
                             chatId={project._id}

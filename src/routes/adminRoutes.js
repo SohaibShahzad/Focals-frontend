@@ -57,11 +57,11 @@ export const adminLinks = [
         icon: <CgWebsite />,
         linkName: "/projects",
       },
-      {
-        name: "Realtime Chat",
-        icon: <IoChatbubblesOutline />,
-        linkName: "/users-chat",
-      },
+      // {
+      //   name: "Realtime Chat",
+      //   icon: <IoChatbubblesOutline />,
+      //   linkName: "/users-chat",
+      // },
       {
         name: "Contact-Us",
         icon: <MdMailOutline />,
