@@ -159,7 +159,7 @@ export default function SingleService({ serviceData }) {
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white relative z-[10] font-poppins`}
     >
       <div className="gradient-02 z-[-1]" />
-      <div className="md:text-[64px] text-[50px] font-extrabold ">
+      <div className="text-[22px] xs:text-[28px] sm:text-[34px] md:text-[50px] font-extrabold ">
         {serviceData.title}
       </div>
 

@@ -24,6 +24,7 @@ export default function WebApp() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const props = {
     signup: true,
     signin: false,
@@ -112,9 +113,7 @@ export default function WebApp() {
               <h1 className="text-xl md:text-2xl font-bold text-center">
                 Welcome to Future Focals!
               </h1>
-              <p className="text-md md:text-lg">
-                Here Vision Meets Reality
-              </p>
+              <p className="text-md md:text-lg">Here Vision Meets Reality</p>
             </div>
             <form className="font-poppins px-1" onSubmit={handleLogin}>
               <div className="flex flex-col w-full">
@@ -136,7 +135,7 @@ export default function WebApp() {
               <div className="flex flex-col w-full">
                 <label>Password</label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   className="w-full bg-transparent border-[2px] border-orange-700 focus:border-orange-400 outline-none rounded-md px-4 py-2"
                   placeholder="Enter Password"
                   value={password}
@@ -145,6 +144,21 @@ export default function WebApp() {
                     setPassword(e.target.value);
                   }}
                 />
+
+                <div
+                  className="items-center flex gap-1 justify-end mt-2"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  <input
+                    type="checkbox"
+                    className="cursor-pointer rounded-md h-4 w-4"
+                    checked={showPassword}
+                    onChange={(e) => setShowPassword(e.target.checked)}
+                  />
+                  <label className="text-xs select-none cursor-pointer">
+                    Show Password
+                  </label>
+                </div>
                 <div className="flex mb-2 z-30">
                   {passwordError && (
                     <p className="text-red-500">{passwordError}</p>

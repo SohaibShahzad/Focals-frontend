@@ -23,11 +23,11 @@ export const userDashLinks = [
         icon: <CgWebsite />,
         linkName: "/projects",
       },
-      // {
-      //   name: "Chat",
-      //   icon: <IoChatbubblesOutline />,
-      //   linkName: "/live-chat",
-      // },
+      {
+        name: "Chat",
+        icon: <IoChatbubblesOutline />,
+        linkName: "/live-chat",
+      },
     ],
   },
   {

@@ -16,7 +16,7 @@ export default function ServicesPage({ services }) {
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins`}
     >
       <div className="flex justify-between items-center">
-        <h1 className="md:text-[64px] text-[50px] font-extrabold light-text ">
+        <h1 className="text-[28px] sm:text-[34px] md:text-[50px] font-extrabold light-text ">
           Our Services
         </h1>
         <div
@@ -28,15 +28,15 @@ export default function ServicesPage({ services }) {
       </div>
       <div className="mb-[20px] h-[2px]  bg-white opacity-20" />
       {filterToggle ? (
-        <div className="flex flex-row gap-9 flex-wrap md:flex-nowrap">
-          <div className="mb-5">
-            <label htmlFor="title-filter" className="light-text mr-3">
+        <div className="flex flex-row gap-9 flex-wrap md:flex-nowrap justify-end">
+          <div className="flex flex-col mb-5">
+            <label htmlFor="title-filter" className="light-text text-right">
               Search by Name:
             </label>
             <input
               placeholder="Enter Name"
               type="text"
-              className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+              className="bg-[#333333] p-2 border-2 w-[250px] rounded-md border-orange-700"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -53,11 +53,11 @@ export default function ServicesPage({ services }) {
             className="p-4 glassmorphism-projects hover:bg-orange-800  rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
           >
             <div className="flex flex-col justify-center items-center ">
-              <div className="flex justify-center my-3">
+              <div className="flex justify-center my-3 ">
                 <img
                   src={service.thumbnail}
                   alt={service.title}
-                  className="w-[auto] h-[75px] transform transition-all duration-300 hover:scale-110"
+                  className="w-[auto] h-[75px]  transform transition-all duration-300 hover:scale-110"
                 />
               </div>
               <h3 className="text-center font-bold text-[24px] border-b-2 border-gray-600 pb-1 ">

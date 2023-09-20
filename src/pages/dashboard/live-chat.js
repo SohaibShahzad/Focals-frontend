@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaUserCircle } from "react-icons/fa";
 
 const jwt_decode = jwt.decode;
 let socket;
@@ -81,14 +81,26 @@ export default function LiveChat({ userDetails }) {
 
   return (
     <div className="font-poppins">
-      <main className="text-center">
-        <h1 className="text-3xl underline font-bold">Live Chat</h1>
-      </main>
-      <div>
+      <div
+        className="glassmorphism-projects p-2 rounded-md"
+        style={{ height: "calc(100vh - 75px)" }}
+      >
+        <div className="pt-2 pl-3">
+          <span className="text-[24px] flex gap-2">
+            <img
+              src="/Logo.png"
+              alt="FutureFocals"
+              className="w-9 h-9 rounded-md p-1 bg-black"
+            />
+            Future Focals
+          </span>
+          <div className="border-2 rounded-full my-3 opacity-50" />
+        </div>
         <div>
           {messages.length === 0 ? (
-            <div className="flex text-center justify-center items-center"
-                style={{ height: "calc(100vh - 150px)" }}
+            <div
+              className="flex text-center justify-center items-center"
+              style={{ height: "calc(100vh - 205px)" }}
             >
               <FaInfoCircle className="text-5xl text-gray-400" />
               <p className="text-xl">No messages yet</p>
@@ -96,7 +108,7 @@ export default function LiveChat({ userDetails }) {
           ) : (
             <div
               className="overflow-y-auto"
-              style={{ height: "calc(100vh - 150px)" }}
+              style={{ height: "calc(100vh - 205px)" }}
             >
               {messages.map((message, index) => (
                 <div
@@ -105,14 +117,29 @@ export default function LiveChat({ userDetails }) {
                     message.sender !== "admin" ? "items-end" : "items-start"
                   }`}
                 >
-                  <div
-                    className={`flex items-center justify-center px-2 py-1 rounded-md ${
-                      message.sender !== "admin"
-                        ? "bg-orange-800 text-white rounded-br-none"
-                        : "bg-gray-300 text-black rounded-bl-none"
-                    }`}
-                  >
-                    {message.message}
+                  <div className="flex items-center gap-2">
+                    {message.sender === "admin" && (
+                      <img
+                        src="/Logo.png"
+                        alt="FutureFocals"
+                        className="w-10 h-10 rounded-full bg-black p-2"
+                      />
+                    )}
+                    <div
+                      className={`flex items-center justify-center px-2 py-1 rounded-md ${
+                        message.sender !== "admin"
+                          ? "bg-orange-800 text-white rounded-br-none"
+                          : "bg-gray-300 text-black rounded-bl-none"
+                      }`}
+                    >
+                      {message.message}
+                    </div>
+                    {message.sender !== "admin" && (
+                      <FaUserCircle
+                      
+                        className="w-9 h-9"
+                      />
+                    )}
                   </div>
                 </div>
               ))}

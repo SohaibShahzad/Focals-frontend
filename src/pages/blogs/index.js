@@ -21,7 +21,7 @@ export default function BlogsPage({ blogs }) {
       className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins`}
     >
       <div className="flex justify-between items-center">
-        <h1 className="md:text-[64px] text-[50px] font-extrabold light-text ">
+        <h1 className="text-[28px] sm:text-[34px] md:text-[50px] font-extrabold light-text ">
           Our Blogs
         </h1>
         <div
@@ -34,15 +34,15 @@ export default function BlogsPage({ blogs }) {
       <div className="mb-[20px] h-[2px]  bg-white opacity-20" />
 
       {filterToggle ? (
-        <div className="flex flex-row gap-9 flex-wrap md:flex-nowrap">
-          <div>
-            <label htmlFor="title-filter" className="light-text mx-5">
-              Search by Title:
-            </label>
+        <div className="flex flex-row gap-9 flex-wrap md:flex-nowrap justify-end">
+          <div className="flex flex-col">
+            <span className="light-text text-right">
+              Search by Title
+            </span>
             <input
               placeholder="Enter Title"
               type="text"
-              className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+              className="bg-[#333333] p-2 border-2 w-[250px] rounded-md border-orange-700"
               id="title-filter"
               value={titleFilter}
               onChange={(e) => setTitleFilter(e.target.value)}

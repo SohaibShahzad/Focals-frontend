@@ -260,7 +260,7 @@ const NavBar = () => {
 
         <div className={`${classes.menuItems}`}>
           <ul className="list-none lg:flex hidden justify-end items-center">
-            <div className="nav-ul lg:flex hidden justify-end items-center">
+            <div className=" lg:flex hidden justify-end items-center">
               {mainNavLinks.map((link, index) => (
                 <li
                   key={index}
@@ -273,94 +273,26 @@ const NavBar = () => {
                   } `}
                 >
                   {link.title === "Services" ? (
-                    <div>
-                      <div className="flex items-center justify-center">
                         <button
                           onClick={() => {
                             setChevronMenu((prev) => !prev);
                           }}
-                          className="nav-item transform transition-all duration-200  hover:px-1"
+                          className="transform transition-all duration-200 hover:px-1 nav-item"
                         >
+                          <span className="flex items-center gap-1"> 
+
                           {link.title}
+                          {chevronMenu ? (
+                            <TbSquareRoundedChevronRightFilled className="w-6 h-6" />
+                          ) : (
+                            <TbSquareRoundedChevronDownFilled className="w-6 h-6" />
+                          )}
+                          </span>
                         </button>
-                        {chevronMenu && link.title === "Services" ? (
-                          <TbSquareRoundedChevronRightFilled
-                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-200 hover:scale-125"
-                            onClick={() => {
-                              setChevronMenu(false);
-                            }}
-                          />
-                        ) : (
-                          <TbSquareRoundedChevronDownFilled
-                            className="w-6 h-6 ml-1 cursor-pointer transform transition-all duration-200 hover:scale-125"
-                            onClick={() => {
-                              setChevronMenu(true);
-                            }}
-                          />
-                        )}
-                      </div>
-                      {chevronMenu && link.title === "Services" && (
-                        <div className="hover:transition-none glassmorphism-projects backdrop-blur-2xl absolute top-10 right-0 px-5 py-3 navbar-sm-animation rounded-[5px]">
-                          <p className="flex justify-center font-semibold underline pb-2">
-                            Categories
-                          </p>
-                          <div
-                            className="flex gap-5 columns-2 border-b-2 border-gray-600"
-                            ref={servicesMenuRef}
-                          >
-                            {Object.keys(categoryWiseServices).map(
-                              (category, index) => (
-                                <div
-                                  key={index}
-                                  style={{
-                                    "border-left":
-                                      index === 0 ? "" : "2px solid gray",
-                                    "padding-left": index === 0 ? "" : "20px",
-                                    "margin-bottom": "10px",
-                                  }}
-                                >
-                                  <h4
-                                    style={{ "white-space": "nowrap" }}
-                                    className="pb-2"
-                                  >
-                                    {capitalizeFirstLetter(category)}
-                                  </h4>
-                                  <div className="flex flex-col gap-1">
-                                    {categoryWiseServices[category].map(
-                                      (service) => (
-                                        <Link href={`/services/${service._id}`}>
-                                          <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-200 hover:scale-110 hover:text-orange-600">
-                                            <TbArrowNarrowRight className="w-8 h-5" />
-                                            <span
-                                              style={{
-                                                "white-space": "nowrap",
-                                              }}
-                                            >
-                                              {service.title}
-                                            </span>
-                                          </p>
-                                        </Link>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                            )}
-                          </div>
-                          <Link
-                            href="/services"
-                            className="opacity-50 text-sm mt-2 flex items-center justify-end transform transition-all duration-250 hover:opacity-100 hover:underline hover:text-orange-600"
-                          >
-                            View all services{" "}
-                            <TbSquareRoundedChevronRightFilled className="w-4 h-4" />
-                          </Link>
-                        </div>
-                      )}
-                    </div>
                   ) : (
                     <Link
-                      href={link.link}
-                      className="nav-item transform transition-all duration-200 hover:px-1"
+                    href={link.link}
+                    className="nav-item transform transition-all duration-200 hover:px-1"
                     >
                       {link.title}
                     </Link>
@@ -368,6 +300,63 @@ const NavBar = () => {
                 </li>
               ))}
             </div>
+              {chevronMenu && (
+                <div className="hover:transition-none glassmorphism-projects backdrop-blur-2xl absolute top-[5rem] right-[25rem] px-5 py-3 navbar-sm-animation rounded-[5px] z-50">
+                  <p className="flex justify-center font-semibold underline pb-2">
+                    Categories
+                  </p>
+                  <div
+                    className="flex gap-5 columns-2 border-b-2 border-gray-600"
+                    ref={servicesMenuRef}
+                  >
+                    {Object.keys(categoryWiseServices).map(
+                      (category, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            "border-left":
+                              index === 0 ? "" : "2px solid gray",
+                            "padding-left": index === 0 ? "" : "20px",
+                            "margin-bottom": "10px",
+                          }}
+                        >
+                          <h4
+                            style={{ "white-space": "nowrap" }}
+                            className="pb-2"
+                          >
+                            {capitalizeFirstLetter(category)}
+                          </h4>
+                          <div className="flex flex-col gap-1">
+                            {categoryWiseServices[category].map(
+                              (service) => (
+                                <Link href={`/services/${service._id}`}>
+                                  <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-200 hover:scale-110 hover:text-orange-600">
+                                    <TbArrowNarrowRight className="w-8 h-5" />
+                                    <span
+                                      style={{
+                                        "white-space": "nowrap",
+                                      }}
+                                    >
+                                      {service.title}
+                                    </span>
+                                  </p>
+                                </Link>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                  <Link
+                    href="/services"
+                    className="opacity-50 text-sm mt-2 flex items-center justify-end transform transition-all duration-250 hover:opacity-100 hover:scale-105 hover:pr-[10px] hover:underline hover:text-orange-600"
+                  >
+                    View all services{" "}
+                    <TbSquareRoundedChevronRightFilled className="w-4 h-4" />
+                  </Link>
+                </div>
+              )}
             {isAuthenticated && isUser && (
               <div className="relative">
                 <li className="relative">
@@ -666,7 +655,7 @@ const NavBar = () => {
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="space-y-1 py-4 px-3 text-center absolute right-10 top-20 mt-2 rounded-lg glassmorphism backdrop-blur-2xl navbar-sm-animation"
+                    className="space-y-1 py-4 px-3 text-center absolute right-10 top-20 mt-2 rounded-lg glassmorphism-projects backdrop-blur-2xl navbar-sm-animation"
                   >
                     <li className="mb-5 cursor-pointer">
                       <Link
@@ -714,7 +703,7 @@ const NavBar = () => {
                 ref={mobileMenuRef}
                 className={`${
                   toggle ? "flex" : "hidden"
-                } p-6 glassmorphism backdrop-blur-2xl navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
+                } p-6 glassmorphism-projects backdrop-blur-2xl navbar-sm-animation absolute top-20 right-0 mx-4 my-2 rounded-xl`}
                 style={{ maxWidth: "calc(100% - 4px)" }}
               >
                 <ul className="list-none flex flex-col justify-end items-center flex-1">

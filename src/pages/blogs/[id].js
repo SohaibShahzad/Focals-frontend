@@ -16,10 +16,10 @@ export default function SingleBlog({ blogData }) {
   return (
     <div className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins`}>
       <div className="md:flex md:flex-row md:justify-between md:items-center md:gap-5">
-        <div className="md:text-[64px] text-[40px] text-center md:text-left font-extrabold ">
+        <div className="text-[22px] xs:text-[28px] sm:text-[34px] md:text-[50px] text-center md:text-left font-extrabold ">
           {blogData.title}
         </div>
-        <div>
+        <div className="flex items-center gap-2 justify-end">
           <div className="text-gray-400">by:</div>
           <div className="text-[20px] font-bold">{blogData.author}</div>
         </div>
@@ -49,7 +49,7 @@ export default function SingleBlog({ blogData }) {
             className="rounded-xl w-[100%] object-cover cursor-zoom-in"
           />
         </div>
-        <div className="text-justify glassmorphism-projects p-5 rounded-2xl">
+        <div className=" glassmorphism-projects p-5 rounded-2xl">
           <p className="leading-8 text-[20px] text-gray-100 tracking-wide" dangerouslySetInnerHTML={{ __html: blogData.content }}/>
         </div>
       </div>

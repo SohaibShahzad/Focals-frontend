@@ -77,14 +77,14 @@ function ChatModule({ user }) {
         {messages.length === 0 ? (
           <div
             className="flex items-center justify-center"
-            style={{ height: "calc(100vh - 44vh)" }}
+            style={{ height: "calc(100vh - 245px)" }}
           >
             <FaInfoCircle className="text-5xl text-gray-400" />
           </div>
         ) : (
           <div
             className="overflow-y-auto"
-            style={{ height: "calc(100vh - 44vh)" }}
+            style={{ height: "calc(100vh - 245px)" }}
           >
             {messages.map((message, index) => (
               <div
@@ -156,7 +156,7 @@ const AdminRealtime = ({ usersData }) => {
   }, []);
 
   return (
-    <div className="font-poppins relative">
+    <div className="font-poppins">
       <main className="mb-2 flex flex-col md:flex-row justify-between">
         <h1 className="text-3xl">Realtime Chat</h1>
       </main>
@@ -164,7 +164,7 @@ const AdminRealtime = ({ usersData }) => {
       {/* //! Desktop View */}
       <div
         className="sm:flex gap-3 hidden"
-        style={{ maxHeight: "calc(100vh - 25vh)" }}
+        style={{ maxHeight: "calc(100vh - 117px)" }}
       >
         <div className="h-auto overflow-auto w-[25%] glassmorphism-projects rounded-md">
           {users.map((user, index) => (
@@ -217,15 +217,11 @@ const AdminRealtime = ({ usersData }) => {
           ))}
         </div>
         {activeUser === null ? (
-          <div className="w-[75%] glassmorphism rounded-md p-3">
-            <div className="flex items-center justify-center">
-              <FaInfoCircle className="text-5xl text-gray-400" />
-            </div>
-            <div className="flex items-center justify-center">
-              <p className="text-gray-400 text-2xl">
-                Select a user to start chat
-              </p>
-            </div>
+          <div className="w-[75%] glassmorphism rounded-md p-3 flex flex-col justify-center items-center">
+            <FaInfoCircle className="text-5xl text-gray-400" />
+            <p className="text-gray-400 text-2xl">
+              Select a user to start chat
+            </p>
           </div>
         ) : (
           <div className="w-[75%] glassmorphism-projects rounded-md p-3">
@@ -249,7 +245,7 @@ const AdminRealtime = ({ usersData }) => {
       {/* //! Mobile View */}
       <div
         className="flex sm:hidden"
-        style={{ maxHeight: "calc(100vh - 25vh)" }}
+        style={{ maxHeight: "calc(100vh - 120px)" }}
       >
         {showUsersList && (
           <div className="h-auto overflow-auto w-[100%] glassmorphism-projects rounded-md">

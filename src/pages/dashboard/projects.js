@@ -169,8 +169,8 @@ export default function UserProjects({ userProjects, userData }) {
             </TabList>
             <TabPanel>
               <div
-                style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
-                className="overflow-y-auto"
+                style={{ maxHeight: "calc(100vh - 185px)"}}
+                className="overflow-y-auto rounded-b-md"
               >
                 {userProjects.ongoingProjects.map((project) => (
                   <div
@@ -233,7 +233,7 @@ export default function UserProjects({ userProjects, userData }) {
                             </div>
                           </div>
                         </div>
-                        {/* <button
+                        <button
                           className="p-1 rounded-full bg-orange-500"
                           onClick={() => {
                             if (chatId === project._id && showChat) {
@@ -245,7 +245,7 @@ export default function UserProjects({ userProjects, userData }) {
                           }}
                         >
                           <RiChat1Line className="w-7 h-7" />
-                        </button> */}
+                        </button>
                         {showChat && chatId === project._id && (
                           <ProjectChat
                             chatId={project._id}
