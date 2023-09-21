@@ -36,6 +36,10 @@ export default function SingleService({ serviceData }) {
   const token = cookies.token;
   const userData = token ? jwt_decode(token) : null;
   const isUser = token ? jwt_decode(token).type === "user" : false;
+  const props = {
+    signup: false,
+    signin: true,
+  };
 
   useEffect(() => {
     const cartFromStorage = localStorage.getItem("cart");
@@ -386,7 +390,13 @@ export default function SingleService({ serviceData }) {
         </div>
       </div>
       <div className="flex justify-around mt-5">
-        <Link href="/contact-us">
+        <Link
+          href={
+            isUser
+              ? "/contact-us"
+              : `/login?prop=${encodeURIComponent(JSON.stringify(props))}`
+          }
+        >
           <div className="button-animation-reverse cursor-pointer bg-orange-700 py-2 px-5 rounded-md ">
             Let's Discuss
           </div>
