@@ -13,6 +13,7 @@ import { setCookie, parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
 import axios from "axios";
 import Link from "next/link";
+import Head from "next/head";
 
 const jwt_decode = jwt.decode;
 
@@ -102,6 +103,7 @@ export default function WebApp() {
 
   return (
     <>
+
       {popup && (
         <Dialog
           open={popup}

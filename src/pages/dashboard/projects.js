@@ -108,6 +108,14 @@ export default function UserProjects({ userProjects, userData }) {
   const [expandedProject, setExpandedProject] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatId, setChatId] = useState(null);
+  const projectStatuses = [
+    "Scheduled",
+    "In Progress",
+    "Revision",
+    "Awaiting Approval",
+    "Completed",
+    "Cancelled",
+  ];
 
   useEffect(() => {
     socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
@@ -154,19 +162,107 @@ export default function UserProjects({ userProjects, userData }) {
         <div>
           <Tabs selectedIndex={activeTab} onSelect={handleTabChange}>
             <TabList className="flex gap-3 justify-center mb-4 cursor-pointer">
-              <Tab
-                selectedClassName="bg-orange-500 font-bold"
-                className="border-2 rounded-md p-2"
-              >
-                OnGoing
-              </Tab>
-              <Tab
-                selectedClassName="bg-orange-500 font-bold"
-                className="border-2 rounded-md p-2"
-              >
-                Completed
-              </Tab>
+              {projectStatuses.map((status) => (
+                <Tab
+                  key={status}
+                  selectedClassName="bg-orange-500 font-bold"
+                  className="border-2 rounded-md p-2"
+                >
+                  {status}
+                </Tab>
+              ))}
             </TabList>
+            <TabPanel>
+              <div
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
+              >
+                {userProjects.scheduledProjects.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      )}
+                    </div>
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          className="p-1 rounded-full bg-orange-500"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setShowChat(true);
+                              setChatId(project._id);
+                            }
+                          }}
+                        >
+                          <RiChat1Line className="w-7 h-7" />
+                        </button>
+                        {showChat && chatId === project._id && (
+                          <ProjectChat
+                            chatId={project._id}
+                            userData={userData}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </TabPanel>
             <TabPanel>
               <div
                 style={{ maxHeight: "calc(100vh - 230px)" }}
@@ -263,7 +359,255 @@ export default function UserProjects({ userProjects, userData }) {
                 style={{ maxHeight: "calc(100vh - 230px)" }}
                 className="overflow-y-auto rounded-md"
               >
+                {userProjects.revisionProjects.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      )}
+                    </div>
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          className="p-1 rounded-full bg-orange-500"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setShowChat(true);
+                              setChatId(project._id);
+                            }
+                          }}
+                        >
+                          <RiChat1Line className="w-7 h-7" />
+                        </button>
+                        {showChat && chatId === project._id && (
+                          <ProjectChat
+                            chatId={project._id}
+                            userData={userData}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <div
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
+              >
+                {userProjects.awaitingApprovalProjects.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => {
+                            setShowChat(false);
+                            handleExpand(project);
+                          }}
+                        />
+                      )}
+                    </div>
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          className="p-1 rounded-full bg-orange-500"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setShowChat(true);
+                              setChatId(project._id);
+                            }
+                          }}
+                        >
+                          <RiChat1Line className="w-7 h-7" />
+                        </button>
+                        {showChat && chatId === project._id && (
+                          <ProjectChat
+                            chatId={project._id}
+                            userData={userData}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <div
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
+              >
                 {userProjects.projectHistory.map((project) => (
+                  <div
+                    key={project._id}
+                    className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <h2 className="text-[18px] xs:text-[20px]">
+                          {project.projectName}
+                        </h2>
+                        <p className="text-[14px] xs:text-[16px] text-gray-300">
+                          Date:
+                          {project.startDate === null
+                            ? "TBD"
+                            : formatDate(project.startDate)}
+                          -{" "}
+                          {project.endDate === null
+                            ? "TBD"
+                            : formatDate(project.endDate)}
+                        </p>
+                      </div>
+                      {expandedProject === project._id ? (
+                        <MdKeyboardArrowDown
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      ) : (
+                        <MdKeyboardArrowRight
+                          className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                          onClick={() => handleExpand(project)}
+                        />
+                      )}
+                    </div>
+                    {expandedProject === project._id && (
+                      <>
+                        <div className="h-1 my-3 bg-gray-500 rounded-md" />
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            Progress:
+                            <div className="flex flex-col w-1/2 sm:w-1/3 items-center">
+                              {project.progress}%
+                              <ProgressBar progress={project.progress} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col xs:flex-row justify-center gap-3 md:gap-20">
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Meeting
+                              <p>{project.meetingStatus}</p>
+                            </div>
+                            <div className="text-center p-2 border-4 border-orange-700 rounded-md">
+                              Status
+                              <p>{project.status}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <div
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
+              >
+                {userProjects.cancelledProjects.map((project) => (
                   <div
                     key={project._id}
                     className="glassmorphism-projects rounded-md p-5 mb-3 md:px-7"

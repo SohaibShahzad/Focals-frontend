@@ -41,11 +41,6 @@ const centerTextPlugin = {
       x: textX,
       y: textY,
     };
-
-    console.log(
-      "Plugin afterDatasetsUpdate executed. Total value:",
-      totalValue
-    );
   },
   afterDraw: (chart) => {
     const ctx = chart.ctx;
@@ -82,6 +77,10 @@ ChartJS.defaults.font.family = "Poppins, sans-serif";
 
 export default function AdminDashboarding({ admin }) {
   const [ongoingProjectsCount, setOngoingProjectsCount] = useState(0);
+  const [scheduledProjectsCount, setScheduledProjectsCount] = useState(0);
+  const [revisionProjectsCount, setRevisionProjectsCount] = useState(0);
+  const [awaitingProjectsCount, setAwaitingProjectsCount] = useState(0);
+  const [cancelledProjectsCount, setCancelledProjectsCount] = useState(0);
   const [completedProjectsCount, setCompletedProjectsCount] = useState(0);
   const [totalUsersCount, setTotalUsersCount] = useState(0);
   const [totalSubAdminsCount, setTotalSubAdminsCount] = useState(0);
@@ -96,6 +95,10 @@ export default function AdminDashboarding({ admin }) {
       const p_data = projectsResponse.data;
       setOngoingProjectsCount(p_data.totalOngoingProjects);
       setCompletedProjectsCount(p_data.totalCompletedProjects);
+      setScheduledProjectsCount(p_data.totalScheduledProjects);
+      setRevisionProjectsCount(p_data.totalRevisionProjects);
+      setAwaitingProjectsCount(p_data.totalAwaitingApprovalProjects);
+      setCancelledProjectsCount(p_data.totalCancelledProjects);
     };
 
     const getUsersCount = async () => {
@@ -143,16 +146,16 @@ export default function AdminDashboarding({ admin }) {
   }, [admin._id]);
 
   const [chartMeta, setChartMeta] = useState({
-    totalProjects: ongoingProjectsCount + completedProjectsCount,
-    displayCount: ongoingProjectsCount + completedProjectsCount,
+    totalProjects: ongoingProjectsCount + completedProjectsCount + scheduledProjectsCount + revisionProjectsCount + awaitingProjectsCount + cancelledProjectsCount,
+    displayCount: ongoingProjectsCount + completedProjectsCount + scheduledProjectsCount + revisionProjectsCount + awaitingProjectsCount + cancelledProjectsCount,
   });
 
   const data = {
-    labels: ["Ongoing", "Completed"],
+    labels: ["Ongoing", "Completed", "Scheduled", "Revision", "Awaiting", "Cancelled"],
     datasets: [
       {
-        data: [ongoingProjectsCount, completedProjectsCount],
-        backgroundColor: ["rgba(243, 153, 63, 1)", "green"],
+        data: [ongoingProjectsCount, completedProjectsCount, scheduledProjectsCount, revisionProjectsCount, awaitingProjectsCount, cancelledProjectsCount],
+        backgroundColor: ["rgba(243, 153, 63, 1)", "green", "blue", "purple", "yellow", "red"],
       },
     ],
   };

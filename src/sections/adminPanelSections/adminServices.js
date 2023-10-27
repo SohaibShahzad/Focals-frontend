@@ -394,7 +394,7 @@ const ServicesPanel = ({ services }) => {
             <CustomDataGridServices data={rows} columns={columns} />
           </div>
           <div>
-            <Dialog open={addNewForm} onClose={handleAddFormClose}>
+            <Dialog open={addNewForm}>
               <div className="p-4 font-poppins">
                 <div className="text-2xl font-bold pb-3">Add New Service</div>
                 <form encType="multipart/form-data">
