@@ -20,10 +20,17 @@ const jwt_decode = jwt.decode;
 const centerTextPlugin = {
   id: "centerText",
   afterDatasetsUpdate: (chart, options, elements) => {
-    const totalValue = chart.config.data.datasets[0].data.reduce(
-      (a, b) => a + b,
-      0
-    );
+    let totalValue = 0;
+
+    const meta = chart.getDatasetMeta(0);
+    meta.data.forEach((segment, index) => {
+      console.log("Segment " + index + " hidden status:", segment.hidden);
+      // Modify this part
+      if (!segment.hidden || segment.hidden === undefined) {
+        totalValue += chart.data.datasets[0].data[index];
+      }
+    });
+
     const width = chart.chartArea.right;
     const height = chart.chartArea.bottom;
     const textX = Math.round((chart.chartArea.left + width) / 2);
@@ -34,6 +41,11 @@ const centerTextPlugin = {
       x: textX,
       y: textY,
     };
+
+    console.log(
+      "Plugin afterDatasetsUpdate executed. Total value:",
+      totalValue
+    );
   },
   afterDraw: (chart) => {
     const ctx = chart.ctx;
@@ -50,6 +62,8 @@ const centerTextPlugin = {
       );
     }
     ctx.restore();
+
+    console.log("Plugin afterDraw executed.");
   },
 };
 
@@ -128,6 +142,11 @@ export default function AdminDashboarding({ admin }) {
     return () => clearInterval(intervalId);
   }, [admin._id]);
 
+  const [chartMeta, setChartMeta] = useState({
+    totalProjects: ongoingProjectsCount + completedProjectsCount,
+    displayCount: ongoingProjectsCount + completedProjectsCount,
+  });
+
   const data = {
     labels: ["Ongoing", "Completed"],
     datasets: [
@@ -137,9 +156,13 @@ export default function AdminDashboarding({ admin }) {
       },
     ],
   };
-
+  const handleLegendOnClick = (e, legendItem) => {
+    // Do nothing
+  };
+  
   const options = {
     responsive: true,
+    centerTextMeta: chartMeta, 
     plugins: {
       legend: {
         position: "bottom",
@@ -148,10 +171,13 @@ export default function AdminDashboarding({ admin }) {
           font: {
             size: 18,
           },
+          onClick: () => null, // Do nothing on legend click
         },
       },
     },
   };
+  
+  
 
   return (
     <div className="flex flex-col font-poppins justify-center py-2 gap-3">
@@ -166,32 +192,41 @@ export default function AdminDashboarding({ admin }) {
           <div className="glassmorphism-projects pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
             <span className="text-center">Projects</span>
             <Doughnut data={data} options={options} />
+            {/* <span className="absolute top-[23rem] left-[32rem]">100</span> */}
           </div>
         </div>
         <div>
           <h1 className="text-2xl md:text-3xl pb-3">Summary</h1>
           <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
             <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
-              <div className="h-[7px] bg-orange-600"/>
+              <div className="h-[7px] bg-orange-600" />
               <h1 className="text-lg text-[#CCCCCC] px-3">Registered Users</h1>
-              <p className="text-3xl font-bold px-3 text-center">{totalUsersCount}</p>
+              <p className="text-3xl font-bold px-3 text-center">
+                {totalUsersCount}
+              </p>
             </div>
             <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
-              <div className="h-[7px] bg-orange-600"/>
+              <div className="h-[7px] bg-orange-600" />
               <h1 className="text-lg text-[#CCCCCC] px-3">Active Sub-Admins</h1>
-              <p className="text-3xl font-bold px-3 text-center">{totalSubAdminsCount}</p>
+              <p className="text-3xl font-bold px-3 text-center">
+                {totalSubAdminsCount}
+              </p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 mt-3">
             <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
-              <div className="h-[7px] bg-orange-600"/>
+              <div className="h-[7px] bg-orange-600" />
               <h1 className="text-lg text-[#CCCCCC] px-3">Active Services</h1>
-              <p className="text-3xl font-bold px-3 text-center">{totalServicesCount}</p>
+              <p className="text-3xl font-bold px-3 text-center">
+                {totalServicesCount}
+              </p>
             </div>
             <div className="glassmorphism-projects pb-3 sm:w-[200px] rounded-md overflow-hidden flex flex-col text-center justify-between gap-3">
-              <div className="h-[7px] bg-orange-600"/>
+              <div className="h-[7px] bg-orange-600" />
               <h1 className="text-lg text-[#CCCCCC] px-3">Total Blogs</h1>
-              <p className="text-3xl font-bold px-3 text-center">{totalBlogsCount}</p>
+              <p className="text-3xl font-bold px-3 text-center">
+                {totalBlogsCount}
+              </p>
             </div>
           </div>
         </div>

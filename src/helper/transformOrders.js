@@ -4,10 +4,12 @@ const transformOrders = (lineItems, email) => {
   const ordersArray = [];
   lineItems.data.forEach(async (item) => {
     for (let i = 0; i < item.quantity; i++) {
+      const currentDateInMilliseconds = new Date().getTime();
       const order = {
         projectName: item.description,
         email: email,
         price: item.price.unit_amount / 100,
+        startDate: currentDateInMilliseconds,
       };
 
       await axios.post(

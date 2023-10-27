@@ -10,13 +10,15 @@ import HourglassFullRoundedIcon from "@mui/icons-material/HourglassFullRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { setCookie, parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
+import { signIn, useSession } from "next-auth/react";
+
 const jwt_decode = jwt.decode;
 
 export default function LoginRegister() {
   const router = useRouter();
   const obj = JSON.parse(router.query.prop);
   const { authenticated, setAuthenticated } = useAuth();
-
+  const {data: session} = useSession();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
@@ -41,6 +43,22 @@ export default function LoginRegister() {
     setUsername("");
     setPassword("");
   };
+
+  const signInGoogle = async () => {
+    console.log("Calling signIn()");
+    const response = await signIn("google");
+    console.log("signIn() response:", response);
+  };
+
+  useEffect(() => {
+    if (session) {
+      console.log("Session found", session);
+
+
+    } else {
+      console.log("Session not found");
+    }
+  }, [session]);
 
   const handleOTPinput = (e, index) => {
     const value = e.target.value;
@@ -728,7 +746,10 @@ export default function LoginRegister() {
                   <hr className="w-full border-gray-500 border-t-2" />
                 </div>
                 <div className="space-y-4">
-                  <button className="button-animation-reverse-red hover:scale-100 py-[8px] w-full rounded-md flex items-center justify-center gap-4">
+                  <button
+                    onClick={signInGoogle}
+                    className="button-animation-reverse-red hover:scale-100 py-[8px] w-full rounded-md flex items-center justify-center gap-4"
+                  >
                     <img src="/gmailLogin.png" className="h-5 w-6" />
                     Continue with Google
                   </button>

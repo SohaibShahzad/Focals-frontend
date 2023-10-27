@@ -169,8 +169,8 @@ export default function UserProjects({ userProjects, userData }) {
             </TabList>
             <TabPanel>
               <div
-                style={{ maxHeight: "calc(100vh - 185px)"}}
-                className="overflow-y-auto rounded-b-md"
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
               >
                 {userProjects.ongoingProjects.map((project) => (
                   <div
@@ -260,8 +260,8 @@ export default function UserProjects({ userProjects, userData }) {
             </TabPanel>
             <TabPanel>
               <div
-                style={{ maxHeight: "calc(100vh - 200px)", height: 450 }}
-                className="overflow-y-auto"
+                style={{ maxHeight: "calc(100vh - 230px)" }}
+                className="overflow-y-auto rounded-md"
               >
                 {userProjects.projectHistory.map((project) => (
                   <div

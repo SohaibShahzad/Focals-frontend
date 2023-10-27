@@ -11,6 +11,7 @@ import { AuthProvider } from "../contexts/auth";
 import withAuth from "../hocs/withAuth";
 import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
+import {SessionProvider} from "next-auth/react";
 const jwt_decode = jwt.decode;
 
 const ContextProvider = dynamic(() => import("../contexts/ContextProvider"), {
@@ -21,13 +22,13 @@ registerLicense(
   "ORg4AjUWIQA/Gnt2VFhhQlJBfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5QdUVjX35cdHZRRmVe"
 );
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
   const is404Route = router.pathname.endsWith("/404");
   const isClientRoute = router.pathname.startsWith("/dashboard");
   const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
   const isSubAdminRoute = router.pathname.startsWith("/subadmin/dashboard");
-  
+
   const ProtectedComponent =
     isClientRoute || isAdminRoute || isSubAdminRoute
       ? withAuth(Component)
@@ -56,9 +57,11 @@ export default function App({ Component, pageProps }) {
   return (
     <ContextProvider>
       <AuthProvider>
-        <Layout role={role}>
-          <ProtectedComponent {...pageProps} />
-        </Layout>
+        <SessionProvider session={session}>
+          <Layout role={role}>
+            <ProtectedComponent {...pageProps} />
+          </Layout>
+        </SessionProvider>
       </AuthProvider>
     </ContextProvider>
   );

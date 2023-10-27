@@ -130,7 +130,9 @@ function EditProjectForm({ project, onDone }) {
   const [startDate, setStartDate] = useState(
     formatDateToYYYYMMDD(project.startDate)
   );
-  const [endDate, setEndDate] = useState(formatDateToYYYYMMDD(project.endDate));
+  const [endDate, setEndDate] = useState(
+    formatDateToYYYYMMDD(project.startDate)
+  );
   const [progress, setProgress] = useState(project.progress);
   const [price, setPrice] = useState(project.price);
   const [meetingStatus, setMeetingStatus] = useState(project.meetingStatus);
@@ -204,6 +206,7 @@ function EditProjectForm({ project, onDone }) {
             <option value="Revision">Revision</option>
             <option value="Awaiting Approval">Awaiting Approval</option>
             <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
         </label>
         <label className="flex flex-col">
@@ -251,17 +254,49 @@ const ProjectsPanel = ({ projectsData }) => {
   const [projects, setProjects] = useState(projectsData);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedProject, setExpandedProject] = useState(null);
+
   const [searchValueOngoing, setSearchValueOngoing] = useState("");
   const [searchValueCompleted, setSearchValueCompleted] = useState("");
+  const [searchValueScheduled, setSearchValueScheduled] = useState("");
+  const [searchValueRevision, setSearchValueRevision] = useState("");
+  const [searchValueAwaitingApproval, setSearchValueAwaitingApproval] =
+    useState("");
+  const [searchValueCancelled, setSearchValueCancelled] = useState("");
+
   const [searchByOngoing, setSearchByOngoing] = useState("project");
   const [searchByCompleted, setSearchByCompleted] = useState("project");
+  const [searchByScheduled, setSearchByScheduled] = useState("project");
+  const [searchByRevision, setSearchByRevision] = useState("project");
+  const [searchByAwaitingApproval, setSearchByAwaitingApproval] =
+    useState("project");
+  const [searchByCancelled, setSearchByCancelled] = useState("project");
+
   const [isSearchOpenOngoing, setIsSearchOpenOngoing] = useState(false);
   const [isSearchOpenCompleted, setIsSearchOpenCompleted] = useState(false);
+  const [isSearchOpenScheduled, setIsSearchOpenScheduled] = useState(false);
+  const [isSearchOpenRevision, setIsSearchOpenRevision] = useState(false);
+  const [isSearchOpenAwaitingApproval, setIsSearchOpenAwaitingApproval] =
+    useState(false);
+  const [isSearchOpenCancelled, setIsSearchOpenCancelled] = useState(false);
+
   const [ongoingProjects, setOngoingProjects] = useState([]);
   const [completedProjects, setCompletedProjects] = useState([]);
+  const [scheduledProjects, setScheduledProjects] = useState([]);
+  const [revisionProjects, setRevisionProjects] = useState([]);
+  const [awaitingApprovalProjects, setAwaitingApprovalProjects] = useState([]);
+  const [cancelledProjects, setCancelledProjects] = useState([]);
+
   const [editingProject, setEditingProject] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatId, setChatId] = useState(null);
+  const projectStatuses = [
+    "Scheduled",
+    "In Progress",
+    "Revision",
+    "Awaiting Approval",
+    "Completed",
+    "Cancelled",
+  ];
   const [projectDetails, setProjectDetails] = useState(null);
   const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
@@ -286,6 +321,10 @@ const ProjectsPanel = ({ projectsData }) => {
   useEffect(() => {
     const ongoing = [];
     const completed = [];
+    const scheduled = [];
+    const revision = [];
+    const awaitingApproval = [];
+    const cancelled = [];
 
     projects.forEach((userProject) => {
       userProject.ongoingProjects.forEach((project) => {
@@ -304,10 +343,46 @@ const ProjectsPanel = ({ projectsData }) => {
           userName: userProject.userName,
         });
       });
+      userProject.scheduledProjects.forEach((project) => {
+        scheduled.push({
+          ...project,
+          email: userProject.email,
+          userId: userProject.user,
+          userName: userProject.userName,
+        });
+      });
+      userProject.revisionProjects.forEach((project) => {
+        revision.push({
+          ...project,
+          email: userProject.email,
+          userId: userProject.user,
+          userName: userProject.userName,
+        });
+      });
+      userProject.awaitingApprovalProjects.forEach((project) => {
+        awaitingApproval.push({
+          ...project,
+          email: userProject.email,
+          userId: userProject.user,
+          userName: userProject.userName,
+        });
+      });
+      userProject.cancelledProjects.forEach((project) => {
+        cancelled.push({
+          ...project,
+          email: userProject.email,
+          userId: userProject.user,
+          userName: userProject.userName,
+        });
+      });
     });
 
     setOngoingProjects(ongoing);
     setCompletedProjects(completed);
+    setScheduledProjects(scheduled);
+    setRevisionProjects(revision);
+    setAwaitingApprovalProjects(awaitingApproval);
+    setCancelledProjects(cancelled);
   }, [projects]);
 
   useEffect(() => {
@@ -379,6 +454,54 @@ const ProjectsPanel = ({ projectsData }) => {
           ?.toLowerCase()
           .includes(searchValueCompleted.trim().toLowerCase()))
   );
+  const filteredScheduledProjects = scheduledProjects.filter(
+    (project) =>
+      searchValueScheduled.trim().length < 2 ||
+      (searchByScheduled === "project" &&
+        project.projectName
+          ?.toLowerCase()
+          .includes(searchValueScheduled.trim().toLowerCase())) ||
+      (searchByScheduled === "email" &&
+        project.email
+          ?.toLowerCase()
+          .includes(searchValueScheduled.trim().toLowerCase()))
+  );
+  const filteredRevisionProjects = revisionProjects.filter(
+    (project) =>
+      searchValueRevision.trim().length < 2 ||
+      (searchByRevision === "project" &&
+        project.projectName
+          ?.toLowerCase()
+          .includes(searchValueRevision.trim().toLowerCase())) ||
+      (searchByRevision === "email" &&
+        project.email
+          ?.toLowerCase()
+          .includes(searchValueRevision.trim().toLowerCase()))
+  );
+  const filteredAwaitingApprovalProjects = awaitingApprovalProjects.filter(
+    (project) =>
+      searchValueAwaitingApproval.trim().length < 2 ||
+      (searchByAwaitingApproval === "project" &&
+        project.projectName
+          ?.toLowerCase()
+          .includes(searchValueAwaitingApproval.trim().toLowerCase())) ||
+      (searchByAwaitingApproval === "email" &&
+        project.email
+          ?.toLowerCase()
+          .includes(searchValueAwaitingApproval.trim().toLowerCase()))
+  );
+  const filteredCancelledProjects = cancelledProjects.filter(
+    (project) =>
+      searchValueCancelled.trim().length < 2 ||
+      (searchByCancelled === "project" &&
+        project.projectName
+          ?.toLowerCase()
+          .includes(searchValueCancelled.trim().toLowerCase())) ||
+      (searchByCancelled === "email" &&
+        project.email
+          ?.toLowerCase()
+          .includes(searchValueCancelled.trim().toLowerCase()))
+  );
 
   const calculateRemainingTime = (startDate, endDate) => {
     let currentDate = new Date();
@@ -433,30 +556,28 @@ const ProjectsPanel = ({ projectsData }) => {
       </main>
       <Tabs selectedIndex={activeTab} onSelect={handleTabChange}>
         <TabList className="flex gap-3 justify-center mb-4 cursor-pointer">
-          <Tab
-            selectedClassName="bg-orange-500 font-bold"
-            className="border-2 rounded-md p-2"
-          >
-            OnGoing
-          </Tab>
-          <Tab
-            selectedClassName="bg-orange-500 font-bold"
-            className="border-2 rounded-md p-2"
-          >
-            Completed
-          </Tab>
+          {projectStatuses.map((status, index) => (
+            <Tab
+              key={index}
+              selectedClassName="bg-orange-500 font-bold"
+              className="border-2 rounded-md p-2"
+            >
+              {status}
+            </Tab>
+          ))}
         </TabList>
+        {/* Scheduled */}
         <TabPanel>
           <div className="mr-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold underline text-[18px]">In Progress:</h3>
+              <h3 className="font-bold underline text-[18px]">Scheduled:</h3>
               <button
                 className="bg-orange-700 text-white rounded-full p-1"
                 onClick={() =>
-                  setIsSearchOpenOngoing((prevState) => !prevState)
+                  setIsSearchOpenScheduled((prevState) => !prevState)
                 }
               >
-                {isSearchOpenOngoing ? (
+                {isSearchOpenScheduled ? (
                   <MdOutlineSearchOff className="w-5 h-5" />
                 ) : (
                   <MdOutlineSearch className="w-5 h-5" />
@@ -464,19 +585,19 @@ const ProjectsPanel = ({ projectsData }) => {
               </button>
             </div>
             <div className="border-b-2 mx-auto rounded-md border-gray-500 my-3 w-[90%]" />
-            {isSearchOpenOngoing && (
+            {isSearchOpenScheduled && (
               <div className="flex md:justify-end justify-center mb-3">
                 <div className="flex flex-col md:flex-row gap-3">
                   <input
                     className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
                     type="text"
                     placeholder="Search..."
-                    value={searchValueOngoing}
-                    onChange={(e) => setSearchValueOngoing(e.target.value)}
+                    value={searchValueScheduled}
+                    onChange={(e) => setSearchValueScheduled(e.target.value)}
                   />
                   <div className="flex flex-col">
                     <select
-                      onChange={(e) => setSearchByOngoing(e.target.value)}
+                      onChange={(e) => setSearchByScheduled(e.target.value)}
                       className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
                     >
                       <option
@@ -501,13 +622,20 @@ const ProjectsPanel = ({ projectsData }) => {
             style={{ maxHeight: "calc(100vh - 230px)" }}
             className="overflow-y-auto rounded-md"
           >
-            {filteredOngoingProjects.map((project) => (
+            {filteredScheduledProjects.map((project) => (
               // Map each project to a component that displays the project info
               <div
                 key={project._id}
-                className="text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7"
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
               >
-                <div className="hidden md:flex items-center justify-between">
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
                   <h2 className="text-[18px] xs:text-[20px]">
                     {project.projectName}
                   </h2>
@@ -517,13 +645,13 @@ const ProjectsPanel = ({ projectsData }) => {
                   </div>
                   {expandedProject === project._id ? (
                     <MdKeyboardArrowDown
-                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                      onClick={() => handleExpand(project)}
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
                     />
                   ) : (
                     <MdKeyboardArrowRight
-                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                      onClick={() => handleExpand(project)}
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
                     />
                   )}
                 </div>
@@ -805,6 +933,1108 @@ const ProjectsPanel = ({ projectsData }) => {
             ))}
           </div>
         </TabPanel>
+        {/* In Progress */}
+        <TabPanel>
+          <div className="mr-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold underline text-[18px]">In Progress:</h3>
+              <button
+                className="bg-orange-700 text-white rounded-full p-1"
+                onClick={() =>
+                  setIsSearchOpenOngoing((prevState) => !prevState)
+                }
+              >
+                {isSearchOpenOngoing ? (
+                  <MdOutlineSearchOff className="w-5 h-5" />
+                ) : (
+                  <MdOutlineSearch className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            <div className="border-b-2 mx-auto rounded-md border-gray-500 my-3 w-[90%]" />
+            {isSearchOpenOngoing && (
+              <div className="flex md:justify-end justify-center mb-3">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <input
+                    className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    type="text"
+                    placeholder="Search..."
+                    value={searchValueOngoing}
+                    onChange={(e) => setSearchValueOngoing(e.target.value)}
+                  />
+                  <div className="flex flex-col">
+                    <select
+                      onChange={(e) => setSearchByOngoing(e.target.value)}
+                      className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    >
+                      <option
+                        value="project"
+                        className="text-[15px]  max-w-[150px]"
+                      >
+                        By Project Name
+                      </option>
+                      <option
+                        value="email"
+                        className=" text-[15px]  max-w-[150px]"
+                      >
+                        By Email
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            style={{ maxHeight: "calc(100vh - 230px)" }}
+            className="overflow-y-auto rounded-md"
+          >
+            {filteredOngoingProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
+              >
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  <div className="flex flex-col items-center opacity-50 ">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
+                    />
+                  ) : (
+                    <MdKeyboardArrowRight
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
+                    />
+                  )}
+                </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      {!showChat && (
+                        <div className="bg-black rounded-md p-5 bg-opacity-40">
+                          <div className="flex items-start justify-between">
+                            <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                              Project Details:
+                            </h2>
+                            <span
+                              onClick={() => handleEdit(project)}
+                              className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                            >
+                              Edit
+                              <FiEdit2 />
+                            </span>
+                          </div>
+
+                          <div className="flex gap-5 mt-4">
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Timeline
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Start-Date
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.startDate === null
+                                      ? "TBD"
+                                      : formatDate(project.startDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Dead-Line
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : formatDate(project.endDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Total Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === project.startDate
+                                      ? "1 day"
+                                      : calculateTotalTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Remaining Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : calculateRemainingTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Summary
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Progress
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.progress}%
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Status
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.status}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                    </div>
+                    {!showChat && (
+                      <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-[16px] text-[#dddddd]">
+                            Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                          >
+                            <FiEdit2 />
+                          </span>
+                        </div>
+                        <div className="space-y-5 mt-4">
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>{" "}
+                      </div>
+                    )}
+
+                    {/* {editingProject && editingProject._id === project._id && (
+                      <EditProjectForm
+                        project={editingProject}
+                        onDone={() => handleEdit(project)}
+                      />
+                    )} */}
+
+                    {!showChat && (
+                      <div className="flex justify-end mt-3">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md flex items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          Chat
+                          <RiChat1Line className="xs:w-7 xs:h-7 w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
+                    {showChat && (
+                      <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          <IoMdArrowRoundBack className="w-5 h-5" />
+                          Close
+                        </button>
+                      </div>
+                    )}
+                    {showChat && chatId === project._id && (
+                      <AdminChat chatId={chatId} />
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </TabPanel>
+        {/* Revision */}
+        <TabPanel>
+          <div className="mr-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold underline text-[18px]">In Revision:</h3>
+              <button
+                className="bg-orange-700 text-white rounded-full p-1"
+                onClick={() =>
+                  setIsSearchOpenRevision((prevState) => !prevState)
+                }
+              >
+                {isSearchOpenRevision ? (
+                  <MdOutlineSearchOff className="w-5 h-5" />
+                ) : (
+                  <MdOutlineSearch className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            <div className="border-b-2 mx-auto rounded-md border-gray-500 my-3 w-[90%]" />
+            {isSearchOpenRevision && (
+              <div className="flex md:justify-end justify-center mb-3">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <input
+                    className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    type="text"
+                    placeholder="Search..."
+                    value={searchValueRevision}
+                    onChange={(e) => setSearchValueRevision(e.target.value)}
+                  />
+                  <div className="flex flex-col">
+                    <select
+                      onChange={(e) => setSearchByRevision(e.target.value)}
+                      className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    >
+                      <option
+                        value="project"
+                        className="text-[15px]  max-w-[150px]"
+                      >
+                        By Project Name
+                      </option>
+                      <option
+                        value="email"
+                        className=" text-[15px]  max-w-[150px]"
+                      >
+                        By Email
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            style={{ maxHeight: "calc(100vh - 230px)" }}
+            className="overflow-y-auto rounded-md"
+          >
+            {filteredRevisionProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
+              >
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  <div className="flex flex-col items-center opacity-50 ">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
+                    />
+                  ) : (
+                    <MdKeyboardArrowRight
+                      className="w-8 h-8"
+                      // onClick={() => handleExpand(project)}
+                    />
+                  )}
+                </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      {!showChat && (
+                        <div className="bg-black rounded-md p-5 bg-opacity-40">
+                          <div className="flex items-start justify-between">
+                            <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                              Project Details:
+                            </h2>
+                            <span
+                              onClick={() => handleEdit(project)}
+                              className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                            >
+                              Edit
+                              <FiEdit2 />
+                            </span>
+                          </div>
+
+                          <div className="flex gap-5 mt-4">
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Timeline
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Start-Date
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.startDate === null
+                                      ? "TBD"
+                                      : formatDate(project.startDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Dead-Line
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : formatDate(project.endDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Total Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === project.startDate
+                                      ? "1 day"
+                                      : calculateTotalTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Remaining Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : calculateRemainingTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Summary
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Progress
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.progress}%
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Status
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.status}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                    </div>
+                    {!showChat && (
+                      <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-[16px] text-[#dddddd]">
+                            Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                          >
+                            <FiEdit2 />
+                          </span>
+                        </div>
+                        <div className="space-y-5 mt-4">
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>{" "}
+                      </div>
+                    )}
+
+                    {/* {editingProject && editingProject._id === project._id && (
+                      <EditProjectForm
+                        project={editingProject}
+                        onDone={() => handleEdit(project)}
+                      />
+                    )} */}
+
+                    {!showChat && (
+                      <div className="flex justify-end mt-3">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md flex items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          Chat
+                          <RiChat1Line className="xs:w-7 xs:h-7 w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
+                    {showChat && (
+                      <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          <IoMdArrowRoundBack className="w-5 h-5" />
+                          Close
+                        </button>
+                      </div>
+                    )}
+                    {showChat && chatId === project._id && (
+                      <AdminChat chatId={chatId} />
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </TabPanel>
+        {/* Approval Awaited */}
+        <TabPanel>
+          <div className="mr-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold underline text-[18px]">
+                Approval Awaited:
+              </h3>
+              <button
+                className="bg-orange-700 text-white rounded-full p-1"
+                onClick={() =>
+                  setIsSearchOpenAwaitingApproval((prevState) => !prevState)
+                }
+              >
+                {isSearchOpenAwaitingApproval ? (
+                  <MdOutlineSearchOff className="w-5 h-5" />
+                ) : (
+                  <MdOutlineSearch className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            <div className="border-b-2 mx-auto rounded-md border-gray-500 my-3 w-[90%]" />
+            {isSearchOpenAwaitingApproval && (
+              <div className="flex md:justify-end justify-center mb-3">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <input
+                    className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    type="text"
+                    placeholder="Search..."
+                    value={searchValueAwaitingApproval}
+                    onChange={(e) =>
+                      setSearchValueAwaitingApproval(e.target.value)
+                    }
+                  />
+                  <div className="flex flex-col">
+                    <select
+                      onChange={(e) =>
+                        setSearchByAwaitingApproval(e.target.value)
+                      }
+                      className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    >
+                      <option
+                        value="project"
+                        className="text-[15px]  max-w-[150px]"
+                      >
+                        By Project Name
+                      </option>
+                      <option
+                        value="email"
+                        className=" text-[15px]  max-w-[150px]"
+                      >
+                        By Email
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            style={{ maxHeight: "calc(100vh - 230px)" }}
+            className="overflow-y-auto rounded-md"
+          >
+            {filteredAwaitingApprovalProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
+              >
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  <div className="flex flex-col items-center opacity-50 ">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown className="w-8 h-8" />
+                  ) : (
+                    <MdKeyboardArrowRight className="w-8 h-8" />
+                  )}
+                </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      {!showChat && (
+                        <div className="bg-black rounded-md p-5 bg-opacity-40">
+                          <div className="flex items-start justify-between">
+                            <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                              Project Details:
+                            </h2>
+                            <span
+                              onClick={() => handleEdit(project)}
+                              className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                            >
+                              Edit
+                              <FiEdit2 />
+                            </span>
+                          </div>
+
+                          <div className="flex gap-5 mt-4">
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Timeline
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Start-Date
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.startDate === null
+                                      ? "TBD"
+                                      : formatDate(project.startDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Dead-Line
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : formatDate(project.endDate)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Total Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === project.startDate
+                                      ? "1 day"
+                                      : calculateTotalTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Remaining Time
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.endDate === null
+                                      ? "TBD"
+                                      : calculateRemainingTime(
+                                          project.startDate,
+                                          project.endDate
+                                        )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                              <h1 className="bg-orange-600 text-[22px] underline">
+                                Summary
+                              </h1>
+                              <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Progress
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.progress}%
+                                  </p>
+                                </div>
+                                <div>
+                                  <h1 className="text-md text-[#CCCCCC] px-3">
+                                    Status
+                                  </h1>
+                                  <p className="text-xl font-bold px-3 text-center">
+                                    {project.status}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                    </div>
+                    {!showChat && (
+                      <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-[16px] text-[#dddddd]">
+                            Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                          >
+                            <FiEdit2 />
+                          </span>
+                        </div>
+                        <div className="space-y-5 mt-4">
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
+                            </h1>
+                            <div className="flex flex-col gap-3 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-md font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>{" "}
+                      </div>
+                    )}
+
+                    {/* {editingProject && editingProject._id === project._id && (
+                      <EditProjectForm
+                        project={editingProject}
+                        onDone={() => handleEdit(project)}
+                      />
+                    )} */}
+
+                    {!showChat && (
+                      <div className="flex justify-end mt-3">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md flex items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          Chat
+                          <RiChat1Line className="xs:w-7 xs:h-7 w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
+                    {showChat && (
+                      <div className="bg-[#0d0d0d] bg-opacity-40 p-5 rounded-t-md">
+                        <button
+                          className="px-1 xs:py-1 xs:px-2 rounded-md items-center button-animation-reverse gap-1 xs:gap-2"
+                          onClick={() => {
+                            if (chatId === project._id && showChat) {
+                              setShowChat(false);
+                            } else {
+                              setChatId(project._id);
+                              setShowChat(true);
+                            }
+                          }}
+                        >
+                          <IoMdArrowRoundBack className="w-5 h-5" />
+                          Close
+                        </button>
+                      </div>
+                    )}
+                    {showChat && chatId === project._id && (
+                      <AdminChat chatId={chatId} />
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </TabPanel>
+        {/* Completed */}
         <TabPanel>
           <div className="flex flex-col mr-3">
             <div className="flex items-center justify-between">
@@ -853,27 +2083,324 @@ const ProjectsPanel = ({ projectsData }) => {
               // Map each project to a component that displays the project info
               <div
                 key={project._id}
-                className="text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7"
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
               >
-                <div className="hidden md:flex items-center justify-between">
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
                   <h2 className="text-[18px] xs:text-[20px]">
                     {project.projectName}
                   </h2>
-                  <div className="flex flex-col items-center opacity-50">
+                  <div className="flex flex-col items-center opacity-50 ">
                     <span>{project.userName}</span>
                     <span className="text-xs">{project.email}</span>
                   </div>
-
                   {expandedProject === project._id ? (
-                    <MdKeyboardArrowDown
-                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
-                      onClick={() => handleExpand(project)}
-                    />
+                    <MdKeyboardArrowDown className="w-8 h-8" />
                   ) : (
-                    <MdKeyboardArrowRight
-                      className="w-8 h-8 cursor-pointer hover:bg-orange-500 rounded-full"
+                    <MdKeyboardArrowRight className="w-8 h-8" />
+                  )}
+                </div>
+                <div className="md:hidden flex flex-col gap-2 items-center">
+                  <h2 className="text-[18px] xs:text-[20px] text-center">
+                    {project.projectName}
+                  </h2>
+                  <div className="opacity-50 flex flex-col items-center">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <span
                       onClick={() => handleExpand(project)}
-                    />
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Close
+                      <MdKeyboardArrowRight className="h-6 w-6" />
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => handleExpand(project)}
+                      className="flex items-center bg-orange-600 rounded-md px-2 py-1"
+                    >
+                      Expand
+                      <MdKeyboardArrowDown className="h-6 w-6" />
+                    </span>
+                  )}
+                </div>
+                {expandedProject === project._id && (
+                  <div>
+                    <div className="border-[1px] rounded-full opacity-20 my-5" />
+                    <div className="hidden xs:flex xs:flex-col xs:gap-5">
+                      <div className="bg-black rounded-md p-5 bg-opacity-40">
+                        <div className="flex items-start justify-between">
+                          <h2 className="text-[18px] font-semibold text-[#dddddd]">
+                            Project Details:
+                          </h2>
+                          <span
+                            onClick={() => handleEdit(project)}
+                            className="flex items-center gap-2 text-[16px] rounded-md px-2 py-1 button-animation-reverse cursor-pointer"
+                          >
+                            Edit
+                            <FiEdit2 />
+                          </span>
+                        </div>
+
+                        <div className="flex gap-5 mt-4">
+                          <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Timeline
+                            </h1>
+                            <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Start-Date
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.startDate === null
+                                    ? "TBD"
+                                    : formatDate(project.startDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Dead-Line
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : formatDate(project.endDate)}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Total Time
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === project.startDate
+                                    ? "1 day"
+                                    : calculateTotalTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Remaining Time
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.endDate === null
+                                    ? "TBD"
+                                    : calculateRemainingTime(
+                                        project.startDate,
+                                        project.endDate
+                                      )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="w-[50%] glassmorphism-projects pb-3 rounded-md overflow-hidden text-center justify-between gap-1">
+                            <h1 className="bg-orange-600 text-[22px] underline">
+                              Summary
+                            </h1>
+                            <div className="grid sm:grid-cols-2 gap-y-5 mt-3">
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Progress
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.progress}%
+                                </p>
+                              </div>
+                              <div>
+                                <h1 className="text-md text-[#CCCCCC] px-3">
+                                  Status
+                                </h1>
+                                <p className="text-xl font-bold px-3 text-center">
+                                  {project.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {editingProject && editingProject._id === project._id && (
+                        <EditProjectForm
+                          project={editingProject}
+                          onDone={() => handleEdit(project)}
+                        />
+                      )}
+                    </div>
+                    <div className="xs:hidden bg-black rounded-md p-2 bg-opacity-40">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-[16px] text-[#dddddd]">Details:</h2>
+                        <span
+                          onClick={() => handleEdit(project)}
+                          className="flex items-center gap-1 text-[16px] rounded-md px-1 button-animation-reverse cursor-pointer"
+                        >
+                          <FiEdit2 />
+                        </span>
+                      </div>
+                      <div className="space-y-5 mt-4">
+                        <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                          <h1 className="bg-orange-600 text-[22px] underline">
+                            Timeline
+                          </h1>
+                          <div className="flex flex-col gap-3 mt-3">
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Start-Date
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.startDate === null
+                                  ? "TBD"
+                                  : formatDate(project.startDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Dead-Line
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : formatDate(project.endDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Total Time
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === project.startDate
+                                  ? "1 day"
+                                  : calculateTotalTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Remaining Time
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.endDate === null
+                                  ? "TBD"
+                                  : calculateRemainingTime(
+                                      project.startDate,
+                                      project.endDate
+                                    )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="glassmorphism-projects pb-3 rounded-sm overflow-hidden text-center justify-between gap-1">
+                          <h1 className="bg-orange-600 text-[22px] underline">
+                            Summary
+                          </h1>
+                          <div className="flex flex-col gap-3 mt-3">
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Progress
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.progress}%
+                              </p>
+                            </div>
+                            <div>
+                              <h1 className="text-md text-[#CCCCCC] px-3">
+                                Status
+                              </h1>
+                              <p className="text-md font-bold px-3 text-center">
+                                {project.status}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>{" "}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </TabPanel>
+        {/* Cancelled */}
+        <TabPanel>
+          <div className="flex flex-col mr-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold underline text-[18px]">Cancelled:</h3>
+              <button
+                className="bg-orange-700 text-white rounded-full p-1"
+                onClick={() =>
+                  setIsSearchOpenCancelled((prevState) => !prevState)
+                }
+              >
+                {isSearchOpenOngoing ? (
+                  <MdOutlineSearchOff className="w-5 h-5" />
+                ) : (
+                  <MdOutlineSearch className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            <div className="border-b-2 mx-auto rounded-md border-gray-500 my-3 w-[90%]" />
+
+            {isSearchOpenCancelled && (
+              <div className="flex md:justify-end justify-center mb-3">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <input
+                    type="text"
+                    className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                    placeholder="Search..."
+                    value={searchValueCancelled}
+                    onChange={(e) => setSearchValueCancelled(e.target.value)}
+                  />
+                  <select
+                    onChange={(e) => setSearchByCancelled(e.target.value)}
+                    className="bg-[#333333] p-2 border-2 rounded-md border-orange-700"
+                  >
+                    <option value="project">By Project Name</option>
+                    <option value="email">By Email</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            style={{ maxHeight: "calc(100vh - 230px)" }}
+            className="overflow-y-auto"
+          >
+            {filteredCancelledProjects.map((project) => (
+              // Map each project to a component that displays the project info
+              <div
+                key={project._id}
+                className={`text-white glassmorphism-projects rounded-md p-5 mb-3 mr-3 md:px-7 ${
+                  expandedProject !== project._id
+                    ? "hover:bg-orange-500 duration-200"
+                    : ""
+                }`}
+              >
+                <div
+                  className="hidden md:flex items-center justify-between cursor-pointer"
+                  onClick={() => handleExpand(project)}
+                >
+                  <h2 className="text-[18px] xs:text-[20px]">
+                    {project.projectName}
+                  </h2>
+                  <div className="flex flex-col items-center opacity-50 ">
+                    <span>{project.userName}</span>
+                    <span className="text-xs">{project.email}</span>
+                  </div>
+                  {expandedProject === project._id ? (
+                    <MdKeyboardArrowDown className="w-8 h-8" />
+                  ) : (
+                    <MdKeyboardArrowRight className="w-8 h-8" />
                   )}
                 </div>
                 <div className="md:hidden flex flex-col gap-2 items-center">

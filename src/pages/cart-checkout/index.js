@@ -14,9 +14,10 @@ import Confetti from "react-confetti";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-export default function CartCheckoutPage({ session, responseFlag }) {
+export default function CartCheckoutPage(props) {
+  console.log("session in main", props);
   const { cart, setCart } = useStateContext();
-  const [statusFlag, setStatusFlag] = useState(responseFlag);
+  const [statusFlag, setStatusFlag] = useState(props.responseFlag);
   const [order, setOrder] = useState([]);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
   const cookies = parseCookies();
@@ -30,15 +31,19 @@ export default function CartCheckoutPage({ session, responseFlag }) {
   };
 
   useEffect(() => {
-    if (session) {
+    console.log("response", props.responseFlag)
+    const sessionPass = props.sessionPass;
+
+    if (sessionPass) {
+
       if (
         localStorage.getItem(`${userData.id}_cart`).length > 0
       ) {
         localStorage.removeItem("guest_cart");
         localStorage.removeItem(`${userData.id}_cart`);
         ordersArray = transformOrders(
-          session.line_items,
-          session.customer_email
+          sessionPass.line_items,
+          sessionPass.customer_email
         );
       }
     }
@@ -107,7 +112,7 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
   return (
     <div
-      className={`${styles.innerWidth} ${styles.xPaddings} mx-auto text-white font-poppins relative`}
+      className={`${styles.innerWidth} ${styles.xPaddings} h-[60vh] mx-auto text-white font-poppins overflow-y-auto`}
     >
       {statusFlag === true && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
@@ -316,12 +321,15 @@ export default function CartCheckoutPage({ session, responseFlag }) {
 
 export async function getServerSideProps(context) {
   const parameters = context.query;
-  let session;
+  let sessionPass;
   if (parameters.success === "true") {
-    session = await stripe.checkout.sessions.retrieve(parameters.session_id, {
+    sessionPass = await stripe.checkout.sessions.retrieve(parameters.session_id, {
       expand: ["line_items"],
     });
   }
+
+  console.log("session", sessionPass);
+
   const cookies = parseCookies(context);
   const token = cookies.token;
   const decoded = jwt.decode(token);
@@ -372,7 +380,7 @@ export async function getServerSideProps(context) {
   }
   return {
     props: {
-      session: session ? session : null,
+      sessionPass: sessionPass ? sessionPass : null,
       responseFlag: statusFlag,
     },
   };

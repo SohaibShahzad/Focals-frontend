@@ -6,7 +6,6 @@ import styles from "../styles";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { Button } from "../components/button";
 
 const ServicesSection = () => {
   const [servicesData, setServicesData] = useState([]);
@@ -22,12 +21,23 @@ const ServicesSection = () => {
       const serviceData = res.data;
       setServicesData(serviceData);
       setUniqueCategories(
-        [...new Set(serviceData.map((service) => service.category))].sort()
+        [
+          "All",
+          ...new Set(serviceData.map((service) => service.category)),
+        ].sort()
       );
-      uniqueCategories.push("All");
     }
     fetchData();
   }, []);
+
+  const handleTabChange = (index) => {
+    setActiveTab(index);
+    if (uniqueCategories[index] === "All") {
+      setSelectedCategory(null); // Setting it to null to show all services
+    } else {
+      setSelectedCategory(uniqueCategories[index]);
+    }
+  };
 
   useEffect(() => {
     if (selectedCategory === null) {
@@ -35,16 +45,10 @@ const ServicesSection = () => {
     } else {
       const filteredServices = servicesData.filter(
         (service) => service.category === selectedCategory
-      )
+      );
       setServicesToDisplay(filteredServices);
     }
-
-  }, [selectedCategory, servicesData])
-
-  const handleTabChange = (index) => {
-    setActiveTab(index);
-    setSelectedCategory(uniqueCategories[index]);
-  };
+  }, [selectedCategory, servicesData]);
 
   const [servicesToDisplay, setServicesToDisplay] = useState(servicesData);
 
@@ -58,7 +62,7 @@ const ServicesSection = () => {
         className={`${styles.innerWidth} mx-auto font-poppins`}
       >
         <div
-          className={` flex-col flex md:gap-28 lg:gap-48 font-tungsten md:flex-row items-center`}
+          className={`flex-col flex md:gap-28 lg:gap-48 font-tungsten md:flex-row items-center`}
         >
           <div className={`${styles.flexStart}`}>
             <TypingText title="Services" />

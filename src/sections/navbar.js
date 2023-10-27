@@ -166,17 +166,13 @@ const NavBar = () => {
   };
 
   const handleSearch = (query) => {
-    if (!query.includes(" ")) {
-      // Check if query contains a space
-      return [];
-    }
-    const queryWords = query.split(" ").filter((word) => word.length > 0); // Exclude any empty strings
-    return servicesData.filter((service) =>
-      queryWords.some((word) =>
-        service.title.toLowerCase().includes(word.toLowerCase())
-      )
+    if (query.length < 3) return [];  // Ensure query is at least 3 characters
+  
+    return servicesData.filter((service) => 
+      service.title.toLowerCase().includes(query.toLowerCase())
     );
   };
+  
 
   const searchResults = handleSearch(searchQuery);
 

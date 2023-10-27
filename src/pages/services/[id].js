@@ -168,10 +168,10 @@ export default function SingleService({ serviceData }) {
       </div>
 
       <div className="mb-[10px] h-[2px] bg-white opacity-20" />
-      <p
+      {/* <p
         className="text-[15px] mb-[10px] md:text-[25px] md:font-normal py-5"
         dangerouslySetInnerHTML={{ __html: serviceData.description }}
-      />
+      /> */}
 
       {fullScreenImage && (
         <div
@@ -389,11 +389,15 @@ export default function SingleService({ serviceData }) {
           </Tabs>
         </div>
       </div>
+        <p
+        className="text-[15px] mb-[10px] md:text-[25px] md:font-normal py-5"
+        dangerouslySetInnerHTML={{ __html: serviceData.description }}
+      />
       <div className="flex justify-around mt-5">
         <Link
           href={
             isUser
-              ? "/contact-us"
+              ? "/dashboard/live-chat"
               : `/login?prop=${encodeURIComponent(JSON.stringify(props))}`
           }
         >
