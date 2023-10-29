@@ -377,6 +377,18 @@ const ProjectsPanel = ({ projectsData }) => {
       });
     });
 
+    // Sorting the individual project arrays based on updatedAt
+    const sortProjectsByUpdated = (a, b) =>
+      new Date(b.updatedAt) - new Date(a.updatedAt);
+
+    ongoing.sort(sortProjectsByUpdated);
+    completed.sort(sortProjectsByUpdated);
+    scheduled.sort(sortProjectsByUpdated);
+    revision.sort(sortProjectsByUpdated);
+    awaitingApproval.sort(sortProjectsByUpdated);
+    cancelled.sort(sortProjectsByUpdated);
+
+    // Setting the sorted projects to the state
     setOngoingProjects(ongoing);
     setCompletedProjects(completed);
     setScheduledProjects(scheduled);

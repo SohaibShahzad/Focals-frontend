@@ -7,8 +7,11 @@ const ClientLayout = ({ children }) => {
   return (
     <div className="flex text-white min-h-screen bg-[#111111]">
       {activeMenu ? (
-          <div className="w-72 fixed z-[1000] bg-black rounded-lg h-full m-2" style={{height: "calc(100vh - 20px)"}}>
-            <Sidebar />
+        <div
+          className="w-72 fixed z-[1000] bg-black rounded-lg h-full m-2"
+          style={{ height: "calc(100vh - 20px)" }}
+        >
+          <Sidebar />
         </div>
       ) : (
         <div className="w-0 h-full">

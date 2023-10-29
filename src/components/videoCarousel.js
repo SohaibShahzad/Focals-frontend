@@ -1,6 +1,7 @@
 import ReactPlayer from "react-player";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import {
   BsFillArrowLeftSquareFill,
   BsFillArrowRightSquareFill,
@@ -56,6 +57,32 @@ const RatingStars = ({ rating }) => {
   );
 };
 
+const VideoPlayer = ({ url }) => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  return (
+    <div ref={ref}>
+      {inView && (
+        <ReactPlayer
+          url={url}
+          controls={true}
+          playIcon={
+            <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
+              <HiPlay className="w-16 h-16" />
+            </button>
+          }
+          className="object-cover"
+          width="auto"
+          height="auto"
+        />
+      )}
+    </div>
+  );
+};
+
 export const VideoCarousel = ({ items, itemsToShow }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -81,7 +108,6 @@ export const VideoCarousel = ({ items, itemsToShow }) => {
 
   return (
     <div className="relative flex flex-col items-center gap-10">
-      <div className="gradient-03"/>
       <div className="gap-5 flex transition-all duration-500 ease-in-out">
         {items.length === 0 ? (
           <div className={`p-5 glassmorphism rounded-lg h-full mx-2`}>
@@ -105,21 +131,8 @@ export const VideoCarousel = ({ items, itemsToShow }) => {
               }}
             >
               <div className="glassmorphism-projects rounded-lg">
-                <ReactPlayer
-                  url={item.url[0]}
-                  controls={true}
-                  // light={true}
-                  playIcon={
-                    <button className="text-orange-600 bg-white hover:text-orange-800 rounded-full w-18 h-18">
-                      <HiPlay className="w-16 h-16" />
-                    </button>
-                  }
-                  className="object-cover "
-                  width="auto"
-                  height="auto"
-                />
+                <VideoPlayer url={item.url[0]} />
                 <div className="flex flex-col py-4 items-center font-poppins justify-center">
-
                   <h3 className="text-[24px]">{item.title}</h3>
                   <RatingStars rating={item.stars} />
                 </div>
@@ -137,7 +150,7 @@ export const VideoCarousel = ({ items, itemsToShow }) => {
             <BsFillArrowRightSquareFill className="text-orange-600 hover:text-orange-800 rounded-md bg-white w-9 h-9" />
           </button>
         </div>
-      )}{" "}
+      )}
     </div>
   );
 };

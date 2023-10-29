@@ -1,10 +1,7 @@
 import "../styles/globals.css";
-import ClientLayout from "../layouts/clientDashLayout";
-import AdminLayout from "../layouts/adminDashLayout";
-import SubAdminLayout from "../layouts/subAdminDashLayout";
+import DashboardLayout from "../layouts/dashboardLayout";
 import MainLayout from "../layouts/mainLayout";
 import TestMainLayout from "../layouts/testMainLayout";
-import { registerLicense } from "@syncfusion/ej2/base.js";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { AuthProvider } from "../contexts/auth";
@@ -17,10 +14,6 @@ const jwt_decode = jwt.decode;
 const ContextProvider = dynamic(() => import("../contexts/ContextProvider"), {
   ssr: false,
 });
-
-registerLicense(
-  "ORg4AjUWIQA/Gnt2VFhhQlJBfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5QdUVjX35cdHZRRmVe"
-);
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
@@ -44,15 +37,13 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
     }
   }
 
-  const Layout = isAdminRoute
-    ? (props) => <AdminLayout {...props} />
-    : isClientRoute
-    ? (props) => <ClientLayout {...props} />
-    : isSubAdminRoute
-    ? (props) => <SubAdminLayout {...props} />
-    : is404Route
-    ? (props) => <TestMainLayout {...props} />
-    : (props) => <MainLayout {...props} />;
+  const userType = isAdminRoute ? 'admin' : isClientRoute ? 'client' : 'subadmin';
+
+  const Layout = isAdminRoute || isClientRoute || isSubAdminRoute
+  ? (props) => <DashboardLayout {...props} userType={userType} />
+  : is404Route
+  ? (props) => <TestMainLayout {...props} />
+  : (props) => <MainLayout {...props} />;
 
   return (
     <ContextProvider>

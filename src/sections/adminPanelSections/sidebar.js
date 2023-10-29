@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useAuth } from "../../contexts/auth";
 
-export const Sidebar = ({ role }) => {
+export const Sidebar = ({ role, userType }) => {
   const sidebarRef = useRef();
   const router = useRouter();
   const { setAuthenticated } = useAuth();
@@ -38,7 +38,7 @@ export const Sidebar = ({ role }) => {
   };
 
   let filteredAdminLinks = adminLinks;
-  if (!role) {
+  if (userType === "admin") {
     filteredAdminLinks = adminLinks;
   } else {
     filteredAdminLinks = adminLinks
@@ -61,7 +61,7 @@ export const Sidebar = ({ role }) => {
     sidebarRef.current.scrollTop = sessionStorage.getItem("scrollY");
   }, []);
 
-  const baseHref = !role ? "/admin/dashboard" : "/subadmin/dashboard"; // add this line
+  const baseHref = userType === 'admin' ? "/admin/dashboard" : "/subadmin/dashboard"; // add this line
 
   return (
     <div
