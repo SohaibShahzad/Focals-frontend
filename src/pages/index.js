@@ -31,13 +31,13 @@ export default function WebApp() {
     signin: false,
   };
 
-  useEffect(() => {
-    const cookies = parseCookies();
-    const token = cookies.token;
-    if (!token) {
-      setTimeout(() => setPopup(true), 5000);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const cookies = parseCookies();
+  //   const token = cookies.token;
+  //   if (!token) {
+  //     setTimeout(() => setPopup(true), 5000);
+  //   }
+  // }, []);
 
   const validateEmail = (email) => {
     var re =
@@ -104,7 +104,7 @@ export default function WebApp() {
   return (
     <>
 
-      {popup && (
+      {/* {popup && (
         <Dialog
           open={popup}
           onClose={() => setPopup(false)}
@@ -196,7 +196,7 @@ export default function WebApp() {
             </DialogActions>
           </div>
         </Dialog>
-      )}
+      )} */}
       <div className="relative">
         <div className="gradient-03 z-[0]" />
         <Hero />
