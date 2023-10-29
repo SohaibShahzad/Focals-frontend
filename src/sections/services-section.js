@@ -16,7 +16,7 @@ const ServicesSection = () => {
   useEffect(() => {
     async function fetchData() {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getAllServices`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesWithThumbs`
       );
       const serviceData = res.data;
       setServicesData(serviceData);
@@ -106,6 +106,7 @@ const ServicesSection = () => {
                       <img
                         src={service.thumbnail}
                         alt={service.title}
+                        loading="lazy"
                         className="w-[auto] h-[75px] transform transition-all duration-300 hover:scale-110"
                       />
                     </div>
