@@ -10,9 +10,13 @@ import { parseCookies } from "nookies";
 import * as jwt from "jsonwebtoken";
 const jwt_decode = jwt.decode;
 
-
 const Hero = () => {
   const [userLoggedin, setUserLoggedin] = useState(false);
+  const props = {
+    signup: false,
+    signin: true,
+  };
+
   useEffect(() => {
     const cookies = parseCookies();
     const token = cookies.token;
@@ -63,28 +67,16 @@ const Hero = () => {
           >
             Our Showcase
           </Link>
-
-          {userLoggedin ? (
-            <Link
-              href="/dashboard/live-chat"
-              className={`button-animation ${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
-            >
-              Let's have a talk
-            </Link>
-          ) : (
-            <a
-              onClick={() => {
-                if (typeof Tawk_API !== "undefined") {
-                  Tawk_API.maximize();
-                } else {
-                  console.error("Tawk.to API is not defined.");
-                }
-              }}
-              className={`button-animation ${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
-            >
-              Let's have a talk
-            </a>
-          )}
+          <Link
+            className={`button-animation ${classes.buttonStyle} flex items-center z-40 border-orange-700 border-2`}
+            href={
+              userLoggedin
+                ? "/dashboard/live-chat"
+                : `/login?prop=${encodeURIComponent(JSON.stringify(props))}`
+            }
+          >
+            Let's have a talk
+          </Link>
         </motion.div>
       </motion.div>
     </section>

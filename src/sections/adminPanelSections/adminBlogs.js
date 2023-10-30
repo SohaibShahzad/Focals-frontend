@@ -202,13 +202,13 @@ const BlogsPanel = ({ blogs }) => {
         return (
           <>
             <IconButton onClick={onClickView}>
-              <VisibilityRoundedIcon className="text-white  hover:text-orange-600 duration-100 hover:scale-125"/>
+              <VisibilityRoundedIcon className="text-white  hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickEdit}>
-              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125"/>
+              <EditRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
             <IconButton onClick={onClickDelete}>
-              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125"/>
+              <DeleteRoundedIcon className="text-white hover:text-orange-600 duration-100 hover:scale-125" />
             </IconButton>
           </>
         );
@@ -220,132 +220,143 @@ const BlogsPanel = ({ blogs }) => {
     <div className="font-poppins">
       <div className="mb-2 flex flex-row justify-between">
         <div className="text-3xl">Blogs</div>
-        <button
-              className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
-              onClick={handleAddFormOpen}
-            >
-              <span className="hidden xs:flex">+ Add New</span>
-              <span className="xs:hidden flex">+ Add</span>
-            </button>
+        {!addNewForm ? (
+          <button
+            className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
+            onClick={handleAddFormOpen}
+          >
+            <span className="hidden xs:flex">+ Add New</span>
+            <span className="xs:hidden flex">+ Add</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setAddNewForm(false)}
+            className="py-1 px-2 xs:py-2 xs:px-4 button-animation-reverse hover:scale-100 rounded-md"
+          >
+            <span>{"<"} Back</span>
+          </button>
+        )}
       </div>
-      <div
-        style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
-        className="h-auto overflow-auto w-full"
-      >
-        <CustomDataGrid data={rows} columns={columns} autoHeight />
-      </div>
-      <div>
-        <Dialog open={addNewForm} onClose={handleAddFormClose}>
-          <div className="p-4 font-poppins">
-            <div className="text-2xl font-bold pb-3">Add New Blog</div>
-            <form>
-              <label htmlFor="title" className="font-bold">
-                Title
-              </label>
-              <input
-                type="text"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="title"
-                placeholder="Enter Blog Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+      {!addNewForm && (
+        <div
+          style={{ maxHeight: "calc(100vh - 200px)", height: 500 }}
+          className="h-auto overflow-auto w-full"
+        >
+          <CustomDataGrid data={rows} columns={columns} autoHeight />
+        </div>
+      )}
+      {addNewForm && (
+        <div className="p-4 font-poppins">
+          <div className="text-2xl font-bold pb-3">Add New Blog</div>
+          <form>
+            <label htmlFor="title" className="font-bold">
+              Title
+            </label>
+            <input
+              type="text"
+              className="w-full border-[2px] bg-transparent border-gray-300 rounded-md px-4 mb-3 py-2"
+              id="title"
+              placeholder="Enter Blog Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
 
-              <label htmlFor="content" className="font-bold">
-                Content
-              </label>
-              <QuillNoSSRWrapper
-                theme="snow"
-                id="content"
-                placeholder="Some Words About This Service"
-                className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
-                value={content}
-                onChange={(content, delta, source, editor) =>
-                  setContent(editor.getHTML())
-                }
-              />
+            <label htmlFor="content" className="font-bold">
+              Content
+            </label>
+            <QuillNoSSRWrapper
+              theme="snow"
+              id="content"
+              placeholder="Some Words About This Service"
+              className="w-full rounded-md mb-3 "
+              value={content}
+              onChange={(content, delta, source, editor) =>
+                setContent(editor.getHTML())
+              }
+            />
 
-              <label htmlFor="author" className="font-bold">
-                Author
-              </label>
-              <input
-                type="text"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="author"
-                placeholder="Enter Author Name"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-              />
+            <label htmlFor="author" className="font-bold">
+              Author
+            </label>
+            <input
+              type="text"
+              className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2 bg-transparent"
+              id="author"
+              placeholder="Enter Author Name"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
 
-              <label htmlFor="date" className="font-bold">
-                Date
-              </label>
-              <input
-                type="date"
-                className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2"
-                id="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
+            <label htmlFor="date" className="font-bold">
+              Date
+            </label>
+            <input
+              type="date"
+              className="w-full border-[2px] border-gray-300 rounded-md px-4 mb-3 py-2 bg-transparent"
+              id="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
 
-              <label htmlFor="image" className="font-bold">
-                Image
-              </label>
-              {image && (
-                <div className="flex items-start gap-4">
-                  <img
-                    src={
-                      typeof image === "string"
-                        ? image
-                        : URL.createObjectURL(image)
-                    }
-                    alt="Current image"
-                    className="w-[auto] h-[150px] p-2 bg-gray-200 rounded-md mb-3"
-                  />
-                  <button
-                    className="bg-red-600 text-white py-1 px-3 rounded"
-                    onClick={() => setImage(null)}
-                  >
-                    X
-                  </button>
-                </div>
-              )}
-              <input
-                type="file"
-                id="image"
-                className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
+            <label htmlFor="image" className="font-bold">
+              Image
+            </label>
+            {image && (
+              <div className="flex items-start gap-4">
+                <img
+                  src={
+                    typeof image === "string"
+                      ? image
+                      : URL.createObjectURL(image)
+                  }
+                  alt="Current image"
+                  className="w-[auto] h-[150px] p-2 bg-gray-200 rounded-md mb-3"
+                />
+                <button
+                  className="bg-red-600 text-white py-1 px-3 rounded"
+                  onClick={() => setImage(null)}
+                >
+                  X
+                </button>
+              </div>
+            )}
+            <input
+              type="file"
+              id="image"
+              className="w-full border-[2px] border-gray-300 rounded-md mb-3 px-4 py-2"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
 
-              <input
-                type="checkbox"
-                className="border-[2px] border-gray-300 rounded-md"
-                id="isSpecial"
-                value={isSpecial}
-                checked={isSpecial}
-                onChange={(e) => setIsSpecial(e.target.checked)}
-              />
-              <label htmlFor="isSpecial" className="font-bold px-2">
-                ShowCase
-              </label>
-            </form>
-          </div>
-          <DialogActions>
+            <input
+              type="checkbox"
+              className="border-[2px] border-gray-300 rounded-md"
+              id="isSpecial"
+              value={isSpecial}
+              checked={isSpecial}
+              onChange={(e) => setIsSpecial(e.target.checked)}
+            />
+            <label htmlFor="isSpecial" className="font-bold px-2">
+              ShowCase
+            </label>
+          </form>
+          <div className="flex gap-5 justify-end">
             <button
-              className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:text-black hover:scale-100 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-green-soft hover:scale-100 font-poppins"
               onClick={handleFormSubmit}
             >
               {buttonLabel}
             </button>
             <button
-              className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:text-black hover:scale-100 font-poppins"
+              className="py-2 px-4 rounded-md button-animation-reverse-red-soft hover:scale-100 font-poppins"
               onClick={handleAddFormClose}
             >
               Close
             </button>
-          </DialogActions>
-        </Dialog>
+          </div>
+        </div>
+      )}
+      <div>
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           {selectedBlog && (
             <div className="font-poppins rounded-3xl w-[250px] h-[500px] md:w-[550px] md:h-[300px] lg:w-[600px] lg:h-[500px] flex flex-col">

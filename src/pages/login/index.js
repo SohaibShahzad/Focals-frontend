@@ -18,7 +18,7 @@ export default function LoginRegister() {
   const router = useRouter();
   const obj = JSON.parse(router.query.prop);
   const { authenticated, setAuthenticated } = useAuth();
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
@@ -53,12 +53,44 @@ export default function LoginRegister() {
   useEffect(() => {
     if (session) {
       console.log("Session found", session);
-
-
     } else {
       console.log("Session not found");
     }
   }, [session]);
+
+
+  // const handleOTPinput = (e, index) => {
+  //   const { value, nativeEvent } = e;
+  
+  //   // Update OTP when typing
+  //   if (nativeEvent.inputType !== "deleteContentBackward") {
+  //     setOtp((prev) => {
+  //       const newOtp = [...prev];
+  //       newOtp[index] = value;
+  //       return newOtp;
+  //     });
+  
+  //     // Move focus forward
+  //     if (value && e.target.nextSibling) {
+  //       e.target.nextSibling.focus();
+  //     }
+  //   } else {
+  //     // Handle backspace
+  //     setOtp((prev) => {
+  //       const newOtp = [...prev];
+  //       newOtp[index] = ''; // Clear current field
+  
+  //       // If not the first field, clear previous field and move focus back
+  //       if (index > 0) {
+  //         newOtp[index - 1] = '';
+  //         setTimeout(() => e.target.previousSibling.focus(), 0);
+  //       }
+  
+  //       return newOtp;
+  //     });
+  //   }
+  // };
+  
 
   const handleOTPinput = (e, index) => {
     const value = e.target.value;
@@ -69,6 +101,10 @@ export default function LoginRegister() {
       newOtp[index] = value;
       return newOtp;
     });
+
+    if (value && e.target.nextSibling) {
+      e.target.nextSibling.focus();
+    }
 
     // If input is not empty and the next input field exists, move focus to the next input field
     if (
@@ -87,6 +123,18 @@ export default function LoginRegister() {
     ) {
       e.target.previousSibling.focus();
     }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
+    if (pasteData.length === 6) {
+      setOtp(pasteData);
+    }
+  };
+
+  const clearOTP = () => {
+    setOtp(Array(6).fill(''));
   };
 
   const isEmailValid = (email) => {
@@ -134,14 +182,14 @@ export default function LoginRegister() {
     formData.append("password", password);
 
     setErrorMessage({
-      message: "Sending OTP...",
+      message: "Requesting...",
       icon: <HourglassFullRoundedIcon />,
       styling: "bg-blue-300 text-blue-700",
     });
     setLoginError(true);
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}users/otpEmail`,
         formData
       );
@@ -154,12 +202,25 @@ export default function LoginRegister() {
       setSignup(false);
       setOtpVerify(true);
     } catch (error) {
-      console.log(error);
-      setErrorMessage({
-        message: "Error in sending OTP",
-        icon: <CancelRoundedIcon />,
-        styling: "bg-red-400 text-red-700",
-      });
+      if (error.response && error.response.status === 400) {
+        // Specific message for email already in use
+        resetForm();
+        setSignup((prev) => !prev);
+        setLogin((prev) => !prev);
+        setForgotPassword(false);
+        setErrorMessage({
+          message: error.response.data.message,
+          icon: <CancelRoundedIcon />,
+          styling: "bg-orange-400 text-orange-700",
+        });
+      } else {
+        // Generic error message for other types of errors
+        setErrorMessage({
+          message: "Error in sending OTP",
+          icon: <CancelRoundedIcon />,
+          styling: "bg-red-400 text-red-700",
+        });
+      }
       setLoginError(true);
     }
   };
@@ -713,6 +774,7 @@ export default function LoginRegister() {
                           value={value}
                           maxLength="1"
                           className="w-9 h-9 lg:w-10 lg:h-10 bg-transparent text-center border-2 border-orange-600 rounded-md text-2xl font-bold"
+                          onPaste={(e) => handlePaste(e, index)}
                           onChange={(e) => {
                             setLoginError(false);
                             handleOTPinput(e, index);

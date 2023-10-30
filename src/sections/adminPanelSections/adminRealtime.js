@@ -13,6 +13,8 @@ function ChatModule({ user }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
+  const messageContainerRef = useRef(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   useEffect(() => {
     const messageHandler = ({ chatId, messages }) => {
@@ -22,7 +24,11 @@ function ChatModule({ user }) {
         message: messages.message,
       };
       setMessages((oldMessages) => [...oldMessages, message]);
+      if (isAtBottom) {
+        scrollToBottom();
+      }
     };
+
     if (socket) {
       socket.on("chatHistory", (history) => {
         if (history === null) {
@@ -38,17 +44,36 @@ function ChatModule({ user }) {
             };
           })
         );
+        // Scroll to bottom after loading history
+        setTimeout(scrollToBottom, 0);
       });
+
       socket.on("chat", messageHandler);
       socket.emit("requestChatHistory", { chatId: user._id });
     }
 
-    scrollToBottom();
-
     return () => {
       socket.off("chat", messageHandler);
     };
-  }, [messages]);
+  }, []); // Dependencies removed
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = messageContainerRef.current;
+      if (!current) return;
+
+      const isScrolledToBottom =
+        current.scrollHeight - current.clientHeight <= current.scrollTop + 1;
+      setIsAtBottom(isScrolledToBottom);
+    };
+
+    const messageContainer = messageContainerRef.current;
+    messageContainer.addEventListener("scroll", handleScroll);
+
+    return () => {
+      messageContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -73,7 +98,7 @@ function ChatModule({ user }) {
 
   return (
     <div className="relative h-full">
-      <div className="overflow-y-auto mb-4 flex-grow">
+      <div className="overflow-y-auto mb-4 flex-grow" ref={messageContainerRef}>
         {messages.length === 0 ? (
           <div
             className="flex items-center justify-center"

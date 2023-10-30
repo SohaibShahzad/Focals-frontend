@@ -103,8 +103,7 @@ export default function WebApp() {
 
   return (
     <>
-
-      {/* {popup && (
+      {popup && (
         <Dialog
           open={popup}
           onClose={() => setPopup(false)}
@@ -196,7 +195,7 @@ export default function WebApp() {
             </DialogActions>
           </div>
         </Dialog>
-      )} */}
+      )}
       <div className="relative">
         <div className="gradient-03 z-[0]" />
         <Hero />

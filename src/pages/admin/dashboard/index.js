@@ -4,6 +4,7 @@ import * as jwt from "jsonwebtoken";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -63,7 +64,7 @@ const centerTextPlugin = {
 };
 
 ChartJS.register(
-  centerTextPlugin,
+  // centerTextPlugin,
   ArcElement,
   CategoryScale,
   LinearScale,
@@ -194,7 +195,7 @@ export default function AdminDashboarding({ admin }) {
           <h1 className="text-2xl md:text-3xl pb-3">At a Glance</h1>
           <div className="glassmorphism-projects pt-3 pb-3 rounded-md sm:w-[400px] sm:h-[450px] flex flex-col">
             <span className="text-center">Projects</span>
-            <Doughnut data={data} options={options} />
+            <Pie data={data} options={options} />
             {/* <span className="absolute top-[23rem] left-[32rem]">100</span> */}
           </div>
         </div>

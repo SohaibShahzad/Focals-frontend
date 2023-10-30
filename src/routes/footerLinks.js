@@ -1,7 +1,7 @@
 export const socials = [
     {
       name: 'Twitter',
-      url: '/twitter.svg',
+      url: '/twitterx.svg',
     },
     {
       name: 'LinkedIn',
