@@ -17,6 +17,7 @@ import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { FaInfoCircle } from "react-icons/fa";
 
 let socket;
+let notificationsSocket;
 
 function AdminChat({ chatId }) {
   const [message, setMessage] = useState("");
@@ -401,11 +402,19 @@ const ProjectsPanel = ({ projectsData }) => {
     socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}projectChats`);
 
     socket.on("connect", () => {
-      console.log("connected to the server");
+      console.log("connected to ProjectChat server");
     });
+
+    notificationsSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}notifications`);
+
+    notificationsSocket.on("connect", () => {
+      console.log("connected to Notifications server");
+    }
+    );
 
     return () => {
       console.log("disconnecting from the server");
+      notificationsSocket.disconnect();
       socket.disconnect();
     };
   }, []);
@@ -434,6 +443,7 @@ const ProjectsPanel = ({ projectsData }) => {
       setShowChat(false); // Close chat when project is collapsed
     } else {
       setExpandedProject(project._id);
+      notificationsSocket.emit("register", project.userId);
       socket.emit("join", {
         chatId: project._id,
         user: "Admin",

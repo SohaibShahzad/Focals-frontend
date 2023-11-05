@@ -3,7 +3,7 @@ import { useStateContext } from "../../contexts/ContextProvider";
 import { useEffect } from "react";
 import Link from "next/link";
 // import AdminOverview from "@/sections/adminPanelSections/admin-overview";
-import Overview from "../../pages/admin/dashboard/overview";
+import Overview from "../../pages/adminFocals/dashboard/overview";
 
 export const AdminDashboard = () => {
   const {

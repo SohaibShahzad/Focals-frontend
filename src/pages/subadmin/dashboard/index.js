@@ -20,7 +20,7 @@ export async function getServerSideProps(context) {
   if (!token) {
     return {
       redirect: {
-        destination: "/admin",
+        destination: "/adminFocals",
         permanent: false,
       },
     };
@@ -59,7 +59,7 @@ export async function getServerSideProps(context) {
     console.log("Error decoding JWT: ", err);
     return {
       redirect: {
-        destination: "/admin",
+        destination: "/adminFocals",
         permanent: false,
       },
     };

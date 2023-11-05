@@ -161,17 +161,18 @@ export default function UserProjects({ userProjects, userData }) {
       {userProjects ? (
         <div>
           <Tabs selectedIndex={activeTab} onSelect={handleTabChange}>
-            <TabList className="flex gap-3 justify-center mb-4 cursor-pointer">
+            <TabList className="grid grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-4 justify-center mb-4">
               {projectStatuses.map((status) => (
                 <Tab
                   key={status}
-                  selectedClassName="bg-orange-500 font-bold"
-                  className="border-2 rounded-md p-2"
+                  selectedClassName="bg-orange-500 text-white font-bold truncate"
+                  className="border-2 border-gray-300 rounded-md py-2 px-4 text-center whitespace-nowrap text-[12px] sm:text-[16px] truncate cursor-pointer"
                 >
                   {status}
                 </Tab>
               ))}
             </TabList>
+
             <TabPanel>
               <div
                 style={{ maxHeight: "calc(100vh - 230px)" }}

@@ -19,7 +19,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
   const router = useRouter();
   const is404Route = router.pathname.endsWith("/404");
   const isClientRoute = router.pathname.startsWith("/dashboard");
-  const isAdminRoute = router.pathname.startsWith("/admin/dashboard");
+  const isAdminRoute = router.pathname.startsWith("/adminFocals/dashboard");
   const isSubAdminRoute = router.pathname.startsWith("/subadmin/dashboard");
 
   const ProtectedComponent =

@@ -38,11 +38,7 @@ export const userDashLinks = [
         icon: <FiSettings />,
         linkName: "/account",
       },
-      // {
-      //   name: "Payment",
-      //   icon: <MdPayment />,
-      // linkName: "/payment",
-      // },
+
     ],
   },
 ];

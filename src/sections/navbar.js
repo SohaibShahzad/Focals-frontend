@@ -577,7 +577,7 @@ const NavBar = () => {
                       <Link
                         href={
                           isAdmin
-                            ? "/admin/dashboard"
+                            ? "/adminFocals/dashboard"
                             : isSub
                             ? "/subadmin/dashboard"
                             : "/dashboard"
@@ -657,7 +657,7 @@ const NavBar = () => {
                       <Link
                         href={
                           isAdmin
-                            ? "/admin/dashboard"
+                            ? "/adminFocals/dashboard"
                             : isSub
                             ? "/subadmin/dashboard"
                             : "/dashboard"

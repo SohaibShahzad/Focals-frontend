@@ -31,7 +31,7 @@ export const Sidebar = ({ role, userType }) => {
       await axios.delete(`/api/session`, { withCredentials: true });
       localStorage.removeItem("token");
       setAuthenticated(false);
-      router.push("/admin");
+      router.push("/adminFocals");
     } catch (error) {
       console.log("Error Logging Out", error);
     }
@@ -61,7 +61,7 @@ export const Sidebar = ({ role, userType }) => {
     sidebarRef.current.scrollTop = sessionStorage.getItem("scrollY");
   }, []);
 
-  const baseHref = userType === 'admin' ? "/admin/dashboard" : "/subadmin/dashboard"; // add this line
+  const baseHref = userType === 'admin' ? "/adminFocals/dashboard" : "/subadmin/dashboard"; // add this line
 
   return (
     <div
@@ -72,7 +72,7 @@ export const Sidebar = ({ role, userType }) => {
       {activeMenu && (
         <>
           <div className="flex justify-between items-center">
-            <Link href="/admin/dashboard">
+            <Link href="/adminFocals/dashboard">
               <div className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900">
                 <div className="p-2">
                   <img src="/Logo.png" alt="FutureFocals" />

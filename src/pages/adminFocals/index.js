@@ -63,7 +63,7 @@ export default function AdminLogin() {
             path: "/",
           });
           setAuthenticated(true);
-          router.push("/admin/dashboard");
+          router.push("/adminFocals/dashboard");
         } else {
           setErrorMessage({
             message: "Invalid Admin Credentials",
