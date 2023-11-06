@@ -9,6 +9,7 @@ const jwt_decode = jwt.decode;
 let socket;
 
 export default function LiveChat({ userDetails }) {
+
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
@@ -20,64 +21,47 @@ export default function LiveChat({ userDetails }) {
       sender: userDetails.id,
       receiver: "admin",
     });
+
+    socket.on("chatHistory", (history) => {
+      console.log("Chat history: ", history);
+      setMessages(history ? history : []);
+    });
+
+    socket.on("chat", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+    socket.emit("requestChatHistory", { chatId: userDetails.id });
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
-    const messageHandler = ({ chatId, messages }) => {
-      const message = {
-        sender: messages.sender,
-        receiver: messages.receiver,
-        message: messages.message,
-      };
-      setMessages((prev) => [...prev, message]);
-    };
-    if (socket) {
-      socket.on("chatHistory", (history) => {
-        if (history === null) {
-          setMessages([]);
-          return;
-        }
-        setMessages(
-          history.messages.map((message) => {
-            return {
-              sender: message.sender,
-              receiver: message.receiver,
-              message: message.message,
-            };
-          })
-        );
-      });
-      socket.on("chat", messageHandler);
-      socket.emit("requestChatHistory", { chatId: userDetails.id });
-    }
-
     scrollToBottom();
-
-    return () => {
-      socket.off("chat", messageHandler);
-    };
-  }, [messages]);
+  }, []); 
 
   const sendMessage = (e) => {
     e.preventDefault();
+    // console.log("User details: ", userDetails);
     const messageData = {
-      sender: userDetails.id,
+      sender: userDetails.firstName,
       receiver: "admin",
       message,
     };
     if (message) {
       socket.emit("chat", {
-        chatId: userDetails.id,
+        chatDetails: userDetails,
         messageData,
       });
       setMessage("");
-      setMessages((prev) => [...prev, messageData]);
     }
   };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  console.log("Messages: ", messages);
 
   return (
     <div className="font-poppins">
@@ -114,11 +98,11 @@ export default function LiveChat({ userDetails }) {
                 <div
                   key={index}
                   className={`flex flex-col items-start justify-start my-2 mr-2 ${
-                    message.sender !== "admin" ? "items-end" : "items-start"
+                    message.user !== "admin" ? "items-end" : "items-start"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    {message.sender === "admin" && (
+                    {message.user === "admin" && (
                       <img
                         src="/Logo.png"
                         alt="FutureFocals"
@@ -127,18 +111,15 @@ export default function LiveChat({ userDetails }) {
                     )}
                     <div
                       className={`flex items-center justify-center px-2 py-1 rounded-md ${
-                        message.sender !== "admin"
+                        message.user !== "admin"
                           ? "bg-orange-800 text-white rounded-br-none"
                           : "bg-gray-300 text-black rounded-bl-none"
                       }`}
                     >
                       {message.message}
                     </div>
-                    {message.sender !== "admin" && (
-                      <FaUserCircle
-                      
-                        className="w-9 h-9"
-                      />
+                    {message.user !== "admin" && (
+                      <FaUserCircle className="w-9 h-9" />
                     )}
                   </div>
                 </div>

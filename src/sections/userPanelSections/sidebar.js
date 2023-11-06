@@ -29,11 +29,12 @@ export const Sidebar = () => {
             const response = await axios.get(
               `${process.env.NEXT_PUBLIC_SERVER_URL}notifications/getNotificationsByUser/${decoded.id}`
             );
-            const data = response.data;
-            const unreadNotifications = data.some(
-              (notification) => !notification.read
+            const notifications = response.data;
+            // Check for at least one notification that is not read
+            const hasUnread = notifications.some(
+              (notification) => !notification.isRead
             );
-            setHasUnreadNotifications(unreadNotifications);
+            setHasUnreadNotifications(hasUnread);
           } catch (error) {
             console.error("Error fetching notifications:", error);
           }
@@ -42,11 +43,9 @@ export const Sidebar = () => {
     };
 
     fetchNotifications();
-    const intervalId = setInterval(() => {
-      fetchNotifications();
-    }, 60000);
+    const intervalId = setInterval(fetchNotifications, 60000); // Fetch notifications every 60 seconds
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
 
   const handleCloseSidebar = () => {
@@ -108,16 +107,17 @@ export const Sidebar = () => {
                     onClick={handleCloseSidebar}
                     href={`/dashboard${link.linkName.toLowerCase()}`}
                     styles={`flex items-center gap-5 pl-4 py-3 rounded-lg text-lg text-white text-gray-700 hover:bg-[#d8730e] m-2 ${
-                      hasUnreadNotifications && link.name === "Projects"
+                      hasUnreadNotifications && link.name === "Projects" // Make sure this is the correct name
                         ? "relative"
                         : ""
                     }`}
                   >
                     {link.icon}
                     <span className="capitalize">{link.name}</span>
-                    {hasUnreadNotifications && link.name === "Projects" && (
-                      <span className="absolute right-0 mr-6 inline-block h-4 w-4 rounded-full bg-orange-600"></span>
-                    )}
+                    {hasUnreadNotifications &&
+                      link.name === "Projects" && ( // Again, adjust if necessary
+                        <span className="absolute right-0 mr-6 inline-block h-4 w-4 rounded-full bg-orange-600"></span>
+                      )}
                   </ActiveLink>
                 ))}
               </div>

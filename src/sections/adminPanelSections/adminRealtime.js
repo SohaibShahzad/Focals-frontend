@@ -10,6 +10,7 @@ import { BsArrowLeft } from "react-icons/bs";
 let socket;
 
 function ChatModule({ user }) {
+  // console.log("User: ", user);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
@@ -18,13 +19,15 @@ function ChatModule({ user }) {
 
   useEffect(() => {
     const messageHandler = ({ chatId, messages }) => {
+      console.log("message", messages);
       const message = {
-        sender: messages.sender,
-        receiver: messages.receiver,
+        sender: messages.user,
+        receiver: "admin",
         message: messages.message,
       };
       setMessages((oldMessages) => [...oldMessages, message]);
       if (isAtBottom) {
+        console.log("Scrolling to bottom");
         scrollToBottom();
       }
     };
@@ -36,10 +39,11 @@ function ChatModule({ user }) {
           return;
         }
         setMessages(
-          history.messages.map((message) => {
+          history.map((message) => {
+            console.log("Message: ", message);
             return {
-              sender: message.sender,
-              receiver: message.receiver,
+              sender: message.user,
+              receiver: "admin",
               message: message.message,
             };
           })
@@ -48,7 +52,15 @@ function ChatModule({ user }) {
         setTimeout(scrollToBottom, 0);
       });
 
-      socket.on("chat", messageHandler);
+      socket.on("chat", (newMessage) => {
+        console.log("New message: ", newMessage);
+        setMessages((prev) => [...prev, newMessage]);
+        if (isAtBottom) {
+          console.log("Scrolling to bottom");
+          scrollToBottom();
+        }
+      });
+      // socket.on("chat", messageHandler);
       socket.emit("requestChatHistory", { chatId: user._id });
     }
 
@@ -76,15 +88,16 @@ function ChatModule({ user }) {
   }, []);
 
   const sendMessage = (e) => {
+    console.log("User: ", user);
     e.preventDefault();
     const messageData = {
       sender: "admin",
-      receiver: user._id,
+      receiver: user.firstName,
       message,
     };
     if (message) {
       socket.emit("chat", {
-        chatId: user._id,
+        chatDetails: user,
         messageData,
       });
       setMessage("");

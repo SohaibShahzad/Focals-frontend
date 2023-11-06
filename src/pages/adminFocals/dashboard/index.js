@@ -25,7 +25,6 @@ const centerTextPlugin = {
 
     const meta = chart.getDatasetMeta(0);
     meta.data.forEach((segment, index) => {
-      console.log("Segment " + index + " hidden status:", segment.hidden);
       // Modify this part
       if (!segment.hidden || segment.hidden === undefined) {
         totalValue += chart.data.datasets[0].data[index];
