@@ -19,6 +19,7 @@ const ServicesSection = () => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}services/getServicesWithThumbs`
       );
       const serviceData = res.data;
+      console.log(serviceData);
       setServicesData(serviceData);
       setUniqueCategories(
         [
@@ -98,7 +99,7 @@ const ServicesSection = () => {
               {servicesToDisplay.map((service) => (
                 <Link
                   key={service._id}
-                  href={`/services/${service._id}`}
+                  href={`/services/${service.id}`}
                   className="p-4 glassmorphism-projects hover:bg-orange-800  rounded-xl justify-between h-full overflow-hidden transform transition-all duration-300 hover:scale-105"
                 >
                   <div>
