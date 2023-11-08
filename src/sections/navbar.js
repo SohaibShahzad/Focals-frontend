@@ -329,6 +329,7 @@ const NavBar = () => {
                                   <p className="text-gray-400 text-[14px] flex items-center transform transition-all duration-200 hover:scale-110 hover:text-orange-600">
                                     <TbArrowNarrowRight className="w-8 h-5" />
                                     <span
+                                    
                                       style={{
                                         "white-space": "nowrap",
                                       }}

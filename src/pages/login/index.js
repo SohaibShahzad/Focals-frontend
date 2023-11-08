@@ -18,7 +18,7 @@ export default function LoginRegister() {
   const router = useRouter();
   const obj = JSON.parse(router.query.prop);
   const { authenticated, setAuthenticated } = useAuth();
-  const { data: session } = useSession();
+  const {  data, status,session  } = useSession();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
@@ -44,19 +44,56 @@ export default function LoginRegister() {
     setPassword("");
   };
 
-  const signInGoogle = async () => {
+  const signInGoogle = async (e) => {
+    
     console.log("Calling signIn()");
     const response = await signIn("google");
-    console.log("signIn() response:", response);
+    
+    console.log("signIn() response:", response ?response : "no-response" );
   };
 
   useEffect(() => {
-    if (session) {
-      console.log("Session found", session);
-    } else {
-      console.log("Session not found");
+    session
+    console.log(session,'session')
+    console.log(data,'data')
+    console.log(status,'status')
+    if (status === 'authenticated') {
+      const userData = {
+        username: data.token.email,
+      };
+      aith();
+    console.log(userData,'userData')
+    async  function aith(){
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
+          userData
+        );
+
+        if (response.status === 200) {
+          setCookie(null, "token", response.data.token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setCookie(null, "user", JSON.stringify(response.data.user), {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setAuthenticated(true);
+          router.push("/");
+        }
+        console.log(response,'userData')
+      }
+      
+     
+      // console.log(data.token.token.token.tooken)
+      // console.log(data.token.token.token.authUser)
+     
     }
-  }, [session]);
+    // if (session) {
+    //   setAuthenticated(true);
+    //   // router.push("/");
+    // }
+  }, [data]);
 
 
   // const handleOTPinput = (e, index) => {
@@ -809,7 +846,7 @@ export default function LoginRegister() {
                 </div>
                 <div className="space-y-4">
                   <button
-                    onClick={signInGoogle}
+                    onClick={(e) => signInGoogle(e)}
                     className="button-animation-reverse-red hover:scale-100 py-[8px] w-full rounded-md flex items-center justify-center gap-4"
                   >
                     <img src="/gmailLogin.png" className="h-5 w-6" />

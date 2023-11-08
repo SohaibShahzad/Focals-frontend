@@ -165,57 +165,64 @@
 //   },
 // });
 
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import axios from "axios";
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import axios from "axios"
+import { setCookie, parseCookies } from "nookies";
 
-export default NextAuth({
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  callbacks: {
-    async jwt(token, user, account, profile, isNewUser) {
-      if (user) {
-        token = {
-          ...token,
-          name: user.name,
-          email: user.email,
-          picture: user.image,
-        };
 
-        // Define the user data to be sent to the backend
-        const userData = {
-          firstName: profile.given_name,
-          lastName: profile.family_name,
-          username: profile.email,
-          googleId: profile.sub,
-        };
 
-        // Send a POST request to the backend to save the user
-        try {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
-            userData
-          );
-          console.log("User saved to backend:", response.data);
-        } catch (error) {
-          console.error("Error saving user to backend:", error);
-        }
-      }
-      return token;
-    },
-    async session(session, token) {
-      console.log({ session, token });
-      session.user = {
-        ...session.user,
-        name: token.name,
-        email: token.email,
-        picture: token.picture,
+export const authOptions = {
+  
+ providers: [
+  GoogleProvider({
+   clientId: process.env.GOOGLE_CLIENT_ID,
+   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }),
+ ],
+ session: {
+  strategy: 'jwt',
+ },
+ callbacks: {
+  async signIn(token, user) {
+    if (user) {
+      // Define the user data to be sent to the backend
+      const userData = {
+        firstName: user.profile.given_name,
+        lastName: user.profile.family_name,
+        username: user.profile.email,
+        googleId: user.profile.sub,
       };
-      return session;
-    },
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
+          userData
+        );
+
+        // Update only necessary token properties on successful response
+        if (response.data.token) {
+          token = {
+            ...token, // Keep existing token properties
+            email: user.email,
+            name: user.name,
+            picture: user.image,
+            token: response.data.token,
+            authUser: response.data.user,
+          };
+        }
+
+        console.log("User saved to backend:", response.data);
+      } catch (error) {
+        console.error("Error saving user to backend:", error);
+      }
+    }
+
+    return token;
   },
-});
+  async session(session) {
+    return session;
+  }
+}
+}
+export default NextAuth(authOptions);
