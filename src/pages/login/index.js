@@ -45,25 +45,21 @@ export default function LoginRegister() {
   };
 
   const signInGoogle = async (e) => {
-    
-    console.log("Calling signIn()");
     const response = await signIn("google");
-    
-    console.log("signIn() response:", response ?response : "no-response" );
+
   };
 
   useEffect(() => {
-    session
-    console.log(session,'session')
-    console.log(data,'data')
     console.log(status,'status')
     if (status === 'authenticated') {
       const userData = {
         username: data.token.email,
       };
-      aith();
-    console.log(userData,'userData')
-    async  function aith(){
+      auth();
+     
+    async function auth(){
+      if(userData)
+      {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
           userData
@@ -81,7 +77,9 @@ export default function LoginRegister() {
           setAuthenticated(true);
           router.push("/");
         }
-        console.log(response,'userData')
+  
+      }
+        
       }
       
      

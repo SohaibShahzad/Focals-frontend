@@ -184,14 +184,15 @@ export const authOptions = {
   strategy: 'jwt',
  },
  callbacks: {
-  async signIn(token, user) {
-    if (user) {
+  async signIn(token) {
+    var profile  = token.profile;
+    if (profile) {
       // Define the user data to be sent to the backend
       const userData = {
-        firstName: user.profile.given_name,
-        lastName: user.profile.family_name,
-        username: user.profile.email,
-        googleId: user.profile.sub,
+        firstName: profile.given_name,
+        lastName: profile.family_name,
+        username: profile.email,
+        googleId: profile.sub,
       };
 
       try {
@@ -199,19 +200,6 @@ export const authOptions = {
           `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
           userData
         );
-
-        // Update only necessary token properties on successful response
-        if (response.data.token) {
-          token = {
-            ...token, // Keep existing token properties
-            email: user.email,
-            name: user.name,
-            picture: user.image,
-            token: response.data.token,
-            authUser: response.data.user,
-          };
-        }
-
         console.log("User saved to backend:", response.data);
       } catch (error) {
         console.error("Error saving user to backend:", error);
