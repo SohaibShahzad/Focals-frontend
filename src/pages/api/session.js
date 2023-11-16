@@ -9,7 +9,11 @@ export default async (req, res) => {
     }
   } else if (req.method === "DELETE") {
     try {
-      res.setHeader("Set-Cookie", "token=; Max-Age=0; Path=/; HttpOnly");
+      // Clear any manually set cookies (if applicable)
+      res.setHeader(
+        "Set-Cookie",
+        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"
+      );
       res.status(200).json({ message: "User logged out" });
     } catch (error) {
       console.error("API Session Error:", error);

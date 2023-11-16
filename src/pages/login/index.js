@@ -18,7 +18,7 @@ export default function LoginRegister() {
   const router = useRouter();
   const obj = JSON.parse(router.query.prop);
   const { authenticated, setAuthenticated } = useAuth();
-  const {  data, status,session  } = useSession();
+  const { data, status, session } = useSession();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
@@ -46,86 +46,39 @@ export default function LoginRegister() {
 
   const signInGoogle = async (e) => {
     const response = await signIn("google");
-
   };
 
   useEffect(() => {
-    console.log(status,'status')
-    if (status === 'authenticated') {
+    console.log(status, "status");
+    if (status === "authenticated") {
       const userData = {
         username: data.token.email,
       };
       auth();
-     
-    async function auth(){
-      if(userData)
-      {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
-          userData
-        );
 
-        if (response.status === 200) {
-          setCookie(null, "token", response.data.token, {
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
-          });
-          setCookie(null, "user", JSON.stringify(response.data.user), {
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
-          });
-          setAuthenticated(true);
-          router.push("/");
+      async function auth() {
+        if (userData) {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}users/saveGoogleUser`,
+            userData
+          );
+
+          if (response.status === 200) {
+            setCookie(null, "token", response.data.token, {
+              maxAge: 30 * 24 * 60 * 60,
+              path: "/",
+            });
+            setCookie(null, "user", JSON.stringify(response.data.user), {
+              maxAge: 30 * 24 * 60 * 60,
+              path: "/",
+            });
+            setAuthenticated(true);
+            router.push("/");
+          }
         }
-  
       }
-        
-      }
-      
-     
-      // console.log(data.token.token.token.tooken)
-      // console.log(data.token.token.token.authUser)
-     
     }
-    // if (session) {
-    //   setAuthenticated(true);
-    //   // router.push("/");
-    // }
   }, [data]);
-
-
-  // const handleOTPinput = (e, index) => {
-  //   const { value, nativeEvent } = e;
-  
-  //   // Update OTP when typing
-  //   if (nativeEvent.inputType !== "deleteContentBackward") {
-  //     setOtp((prev) => {
-  //       const newOtp = [...prev];
-  //       newOtp[index] = value;
-  //       return newOtp;
-  //     });
-  
-  //     // Move focus forward
-  //     if (value && e.target.nextSibling) {
-  //       e.target.nextSibling.focus();
-  //     }
-  //   } else {
-  //     // Handle backspace
-  //     setOtp((prev) => {
-  //       const newOtp = [...prev];
-  //       newOtp[index] = ''; // Clear current field
-  
-  //       // If not the first field, clear previous field and move focus back
-  //       if (index > 0) {
-  //         newOtp[index - 1] = '';
-  //         setTimeout(() => e.target.previousSibling.focus(), 0);
-  //       }
-  
-  //       return newOtp;
-  //     });
-  //   }
-  // };
-  
 
   const handleOTPinput = (e, index) => {
     const value = e.target.value;
@@ -162,14 +115,14 @@ export default function LoginRegister() {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
+    const pasteData = e.clipboardData.getData("text").slice(0, 6).split("");
     if (pasteData.length === 6) {
       setOtp(pasteData);
     }
   };
 
   const clearOTP = () => {
-    setOtp(Array(6).fill(''));
+    setOtp(Array(6).fill(""));
   };
 
   const isEmailValid = (email) => {

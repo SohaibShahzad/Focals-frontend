@@ -26,6 +26,7 @@ import {
 import { AiFillDelete } from "react-icons/ai";
 import axios from "axios";
 import * as jwt from "jsonwebtoken";
+import { signOut } from "next-auth/react";
 const jwt_decode = jwt.decode;
 
 const NavBar = () => {
@@ -146,13 +147,20 @@ const NavBar = () => {
 
   const handleLogout = async () => {
     try {
+      // If using JWT or sessions stored in cookies by NextAuth
+      await signOut({ redirect: false });
+  
+      // If you have additional cookies or local storage items set by manual login
       await axios.delete("/api/session", { withCredentials: true });
+  
+      // Clearing local application state
       localStorage.removeItem("token");
       setShowDropdown(false);
       setIsAuthenticated(false);
       setIsUser(false);
       setIsAdmin(false);
       setIsSub(false);
+  
     } catch (err) {
       console.log("Error logging out: ", err);
     }
