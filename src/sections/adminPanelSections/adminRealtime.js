@@ -172,9 +172,11 @@ const AdminRealtime = ({ usersData }) => {
   const [showUsersList, setShowUsersList] = useState(true);
 
   const capitalizeFirstLetter = (string) => {
+    if (typeof string !== 'string' || string.length === 0) {
+      return '';
+    }
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-
   const joinChatRoom = (user) => {
     setShowUsersList(false);
     if (activeUser === user) return;

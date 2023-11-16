@@ -183,11 +183,17 @@ const UserPanel = ({ user }) => {
 export async function getServerSideProps(context) {
   const cookies = parseCookies(context);
   const token = cookies.token;
+  const props = {
+    signup: true,
+    signin: false,
+  };
 
   if (!token) {
     return {
       redirect: {
-        destination: "/login",
+        destination: `/login?prop=${encodeURIComponent(
+          JSON.stringify(props)
+        )}`,
         permanent: false,
       },
     };
@@ -198,7 +204,9 @@ export async function getServerSideProps(context) {
     if (decoded.type !== "user") {
       return {
         redirect: {
-          destination: "/login",
+          destination: `/login?prop=${encodeURIComponent(
+            JSON.stringify(props)
+          )}`,
           permanent: false,
         },
       };
@@ -212,7 +220,9 @@ export async function getServerSideProps(context) {
     if (!user) {
       return {
         redirect: {
-          destination: "/login",
+          destination: `/login?prop=${encodeURIComponent(
+            JSON.stringify(props)
+          )}`,
           permanent: false,
         },
       };
@@ -225,7 +235,9 @@ export async function getServerSideProps(context) {
     console.log("Error decoding JWT: ", err);
     return {
       redirect: {
-        destination: "/login",
+        destination: `/login?prop=${encodeURIComponent(
+          JSON.stringify(props)
+        )}`,
         permanent: false,
       },
     };
